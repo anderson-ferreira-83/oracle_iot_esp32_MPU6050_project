@@ -92,7 +92,8 @@
       "Bash(powershell.exe -Command \"py -3.11 -c \\\\\"import oracledb; conn = oracledb.connect\\(user='dersao', password='986960440', dsn='localhost:1521/xepdb1'\\); cur = conn.cursor\\(\\); cur.execute\\('GRANT SELECT ON sensor_data TO student'\\); conn.commit\\(\\); conn.close\\(\\); print\\('GRANT OK'\\)\\\\\"\")",
       "Bash(du -sh /mnt/c/Users/Anderson/Downloads/oracle_iot_esp32_MPU6050_project-main/* | sort -h)",
       "Bash(du -sh /mnt/c/Users/Anderson/Downloads/oracle_iot_esp32_MPU6050_project-main/notebooks/output/*)",
-      "Bash(git credential-manager --version 2>&1 || git-credential-manager --version 2>&1 || echo \"gcm not found\"\ngit config --global credential.helper 2>&1)"
+      "Bash(git credential-manager --version 2>&1 || git-credential-manager --version 2>&1 || echo \"gcm not found\"\ngit config --global credential.helper 2>&1)",
+      "Bash(git add web/js/dashboard.js web/index.html && git status)"
     ]
   }
 }
