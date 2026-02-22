@@ -1,0 +1,213 @@
+{
+  "type": "softmax_logreg",
+  "version": "py_20260207",
+  "generated_at": "2026-02-07 22:00:39",
+  "generated_by": "03_Model_Training_Evaluation.ipynb",
+  "features": [
+    "gyro_y_dps_std",
+    "vibration_dps_rms",
+    "gyro_x_dps_std",
+    "gyro_y_dps_range",
+    "accel_x_g_std",
+    "accel_x_g_range",
+    "accel_mag_g_std",
+    "gyro_x_dps_range",
+    "accel_mag_g_range",
+    "vibration_dps_range",
+    "accel_z_g_std",
+    "accel_z_g_range"
+  ],
+  "labels": [
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "scaler": {
+    "mean": [
+      3.5071670398942145,
+      20.860715711771263,
+      8.389346894162648,
+      16.479418040737148,
+      0.14437308412780323,
+      0.5791925315227935,
+      0.05099246188855412,
+      42.300969932104756,
+      0.2455247284289915,
+      40.8281478186227,
+      0.03713025019742562,
+      0.18751687681862264
+    ],
+    "scale": [
+      1.7026621205691026,
+      4.645763547950494,
+      4.575943863075305,
+      7.5081916112610445,
+      0.0901886723368789,
+      0.33481486861963067,
+      0.03128158577190279,
+      21.72183238948779,
+      0.13946252038827026,
+      9.975730400118499,
+      0.018008030179581958,
+      0.09242315237220838
+    ]
+  },
+  "weights": {
+    "coef": [
+      [
+        0.7068563191318962,
+        0.5844469127484695,
+        0.6431917672952221,
+        0.6294852708750022,
+        0.9303668982278326,
+        0.8627533321852298,
+        0.8884121326200319,
+        0.5307428187610074,
+        0.7748205522545906,
+        0.6020040366816906,
+        0.8479260299029305,
+        0.7552102062288896
+      ],
+      [
+        -0.9417507107575357,
+        -1.1210872888834795,
+        -1.1095307864788926,
+        -1.2419958579187822,
+        -0.39759103784254407,
+        -0.5136321342409426,
+        -0.47268009097550995,
+        -1.3347105442973834,
+        -0.5753067879595507,
+        -1.3378829401567707,
+        -0.42146649952775067,
+        -0.4915918947704315
+      ],
+      [
+        0.23489439162563766,
+        0.5366403761350076,
+        0.46633901918366827,
+        0.6125105870437779,
+        -0.5327758603852912,
+        -0.3491211979442892,
+        -0.4157320416445241,
+        0.8039677255363742,
+        -0.1995137642950422,
+        0.7358789034750776,
+        -0.4264595303751824,
+        -0.26361831145846126
+      ]
+    ],
+    "intercept": [
+      -0.015340545159046304,
+      -3.7543189194446587,
+      3.769659464603712
+    ]
+  },
+  "metrics": {
+    "train_accuracy": 1.0,
+    "cv": {
+      "stratified": {
+        "accuracy_mean": 1.0,
+        "accuracy_std": 0.0,
+        "fold_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "low_med_confusion_rate": 0.0,
+        "confusion_matrix": {
+          "HIGH": {
+            "HIGH": 330,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "LOW": {
+            "HIGH": 0,
+            "LOW": 343,
+            "MEDIUM": 0
+          },
+          "MEDIUM": {
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 358
+          }
+        },
+        "classification_report": {
+          "HIGH": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 330.0
+          },
+          "LOW": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 343.0
+          },
+          "MEDIUM": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 358.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 1031.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 1031.0
+          }
+        }
+      },
+      "groupkfold": null
+    }
+  },
+  "eda_traceability": {
+    "feature_config_version": "5.11",
+    "eda_id": "eda_20260207_214508",
+    "fe_id": "fe_20260207_214508",
+    "eda_generated_at": "20260207_214508",
+    "sample_rate_hz": 15.0,
+    "selection_method": "cohens_d_min_adjacent_classwise_corr_pairwise_score_topk",
+    "features_count": 12,
+    "collection_ids": [
+      "col_20260207_191320_5hz"
+    ],
+    "sampling_validation": {
+      "status": "computed_from_loaded_data",
+      "expected_hz": 15.0,
+      "per_class": {
+        "LOW": {
+          "samples": 7275,
+          "duration_s": 545.2616000175476,
+          "actual_hz": 13.34,
+          "deviation_pct": 11.05
+        },
+        "MEDIUM": {
+          "samples": 7250,
+          "duration_s": 522.0142002105713,
+          "actual_hz": 13.89,
+          "deviation_pct": 7.41
+        },
+        "HIGH": {
+          "samples": 7275,
+          "duration_s": 561.9821000099182,
+          "actual_hz": 12.95,
+          "deviation_pct": 13.7
+        }
+      },
+      "note": "Taxa estimada via timestamps das classes (LOW/MEDIUM/HIGH)."
+    },
+    "features_csv_file": "features_latest.csv",
+    "features_csv_hash": "992b399967e0ccf1b54d1b745617116765ca47ef8929f340458b2c51db04e092"
+  }
+}

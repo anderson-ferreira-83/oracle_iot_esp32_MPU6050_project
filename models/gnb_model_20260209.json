@@ -1,0 +1,384 @@
+{
+  "type": "gaussian_nb",
+  "version": "py_20260209",
+  "generated_at": "2026-02-09 15:00:52",
+  "generated_by": "03_Model_Training_Evaluation.ipynb",
+  "features": [
+    "accel_z_g_std",
+    "accel_z_g_range",
+    "accel_x_g_range",
+    "vibration_dps_range",
+    "vibration_dps_std",
+    "gyro_y_dps_range",
+    "accel_mag_g_range",
+    "accel_mag_g_std",
+    "gyro_x_dps_range",
+    "gyro_x_dps_std",
+    "vibration_dps_rms",
+    "gyro_z_dps_range"
+  ],
+  "labels": [
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "priors": {
+    "HIGH": 0.3386454183266932,
+    "LOW": 0.32214001138303927,
+    "MEDIUM": 0.3392145702902675
+  },
+  "stats": {
+    "HIGH": {
+      "accel_z_g_std": {
+        "mean": 0.04175120670717494,
+        "var": 2.3497832901943913e-05,
+        "count": 595
+      },
+      "accel_z_g_range": {
+        "mean": 0.20654151260504208,
+        "var": 0.0007664143591847695,
+        "count": 595
+      },
+      "accel_x_g_range": {
+        "mean": 0.5509865546218498,
+        "var": 0.009022153632795392,
+        "count": 595
+      },
+      "vibration_dps_range": {
+        "mean": 41.46263444705872,
+        "var": 8.038905868407863,
+        "count": 595
+      },
+      "vibration_dps_std": {
+        "mean": 11.584172753397661,
+        "var": 0.9452437721808503,
+        "count": 595
+      },
+      "gyro_y_dps_range": {
+        "mean": 14.92586554621848,
+        "var": 8.718071620071912,
+        "count": 595
+      },
+      "accel_mag_g_range": {
+        "mean": 0.24968054012461666,
+        "var": 0.0010888240176923378,
+        "count": 595
+      },
+      "accel_mag_g_std": {
+        "mean": 0.049713109921480675,
+        "var": 3.849164018598589e-05,
+        "count": 595
+      },
+      "gyro_x_dps_range": {
+        "mean": 27.096840336134406,
+        "var": 14.121193688287407,
+        "count": 595
+      },
+      "gyro_x_dps_std": {
+        "mean": 4.9194965338872905,
+        "var": 0.31073650327107544,
+        "count": 595
+      },
+      "vibration_dps_rms": {
+        "mean": 20.38941588220732,
+        "var": 3.3055526882282087,
+        "count": 595
+      },
+      "gyro_z_dps_range": {
+        "mean": 64.2833949579831,
+        "var": 166.88298307039312,
+        "count": 595
+      }
+    },
+    "LOW": {
+      "accel_z_g_std": {
+        "mean": 0.014234127714176809,
+        "var": 4.3169224522444264e-06,
+        "count": 566
+      },
+      "accel_z_g_range": {
+        "mean": 0.06992402826855114,
+        "var": 9.236344549819389e-05,
+        "count": 566
+      },
+      "accel_x_g_range": {
+        "mean": 0.18607067137809205,
+        "var": 0.00034111316268782023,
+        "count": 566
+      },
+      "vibration_dps_range": {
+        "mean": 19.75267873498234,
+        "var": 2.137635223240773,
+        "count": 566
+      },
+      "vibration_dps_std": {
+        "mean": 5.157625888716497,
+        "var": 0.3200421931749426,
+        "count": 566
+      },
+      "gyro_y_dps_range": {
+        "mean": 5.166837455830392,
+        "var": 0.5304070931852881,
+        "count": 566
+      },
+      "accel_mag_g_range": {
+        "mean": 0.06964418543281943,
+        "var": 9.227770210743434e-05,
+        "count": 566
+      },
+      "accel_mag_g_std": {
+        "mean": 0.01412241686168885,
+        "var": 4.2922782559062354e-06,
+        "count": 566
+      },
+      "gyro_x_dps_range": {
+        "mean": 6.845918727915179,
+        "var": 1.2351004380890847,
+        "count": 566
+      },
+      "gyro_x_dps_std": {
+        "mean": 1.3664865139112636,
+        "var": 0.06628409123315894,
+        "count": 566
+      },
+      "vibration_dps_rms": {
+        "mean": 12.079994637204994,
+        "var": 3.4928208169037207,
+        "count": 566
+      },
+      "gyro_z_dps_range": {
+        "mean": 29.694734982332175,
+        "var": 47.279805452198424,
+        "count": 566
+      }
+    },
+    "MEDIUM": {
+      "accel_z_g_std": {
+        "mean": 0.024089690045763855,
+        "var": 5.628943101200496e-06,
+        "count": 596
+      },
+      "accel_z_g_range": {
+        "mean": 0.10749412751677846,
+        "var": 0.00013007972976712549,
+        "count": 596
+      },
+      "accel_x_g_range": {
+        "mean": 0.2981614093959732,
+        "var": 0.0016567206072332305,
+        "count": 596
+      },
+      "vibration_dps_range": {
+        "mean": 23.926651434563762,
+        "var": 1.8224177322146022,
+        "count": 596
+      },
+      "vibration_dps_std": {
+        "mean": 6.499468946219068,
+        "var": 0.2035547587170931,
+        "count": 596
+      },
+      "gyro_y_dps_range": {
+        "mean": 8.57840604026845,
+        "var": 3.1796190784358225,
+        "count": 596
+      },
+      "accel_mag_g_range": {
+        "mean": 0.09415497143131443,
+        "var": 0.00017988219917832436,
+        "count": 596
+      },
+      "accel_mag_g_std": {
+        "mean": 0.01858430725037885,
+        "var": 7.532861372283803e-06,
+        "count": 596
+      },
+      "gyro_x_dps_range": {
+        "mean": 9.087852348993286,
+        "var": 1.7712064362688036,
+        "count": 596
+      },
+      "gyro_x_dps_std": {
+        "mean": 1.816195725361707,
+        "var": 0.061430486908552934,
+        "count": 596
+      },
+      "vibration_dps_rms": {
+        "mean": 14.190372724560357,
+        "var": 2.926345837646711,
+        "count": 596
+      },
+      "gyro_z_dps_range": {
+        "mean": 38.38838926174497,
+        "var": 67.42689234681337,
+        "count": 596
+      }
+    }
+  },
+  "metrics": {
+    "train_accuracy": 1.0,
+    "cv_accuracy_mean": 1.0,
+    "cv": {
+      "stratified": {
+        "accuracy_mean": 1.0,
+        "accuracy_std": 0.0,
+        "fold_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "low_med_confusion_rate": 0.0,
+        "confusion_matrix": {
+          "HIGH": {
+            "HIGH": 595,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "LOW": {
+            "HIGH": 0,
+            "LOW": 566,
+            "MEDIUM": 0
+          },
+          "MEDIUM": {
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 596
+          }
+        },
+        "classification_report": {
+          "HIGH": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 595.0
+          },
+          "LOW": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 566.0
+          },
+          "MEDIUM": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 596.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 1757.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 1757.0
+          }
+        }
+      },
+      "groupkfold": null
+    },
+    "holdout_test": {
+      "accuracy": 1.0,
+      "confusion_matrix": {
+        "HIGH": {
+          "HIGH": 119,
+          "LOW": 0,
+          "MEDIUM": 0
+        },
+        "LOW": {
+          "HIGH": 0,
+          "LOW": 113,
+          "MEDIUM": 0
+        },
+        "MEDIUM": {
+          "HIGH": 0,
+          "LOW": 0,
+          "MEDIUM": 120
+        }
+      },
+      "classification_report": {
+        "HIGH": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 119.0
+        },
+        "LOW": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 113.0
+        },
+        "MEDIUM": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 120.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 352.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 352.0
+        }
+      }
+    }
+  },
+  "training_info": {
+    "total_samples": 1757,
+    "window_size": 100,
+    "step_size": 20
+  },
+  "eda_traceability": {
+    "feature_config_version": "5.13",
+    "eda_id": "eda_20260209_145315",
+    "fe_id": "fe_20260209_145315",
+    "eda_generated_at": "20260209_145315",
+    "sample_rate_hz": 20.0,
+    "selection_method": "cohens_d_min_adjacent_classwise_corr_pairwise_score_topk",
+    "features_count": 12,
+    "collection_ids": [
+      "col_20260209_181623_20hz"
+    ],
+    "sampling_validation": {
+      "status": "computed_from_loaded_data",
+      "expected_hz": 20.0,
+      "per_class": {
+        "LOW": {
+          "samples": 12000,
+          "duration_s": 629.5457000732422,
+          "actual_hz": 19.06,
+          "deviation_pct": 4.69
+        },
+        "MEDIUM": {
+          "samples": 12000,
+          "duration_s": 599.9460999965668,
+          "actual_hz": 20.0,
+          "deviation_pct": 0.01
+        },
+        "HIGH": {
+          "samples": 12000,
+          "duration_s": 600.2221999168396,
+          "actual_hz": 19.99,
+          "deviation_pct": 0.04
+        }
+      },
+      "note": "Taxa estimada via timestamps das classes (LOW/MEDIUM/HIGH)."
+    },
+    "features_csv_file": "features_latest.csv",
+    "features_csv_hash": "e252093f729ca42f867db343ed7a47d96c2c9f561b376fdd4c6a5ebe8d35269a"
+  }
+}

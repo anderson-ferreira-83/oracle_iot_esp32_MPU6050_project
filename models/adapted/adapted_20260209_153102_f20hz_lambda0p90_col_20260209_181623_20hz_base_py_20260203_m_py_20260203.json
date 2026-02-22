@@ -1,0 +1,478 @@
+{
+    "type": "gaussian_nb",
+    "version": "py_20260203",
+    "generated_at": "2026-02-03 22:20:29",
+    "generated_by": "02_Model_Training_Evaluation.ipynb",
+    "features": [
+        "accel_z_g_std",
+        "accel_x_g_std",
+        "gyro_z_dps_peak",
+        "gyro_x_dps_std",
+        "accel_x_g_peak",
+        "accel_x_g_clearance_factor",
+        "gyro_x_dps_peak",
+        "gyro_x_dps_rms",
+        "accel_z_g_clearance_factor",
+        "gyro_z_dps_rms"
+    ],
+    "labels": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+    ],
+    "priors": {
+        "HIGH": 0.33345529439072796,
+        "LOW": 0.3335113521468141,
+        "MEDIUM": 0.33303335346245794
+    },
+    "stats": {
+        "HIGH": {
+            "accel_z_g_std": {
+                "mean": 0.07839341023702835,
+                "var": 0.00012599496340230752,
+                "count": 341
+            },
+            "accel_x_g_std": {
+                "mean": 0.32378550325521144,
+                "var": 0.0022402041156089625,
+                "count": 341
+            },
+            "gyro_z_dps_peak": {
+                "mean": 49.18050438048426,
+                "var": 6.0727187951720225,
+                "count": 341
+            },
+            "gyro_x_dps_std": {
+                "mean": 7.791699502121919,
+                "var": 0.24914657444055877,
+                "count": 341
+            },
+            "accel_x_g_peak": {
+                "mean": 1.0280068340289603,
+                "var": 0.01698321466976571,
+                "count": 341
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 3.2809228848138585,
+                "var": 0.11787061071681393,
+                "count": 341
+            },
+            "gyro_x_dps_peak": {
+                "mean": 21.655117003855015,
+                "var": 9.175069303811881,
+                "count": 341
+            },
+            "gyro_x_dps_rms": {
+                "mean": 8.236496744624324,
+                "var": 0.4842251999432392,
+                "count": 341
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.1918772200185075,
+                "var": 0.001528172972052877,
+                "count": 341
+            },
+            "gyro_z_dps_rms": {
+                "mean": 21.816522918767127,
+                "var": 3.6255350234298476,
+                "count": 341
+            }
+        },
+        "LOW": {
+            "accel_z_g_std": {
+                "mean": 0.028467074089013628,
+                "var": 0.000818190307484766,
+                "count": 338
+            },
+            "accel_x_g_std": {
+                "mean": 0.08072619469199567,
+                "var": 0.00020050213880975533,
+                "count": 338
+            },
+            "gyro_z_dps_peak": {
+                "mean": 26.146713768874058,
+                "var": 3.535412989448787,
+                "count": 338
+            },
+            "gyro_x_dps_std": {
+                "mean": 1.9545513131972005,
+                "var": 0.1329704145436379,
+                "count": 338
+            },
+            "accel_x_g_peak": {
+                "mean": 0.4636541250941573,
+                "var": 0.00035497045166046903,
+                "count": 338
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 1.4122621828961759,
+                "var": 0.006306916770730364,
+                "count": 338
+            },
+            "gyro_x_dps_peak": {
+                "mean": 5.877944572015101,
+                "var": 1.2089929904937193,
+                "count": 338
+            },
+            "gyro_x_dps_rms": {
+                "mean": 2.472633802680588,
+                "var": 0.4247778084997371,
+                "count": 338
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.0518441891378838,
+                "var": 0.0003709142166663515,
+                "count": 338
+            },
+            "gyro_z_dps_rms": {
+                "mean": 13.705795156185381,
+                "var": 2.984672442494201,
+                "count": 338
+            }
+        },
+        "MEDIUM": {
+            "accel_z_g_std": {
+                "mean": 0.029335634372606636,
+                "var": 2.4052794539323108e-5,
+                "count": 339
+            },
+            "accel_x_g_std": {
+                "mean": 0.07915768365088478,
+                "var": 6.144151524292967e-5,
+                "count": 339
+            },
+            "gyro_z_dps_peak": {
+                "mean": 34.110807194652416,
+                "var": 6.385305209742,
+                "count": 339
+            },
+            "gyro_x_dps_std": {
+                "mean": 3.3126473880663134,
+                "var": 0.3309601271298135,
+                "count": 339
+            },
+            "accel_x_g_peak": {
+                "mean": 0.4800856825812085,
+                "var": 0.0009353324428532928,
+                "count": 339
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 1.4556946233424195,
+                "var": 0.0029582838909845144,
+                "count": 339
+            },
+            "gyro_x_dps_peak": {
+                "mean": 9.499373384943887,
+                "var": 3.9474689841602384,
+                "count": 339
+            },
+            "gyro_x_dps_rms": {
+                "mean": 3.6301662250857554,
+                "var": 0.4624298737054975,
+                "count": 339
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.06533239008442,
+                "var": 0.00024798314145169087,
+                "count": 339
+            },
+            "gyro_z_dps_rms": {
+                "mean": 16.53808954759314,
+                "var": 3.637090314076545,
+                "count": 339
+            }
+        }
+    },
+    "metrics": {
+        "train_accuracy": 1,
+        "cv_accuracy_mean": 0.9991266375545852
+    },
+    "training_info": {
+        "total_samples": 1144,
+        "window_size": 100
+    },
+    "eda_traceability": {
+        "feature_config_version": "5.8",
+        "eda_id": "eda_20260203_221724",
+        "eda_generated_at": "20260203_221724",
+        "sample_rate_hz": 20,
+        "selection_method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk",
+        "features_count": 10,
+        "collection_ids": [
+            "col_20260202_175920_20hz"
+        ],
+        "sampling_validation": {
+            "status": "skipped",
+            "reason": "Fonte CSV selecionada",
+            "expected_hz": 20,
+            "actual_hz": null,
+            "deviation_pct": null,
+            "samples": 0,
+            "duration_min": null
+        }
+    },
+    "_adapted": true,
+    "_base_version": "py_20260203",
+    "_adaptation_history": [
+        {
+            "timestamp": "2026-02-09T18:17:19.482Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-09T18:31:02.807Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "pending"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        }
+    ],
+    "_ol_last_absorb": {
+        "timestamp": "2026-02-09T18:31:02.807Z",
+        "lambda": 0.9,
+        "tag": null,
+        "configured_sample_rate_hz": 20,
+        "collection_id": "col_20260209_181623_20hz"
+    },
+    "_ol_reference_baselines": {
+        "version": 1,
+        "generated_at": "2026-02-09T18:31:02.807Z",
+        "source": "soak_test",
+        "tag": null,
+        "configured_sample_rate_hz": 20,
+        "collection_id": "col_20260209_181623_20hz",
+        "classes": {
+            "LOW": {
+                "n": 744,
+                "accel_x_g": {
+                    "n": 744,
+                    "mean": 0.34176142473118365,
+                    "std": 0.06971606655997309,
+                    "rms": 0.3487996579282771,
+                    "min": 0,
+                    "max": 0.4607
+                },
+                "accel_y_g": {
+                    "n": 744,
+                    "mean": -0.01040806451612905,
+                    "std": 0.1377972314701019,
+                    "rms": 0.13818974204982346,
+                    "min": -0.2925,
+                    "max": 0.259
+                },
+                "accel_z_g": {
+                    "n": 744,
+                    "mean": -1.0576088709677458,
+                    "std": 0.08156634206630523,
+                    "rms": 1.060749542591345,
+                    "min": -1.1145,
+                    "max": 0
+                },
+                "gyro_x_dps": {
+                    "n": 744,
+                    "mean": -0.8994623655913985,
+                    "std": 2.569272402763986,
+                    "rms": 2.722167009336477,
+                    "min": -7.31,
+                    "max": 6.29
+                },
+                "gyro_y_dps": {
+                    "n": 744,
+                    "mean": 0.6641935483870975,
+                    "std": 1.763052273516243,
+                    "rms": 1.884013372794853,
+                    "min": -3.36,
+                    "max": 5.55
+                },
+                "gyro_z_dps": {
+                    "n": 744,
+                    "mean": -0.007674731182796395,
+                    "std": 14.387035114200357,
+                    "rms": 14.387037161234165,
+                    "min": -28.07,
+                    "max": 28.15
+                },
+                "vibration_dps": {
+                    "n": 744,
+                    "mean": 12.781985913978508,
+                    "std": 7.372192411458539,
+                    "rms": 14.755622144007072,
+                    "min": 0,
+                    "max": 28.4699
+                }
+            },
+            "MEDIUM": {
+                "n": 768,
+                "accel_x_g": {
+                    "n": 768,
+                    "mean": 0.34355963541666656,
+                    "std": 0.08081262929991172,
+                    "rms": 0.35293611906688976,
+                    "min": 0.1416,
+                    "max": 0.5195
+                },
+                "accel_y_g": {
+                    "n": 768,
+                    "mean": -0.0070265625000000215,
+                    "std": 0.14958539117975472,
+                    "rms": 0.14975033166897042,
+                    "min": -0.2747,
+                    "max": 0.2856
+                },
+                "accel_z_g": {
+                    "n": 768,
+                    "mean": -1.0622158854166617,
+                    "std": 0.03364719992569257,
+                    "rms": 1.062748663275726,
+                    "min": -1.1509,
+                    "max": -0.9697
+                },
+                "gyro_x_dps": {
+                    "n": 768,
+                    "mean": -0.5867708333333331,
+                    "std": 3.7266764454969783,
+                    "rms": 3.7725876186342826,
+                    "min": -8.39,
+                    "max": 10.05
+                },
+                "gyro_y_dps": {
+                    "n": 768,
+                    "mean": 0.6326302083333345,
+                    "std": 1.5578710805948615,
+                    "rms": 1.681422993850649,
+                    "min": -2.86,
+                    "max": 3.69
+                },
+                "gyro_z_dps": {
+                    "n": 768,
+                    "mean": 0.9940885416666675,
+                    "std": 17.100121996941215,
+                    "rms": 17.128992507994912,
+                    "min": -34.56,
+                    "max": 36.04
+                },
+                "vibration_dps": {
+                    "n": 768,
+                    "mean": 14.481378059895855,
+                    "std": 10.023993998975964,
+                    "rms": 17.61223342467216,
+                    "min": 1.89581,
+                    "max": 36.6185
+                }
+            },
+            "HIGH": {
+                "n": 748,
+                "accel_x_g": {
+                    "n": 748,
+                    "mean": 0.35787072192513353,
+                    "std": 0.3412212826500522,
+                    "rms": 0.49447286815816605,
+                    "min": -0.2373,
+                    "max": 1.084
+                },
+                "accel_y_g": {
+                    "n": 748,
+                    "mean": -0.03532245989304814,
+                    "std": 0.20972903734737935,
+                    "rms": 0.2126827338538661,
+                    "min": -0.4602,
+                    "max": 0.4885
+                },
+                "accel_z_g": {
+                    "n": 748,
+                    "mean": -1.0676897058823527,
+                    "std": 0.08788564806720048,
+                    "rms": 1.0713007025029604,
+                    "min": -1.2874,
+                    "max": -0.8486
+                },
+                "gyro_x_dps": {
+                    "n": 748,
+                    "mean": -1.4419251336898344,
+                    "std": 8.535533792264289,
+                    "rms": 8.656470713290263,
+                    "min": -19.07,
+                    "max": 19.95
+                },
+                "gyro_y_dps": {
+                    "n": 748,
+                    "mean": 0.36457219251336914,
+                    "std": 4.550397979432168,
+                    "rms": 4.564979151625378,
+                    "min": -8.92,
+                    "max": 10.91
+                },
+                "gyro_z_dps": {
+                    "n": 748,
+                    "mean": 1.642486631016042,
+                    "std": 19.70696545682655,
+                    "rms": 19.775293925745355,
+                    "min": -46.22,
+                    "max": 46.37
+                },
+                "vibration_dps": {
+                    "n": 748,
+                    "mean": 18.74477022727274,
+                    "std": 11.619188092594483,
+                    "rms": 22.053841905761903,
+                    "min": 2.92127,
+                    "max": 48.5171
+                }
+            }
+        }
+    },
+    "_server_saved_at": "2026-02-09T15:31:02-03:00",
+    "_server_export": {
+        "received_at": "2026-02-09T15:31:02-03:00",
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        }
+    }
+}

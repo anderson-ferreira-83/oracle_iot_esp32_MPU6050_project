@@ -1,0 +1,37 @@
+{
+  "mode": "HIGH",
+  "sample_rate": 20,
+  "ingest_enabled": true,
+  "cmd_speed_label": "HIGH",
+  "rot_state_label": "STOPPED",
+  "use_state_label": "NO_LOAD",
+  "vib_profile_label": "NATURAL",
+  "label_source": "CONTROL",
+  "transition_marker": 0,
+  "network_revision": 1771101006698,
+  "network_apply_pending": true,
+  "open_portal": false,
+  "wifi_profiles": [
+    {
+      "ssid": "S20_Ders@0",
+      "password": "Foxbam1844",
+      "server_ip": "192.168.43.100"
+    },
+    {
+      "ssid": "Dersao83",
+      "password": "986960440",
+      "server_ip": "192.168.0.108"
+    }
+  ],
+  "server_hostname": "",
+  "server_fallback_ip": "192.168.43.100",
+  "server_fallback_ips": [
+    "192.168.43.100",
+    "192.168.0.108"
+  ],
+  "api_path": "/api/ingest",
+  "collection_id": "col_20260222_112119_20hz",
+  "new_collection": true,
+  "sends_per_sec": 1,
+  "transition_duration_s": 10
+}

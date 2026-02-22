@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico | IoT Fan Monitor</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+        h1 { color: #38bdf8; margin-bottom: 20px; }
+        .card { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .card h2 { color: #94a3b8; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 12px; }
+        .status { font-size: 1.5rem; font-weight: bold; margin-bottom: 8px; }
+        .status.ok { color: #22c55e; }
+        .status.warn { color: #f59e0b; }
+        .status.error { color: #ef4444; }
+        .info { color: #94a3b8; font-size: 0.9rem; margin: 4px 0; }
+        .mono { font-family: 'JetBrains Mono', monospace; background: #0f172a; padding: 2px 6px; border-radius: 4px; }
+        pre { background: #0f172a; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+        .btn { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; margin-right: 10px; margin-top: 10px; }
+        .btn:hover { background: #2563eb; }
+        .btn-secondary { background: #475569; }
+        .checklist { list-style: none; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #334155; }
+        .checklist li:last-child { border-bottom: none; }
+        .check { color: #22c55e; margin-right: 8px; }
+        .cross { color: #ef4444; margin-right: 8px; }
+        .pending { color: #f59e0b; margin-right: 8px; }
+        a { color: #38bdf8; }
+    </style>
+</head>
+<body>
+    <h1>Diagnóstico do Sistema</h1>
+
+    <div class="card">
+        <h2>Status da API</h2>
+        <div id="apiStatus" class="status pending">Verificando...</div>
+        <div id="apiInfo" class="info"></div>
+    </div>
+
+    <div class="card">
+        <h2>Status do Banco de Dados</h2>
+        <div id="dbStatus" class="status pending">Verificando...</div>
+        <div id="dbInfo" class="info"></div>
+    </div>
+
+    <div class="card">
+        <h2>Último Dado Recebido</h2>
+        <div id="lastDataStatus" class="status pending">Verificando...</div>
+        <div id="lastDataInfo" class="info"></div>
+        <pre id="lastDataJson"></pre>
+    </div>
+
+    <div class="card">
+        <h2>Diagnóstico</h2>
+        <div id="diagnosis" class="info">Analisando...</div>
+    </div>
+
+    <div class="card">
+        <h2>Checklist</h2>
+        <ul class="checklist" id="checklist">
+            <li><span class="pending">?</span> Backend FastAPI rodando</li>
+            <li><span class="pending">?</span> Oracle XE acessivel</li>
+            <li><span class="pending">?</span> Banco de dados com registros</li>
+            <li><span class="pending">?</span> Dados recentes (< 30s)</li>
+            <li><span class="pending">?</span> ESP32 enviando dados</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Ações</h2>
+        <button class="btn" onclick="runDiagnostic()">Atualizar Diagnóstico</button>
+        <button class="btn btn-secondary" onclick="window.open('index.html', '_blank')">Abrir Dashboard</button>
+        <button class="btn btn-secondary" onclick="window.open('control.html', '_blank')">Abrir Controle</button>
+    </div>
+
+    <div class="card">
+        <h2>Resposta Completa da API</h2>
+        <pre id="fullResponse"></pre>
+    </div>
+
+    <script>
+        async function runDiagnostic() {
+            const apiStatusEl = document.getElementById('apiStatus');
+            const apiInfoEl = document.getElementById('apiInfo');
+            const dbStatusEl = document.getElementById('dbStatus');
+            const dbInfoEl = document.getElementById('dbInfo');
+            const lastDataStatusEl = document.getElementById('lastDataStatus');
+            const lastDataInfoEl = document.getElementById('lastDataInfo');
+            const lastDataJsonEl = document.getElementById('lastDataJson');
+            const diagnosisEl = document.getElementById('diagnosis');
+            const fullResponseEl = document.getElementById('fullResponse');
+            const checklistEl = document.getElementById('checklist');
+
+            // Reset
+            apiStatusEl.className = 'status pending';
+            apiStatusEl.textContent = 'Verificando...';
+            dbStatusEl.className = 'status pending';
+            dbStatusEl.textContent = 'Verificando...';
+            lastDataStatusEl.className = 'status pending';
+            lastDataStatusEl.textContent = 'Verificando...';
+
+            try {
+                const response = await fetch('../api/get_data?mode=debug');
+                const data = await response.json();
+
+                fullResponseEl.textContent = JSON.stringify(data, null, 2);
+
+                // API Status
+                apiStatusEl.className = 'status ok';
+                apiStatusEl.textContent = 'API Funcionando';
+                apiInfoEl.textContent = `Hora do servidor: ${data.server_time_iso}`;
+
+                // DB Status
+                if (data.total_records > 0) {
+                    dbStatusEl.className = 'status ok';
+                    dbStatusEl.textContent = `${data.total_records} registros`;
+                    dbInfoEl.textContent = 'Banco de dados contém dados';
+                } else {
+                    dbStatusEl.className = 'status error';
+                    dbStatusEl.textContent = 'Banco Vazio';
+                    dbInfoEl.textContent = 'Nenhum registro encontrado - ESP32 não está enviando dados';
+                }
+
+                // Last Data Status
+                if (data.latest_record) {
+                    const age = data.latest_age_seconds;
+                    if (age < 10) {
+                        lastDataStatusEl.className = 'status ok';
+                        lastDataStatusEl.textContent = `Ativo (${age.toFixed(1)}s atrás)`;
+                    } else if (age < 60) {
+                        lastDataStatusEl.className = 'status warn';
+                        lastDataStatusEl.textContent = `Recente (${age.toFixed(0)}s atrás)`;
+                    } else {
+                        lastDataStatusEl.className = 'status error';
+                        lastDataStatusEl.textContent = `Antigo (${Math.round(age)}s atrás)`;
+                    }
+                    lastDataInfoEl.textContent = `Device: ${data.latest_record.device_id} | Estado: ${data.latest_record.fan_state} | Taxa: ${data.latest_record.sample_rate} Hz`;
+                    lastDataJsonEl.textContent = JSON.stringify(data.latest_record, null, 2);
+                } else {
+                    lastDataStatusEl.className = 'status error';
+                    lastDataStatusEl.textContent = 'Sem dados';
+                    lastDataInfoEl.textContent = '';
+                    lastDataJsonEl.textContent = 'Nenhum registro encontrado';
+                }
+
+                // Diagnosis
+                diagnosisEl.innerHTML = `<strong>${data.diagnosis}</strong>`;
+
+                // Checklist
+                const checks = [
+                    { ok: true, text: 'Backend FastAPI rodando' },
+                    { ok: true, text: 'Oracle XE acessivel' },
+                    { ok: data.total_records > 0, text: `Banco de dados com registros (${data.total_records})` },
+                    { ok: data.is_fresh, text: `Dados recentes (< 30s)${data.latest_age_seconds ? ' - último: ' + data.latest_age_seconds.toFixed(1) + 's' : ''}` },
+                    { ok: data.is_fresh, text: 'ESP32 enviando dados' },
+                ];
+
+                checklistEl.innerHTML = checks.map(c =>
+                    `<li><span class="${c.ok ? 'check' : 'cross'}">${c.ok ? '✓' : '✗'}</span> ${c.text}</li>`
+                ).join('');
+
+            } catch (err) {
+                apiStatusEl.className = 'status error';
+                apiStatusEl.textContent = 'Erro de Conexão';
+                apiInfoEl.textContent = err.message;
+                fullResponseEl.textContent = 'Erro: ' + err.message + '\n\nVerifique se o backend FastAPI está rodando.';
+
+                // Checklist com erro
+                checklistEl.innerHTML = `
+                    <li><span class="cross">✗</span> Backend FastAPI rodando - <strong>VERIFICAR</strong></li>
+                    <li><span class="pending">?</span> Oracle XE acessivel</li>
+                    <li><span class="pending">?</span> Banco de dados com registros</li>
+                    <li><span class="pending">?</span> Dados recentes</li>
+                    <li><span class="pending">?</span> ESP32 enviando dados</li>
+                `;
+            }
+        }
+
+        // Run on load
+        runDiagnostic();
+        // Auto-refresh every 5 seconds
+        setInterval(runDiagnostic, 5000);
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,387 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-02-07T22:30:50Z",
+  "repo_root": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project",
+  "eda_id": "eda_20260207_171939",
+  "fe_id": "fe_20260207_171939",
+  "model": {
+    "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\models\\gnb_model_20260207.json",
+    "sha256": "331d4657fc431cf0ddb35cc4b326bf06cf8befc2efa52f434ab0b804822feb80",
+    "version": "py_20260207",
+    "generated_at": "2026-02-07 17:21:44",
+    "generated_by": "03_Model_Training_Evaluation.ipynb",
+    "feature_count": 6,
+    "labels": [
+      "HIGH",
+      "LOW",
+      "MEDIUM"
+    ],
+    "eda_traceability": {
+      "feature_config_version": "5.10",
+      "eda_id": "eda_20260207_171939",
+      "fe_id": "fe_20260207_171939",
+      "eda_generated_at": "20260207_171939",
+      "sample_rate_hz": 15.0,
+      "selection_method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk",
+      "features_count": 6,
+      "collection_ids": [
+        "col_20260207_191320_5hz"
+      ],
+      "sampling_validation": {
+        "status": "computed_from_loaded_data",
+        "expected_hz": 15.0,
+        "per_class": {
+          "LOW": {
+            "samples": 7275,
+            "duration_s": 545.2616000175476,
+            "actual_hz": 13.34,
+            "deviation_pct": 11.05
+          },
+          "MEDIUM": {
+            "samples": 7250,
+            "duration_s": 522.0142002105713,
+            "actual_hz": 13.89,
+            "deviation_pct": 7.41
+          },
+          "HIGH": {
+            "samples": 7275,
+            "duration_s": 561.9821000099182,
+            "actual_hz": 12.95,
+            "deviation_pct": 13.7
+          }
+        },
+        "note": "Taxa estimada via timestamps das classes (LOW/MEDIUM/HIGH)."
+      },
+      "features_csv_file": "features_latest.csv",
+      "features_csv_hash": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d"
+    }
+  },
+  "metrics": {
+    "data_source_config": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\data_source_config.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "5ba5601e5717fc67adaeca6b93a817f9b242442ab4e67b158f59f82725c4bccf",
+      "size": 118,
+      "mtime": "2026-02-07T20:19:31Z"
+    },
+    "eda_run_config": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\eda_run_config.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "ac8b0b62cf9c0895a0d505970d3d2dd7a409a1c6e8a71cfdc3edad1ea81e15e7",
+      "size": 885,
+      "mtime": "2026-02-07T20:19:40Z"
+    },
+    "feature_engineering_run": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\feature_engineering_run.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "8c5dc65d2d855d3bae9ec4703da0db2b1405053085b72efc39b72f3c4b4250f1",
+      "size": 1236,
+      "mtime": "2026-02-07T20:19:40Z"
+    },
+    "pipeline_registry": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\pipeline_registry.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "d06678fd36361c46b0748a632225b8d088ab2fc26ec75ced49b4f23d154087bc",
+      "size": 1960,
+      "mtime": "2026-02-07T20:21:44Z"
+    },
+    "data_source_config_content": {
+      "data_source": "CSV",
+      "csv_file": "raw_sensor_data_20260207_151423.csv",
+      "updated_at": "20260207_171931"
+    },
+    "eda_run_config_content": {
+      "generated_at": "20260207_171939",
+      "eda_id": "eda_20260207_171939",
+      "fe_id": "fe_20260207_171939",
+      "feature_config_version": "5.10",
+      "raw_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\raw_sensor_data_20260207_171939.csv",
+      "features_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_extracted_20260207_171939.csv",
+      "features_latest_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_latest.csv",
+      "features_csv_hash": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "window_size": 100,
+      "step_size": 20,
+      "sample_rate_hz": 15.0,
+      "selected_features": [
+        "accel_x_g_std",
+        "gyro_y_dps_std",
+        "gyro_y_dps_rms",
+        "accel_x_g_range",
+        "gyro_y_dps_range",
+        "accel_x_g_rms"
+      ]
+    },
+    "feature_engineering_run_content": {
+      "generated_at": "20260207_171939",
+      "eda_id": "eda_20260207_171939",
+      "fe_id": "fe_20260207_171939",
+      "feature_config_version": "5.10",
+      "raw_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\raw_sensor_data_20260207_171939.csv",
+      "features_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_extracted_20260207_171939.csv",
+      "features_latest_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_latest.csv",
+      "features_csv_hash": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "window_size": 100,
+      "step_size": 20,
+      "sample_rate_hz": 15.0,
+      "selected_features": [
+        "accel_x_g_std",
+        "gyro_y_dps_std",
+        "gyro_y_dps_rms",
+        "accel_x_g_range",
+        "gyro_y_dps_range",
+        "accel_x_g_rms"
+      ],
+      "selection_criteria": {
+        "anova_alpha": 0.05,
+        "correlation_threshold": 1.0,
+        "correlation_mode": "classwise_median",
+        "pairwise_min_separation": 0.0,
+        "pairwise_min_pairs": 0,
+        "score_formula": "min_sep * log(1 + F)",
+        "top_k": 6,
+        "method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk"
+      }
+    }
+  },
+  "data": {
+    "raw_csv": {
+      "path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\raw_sensor_data_20260207_171939.csv",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "594d0864b445364b48c1c69aab76516c94fb8536a34717e90bfecbf793bb85c6",
+      "size": 3223846,
+      "mtime": "2026-02-07T20:19:39Z"
+    },
+    "features_csv": {
+      "path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_extracted_20260207_171939.csv",
+      "exists": true,
+      "expected_sha256": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "sha256": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "size": 190736,
+      "mtime": "2026-02-07T20:19:40Z"
+    },
+    "features_latest_csv": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_latest.csv",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "size": 190736,
+      "mtime": "2026-02-07T20:19:40Z"
+    }
+  },
+  "figures": {
+    "dir": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures",
+    "count": 0,
+    "files": []
+  },
+  "runtime": {
+    "transition_logs": {
+      "analysis_params": {
+        "backtrack_s": 5.0,
+        "low_to_medium_gate": null
+      },
+      "files": [
+        {
+          "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\logs\\ml_transitions_20260207_172709_f_15.json",
+          "exists": true,
+          "expected_sha256": null,
+          "sha256": "9bddb930581c2ec5c791719a431c936410e42b757a8bc2051d8ae086e3b7215d",
+          "size": 392586,
+          "mtime": "2026-02-07T20:54:58Z"
+        }
+      ],
+      "analysis": [
+        {
+          "n_transitions": 108,
+          "span_s": 1665.249,
+          "transitions_per_min": 3.891,
+          "confidence": {
+            "mean": 0.934,
+            "min": 0.678,
+            "max": 0.981
+          },
+          "dirs_top": [
+            {
+              "from": "LOW",
+              "to": "MEDIUM",
+              "count": 42
+            },
+            {
+              "from": "MEDIUM",
+              "to": "LOW",
+              "count": 34
+            },
+            {
+              "from": "MEDIUM",
+              "to": "HIGH",
+              "count": 15
+            },
+            {
+              "from": "HIGH",
+              "to": "MEDIUM",
+              "count": 13
+            },
+            {
+              "from": "HIGH",
+              "to": "LOW",
+              "count": 2
+            },
+            {
+              "from": "LOW",
+              "to": "HIGH",
+              "count": 2
+            }
+          ],
+          "backtracks": {
+            "window_s": 5.0,
+            "pair_count": 26,
+            "transition_count": 48,
+            "pair_types": {
+              "LOW<->MEDIUM": 17,
+              "MEDIUM<->HIGH": 1,
+              "MEDIUM<->LOW": 4,
+              "HIGH<->MEDIUM": 4
+            },
+            "examples": [
+              {
+                "i": 1,
+                "j": 2,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 1.602,
+                "conf_i": 0.8565999040151974,
+                "conf_j": 0.9605843144538715
+              },
+              {
+                "i": 6,
+                "j": 7,
+                "pair": "MEDIUM<->HIGH",
+                "dt_s": 1.604,
+                "conf_i": 0.9564569374349574,
+                "conf_j": 0.9571645744480002
+              },
+              {
+                "i": 12,
+                "j": 13,
+                "pair": "MEDIUM<->LOW",
+                "dt_s": 3.196,
+                "conf_i": 0.8721184466175,
+                "conf_j": 0.9315307893214384
+              },
+              {
+                "i": 13,
+                "j": 14,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 1.601,
+                "conf_i": 0.9315307893214384,
+                "conf_j": 0.9584491980381893
+              },
+              {
+                "i": 19,
+                "j": 20,
+                "pair": "MEDIUM<->LOW",
+                "dt_s": 3.398,
+                "conf_i": 0.957125005503595,
+                "conf_j": 0.8969715016668979
+              },
+              {
+                "i": 20,
+                "j": 21,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 1.612,
+                "conf_i": 0.8969715016668979,
+                "conf_j": 0.9598974795598673
+              },
+              {
+                "i": 24,
+                "j": 25,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 3.381,
+                "conf_i": 0.9570949955593503,
+                "conf_j": 0.8483041032214755
+              },
+              {
+                "i": 27,
+                "j": 28,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 1.581,
+                "conf_i": 0.9511780804950148,
+                "conf_j": 0.9574009593540623
+              },
+              {
+                "i": 29,
+                "j": 30,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 1.599,
+                "conf_i": 0.7982343266457735,
+                "conf_j": 0.748021216583001
+              },
+              {
+                "i": 32,
+                "j": 33,
+                "pair": "LOW<->MEDIUM",
+                "dt_s": 3.19,
+                "conf_i": 0.9572733980421284,
+                "conf_j": 0.9662920462380695
+              }
+            ]
+          },
+          "low_to_medium": {
+            "all": {
+              "n": 42,
+              "confidence": {
+                "mean": 0.921,
+                "min": 0.678,
+                "max": 0.98
+              },
+              "best_eq_to_pct": 81.0,
+              "bestCount_counts": {
+                "8": 3,
+                "7": 10,
+                "5": 8,
+                "6": 19,
+                "9": 2
+              }
+            },
+            "backtrack": {
+              "n": 18,
+              "confidence": {
+                "mean": 0.899,
+                "min": 0.678,
+                "max": 0.98
+              },
+              "best_eq_to_pct": 77.8,
+              "bestCount_counts": {
+                "8": 1,
+                "6": 9,
+                "5": 3,
+                "7": 4,
+                "9": 1
+              }
+            },
+            "stable": {
+              "n": 24,
+              "confidence": {
+                "mean": 0.937,
+                "min": 0.695,
+                "max": 0.972
+              },
+              "best_eq_to_pct": 83.3,
+              "bestCount_counts": {
+                "7": 6,
+                "5": 5,
+                "6": 10,
+                "8": 2,
+                "9": 1
+              }
+            }
+          },
+          "file": "ml_transitions_20260207_172709_f_15.json"
+        }
+      ]
+    }
+  }
+}

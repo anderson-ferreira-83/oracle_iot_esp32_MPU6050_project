@@ -1,0 +1,660 @@
+{
+    "type": "gaussian_nb",
+    "version": "py_20260203",
+    "generated_at": "2026-02-03 22:20:29",
+    "generated_by": "02_Model_Training_Evaluation.ipynb",
+    "features": [
+        "accel_z_g_std",
+        "accel_x_g_std",
+        "gyro_z_dps_peak",
+        "gyro_x_dps_std",
+        "accel_x_g_peak",
+        "accel_x_g_clearance_factor",
+        "gyro_x_dps_peak",
+        "gyro_x_dps_rms",
+        "accel_z_g_clearance_factor",
+        "gyro_z_dps_rms"
+    ],
+    "labels": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+    ],
+    "priors": {
+        "HIGH": 0.3133012446880121,
+        "LOW": 0.3278465643888296,
+        "MEDIUM": 0.3588521909231583
+    },
+    "stats": {
+        "HIGH": {
+            "accel_z_g_std": {
+                "mean": 0.06517909247579855,
+                "var": 0.0003036395441936906,
+                "count": 597
+            },
+            "accel_x_g_std": {
+                "mean": 0.24759319813774436,
+                "var": 0.007285555373089302,
+                "count": 597
+            },
+            "gyro_z_dps_peak": {
+                "mean": 46.824291460973626,
+                "var": 26.380826378994698,
+                "count": 597
+            },
+            "gyro_x_dps_std": {
+                "mean": 6.67397944396251,
+                "var": 1.985354235700072,
+                "count": 597
+            },
+            "accel_x_g_peak": {
+                "mean": 0.8601235233320998,
+                "var": 0.04599892278110096,
+                "count": 597
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 2.7127252345231936,
+                "var": 0.551689279224032,
+                "count": 597
+            },
+            "gyro_x_dps_peak": {
+                "mean": 18.45982170801236,
+                "var": 15.104318210056306,
+                "count": 597
+            },
+            "gyro_x_dps_rms": {
+                "mean": 7.095305188269652,
+                "var": 1.99017318357933,
+                "count": 597
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.1570147404611717,
+                "var": 0.0020887491183518847,
+                "count": 597
+            },
+            "gyro_z_dps_rms": {
+                "mean": 20.878626523739285,
+                "var": 12.249042052485322,
+                "count": 597
+            }
+        },
+        "LOW": {
+            "accel_z_g_std": {
+                "mean": 0.025405762444363916,
+                "var": 0.00015607818855239617,
+                "count": 608
+            },
+            "accel_x_g_std": {
+                "mean": 0.0793996869827049,
+                "var": 0.00018532436876206142,
+                "count": 608
+            },
+            "gyro_z_dps_peak": {
+                "mean": 24.84252791073485,
+                "var": 5.750083399903474,
+                "count": 608
+            },
+            "gyro_x_dps_std": {
+                "mean": 1.892964891489969,
+                "var": 0.14955598092542965,
+                "count": 608
+            },
+            "accel_x_g_peak": {
+                "mean": 0.46417681292310564,
+                "var": 0.0003696287304800483,
+                "count": 608
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 1.404342229326515,
+                "var": 0.006792368259794568,
+                "count": 608
+            },
+            "gyro_x_dps_peak": {
+                "mean": 5.740905147478587,
+                "var": 1.258075684921181,
+                "count": 608
+            },
+            "gyro_x_dps_rms": {
+                "mean": 2.346461389748173,
+                "var": 0.3602804143315419,
+                "count": 608
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.052351639121773,
+                "var": 0.00012661543266201392,
+                "count": 608
+            },
+            "gyro_z_dps_rms": {
+                "mean": 12.85166710420176,
+                "var": 5.7279465916108165,
+                "count": 608
+            }
+        },
+        "MEDIUM": {
+            "accel_z_g_std": {
+                "mean": 0.025680129272720956,
+                "var": 1.2528192629580296e-5,
+                "count": 682
+            },
+            "accel_x_g_std": {
+                "mean": 0.07251159065807454,
+                "var": 0.00010038720468599684,
+                "count": 682
+            },
+            "gyro_z_dps_peak": {
+                "mean": 29.829782730574603,
+                "var": 11.41690910759678,
+                "count": 682
+            },
+            "gyro_x_dps_std": {
+                "mean": 2.6556672318070738,
+                "var": 0.3795258009497271,
+                "count": 682
+            },
+            "accel_x_g_peak": {
+                "mean": 0.46265256191342,
+                "var": 0.00031478651605493235,
+                "count": 682
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 1.3851682363921345,
+                "var": 0.003623465559532635,
+                "count": 682
+            },
+            "gyro_x_dps_peak": {
+                "mean": 7.578259494740666,
+                "var": 3.421663898892106,
+                "count": 682
+            },
+            "gyro_x_dps_rms": {
+                "mean": 3.0581148408660206,
+                "var": 0.4716618532675749,
+                "count": 682
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.0541352036096108,
+                "var": 0.00010670656043143545,
+                "count": 682
+            },
+            "gyro_z_dps_rms": {
+                "mean": 15.211541132490282,
+                "var": 5.1417990535168485,
+                "count": 682
+            }
+        }
+    },
+    "metrics": {
+        "train_accuracy": 1,
+        "cv_accuracy_mean": 0.9991266375545852
+    },
+    "training_info": {
+        "total_samples": 1144,
+        "window_size": 100
+    },
+    "eda_traceability": {
+        "feature_config_version": "5.8",
+        "eda_id": "eda_20260203_221724",
+        "eda_generated_at": "20260203_221724",
+        "sample_rate_hz": 20,
+        "selection_method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk",
+        "features_count": 10,
+        "collection_ids": [
+            "col_20260202_175920_20hz"
+        ],
+        "sampling_validation": {
+            "status": "skipped",
+            "reason": "Fonte CSV selecionada",
+            "expected_hz": 20,
+            "actual_hz": null,
+            "deviation_pct": null,
+            "samples": 0,
+            "duration_min": null
+        }
+    },
+    "_adapted": true,
+    "_base_version": "py_20260203",
+    "_adaptation_history": [
+        {
+            "timestamp": "2026-02-09T18:17:19.482Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-09T18:31:02.807Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260209_153102_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260209_153102_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T14:54:24.123Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_115424_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_115424_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T15:13:13.237Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_121313_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_121313_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T19:36:30.656Z",
+            "lambda": 0.85,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_163630_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_163630_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T19:58:03.061Z",
+            "lambda": 0.7,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_165803_f20hz_lambda0p70_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_165803_f20hz_lambda0p70_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T20:16:39.816Z",
+            "lambda": 0.85,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_171639_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_171639_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T20:38:59.520Z",
+            "lambda": 0.7,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_173859_f20hz_lambda0p70_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_173859_f20hz_lambda0p70_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T21:51:42.967Z",
+            "lambda": 0.85,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "pending"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        }
+    ],
+    "_ol_last_absorb": {
+        "timestamp": "2026-02-10T21:51:42.967Z",
+        "lambda": 0.85,
+        "tag": null,
+        "configured_sample_rate_hz": 20,
+        "collection_id": "col_20260209_181623_20hz"
+    },
+    "_ol_reference_baselines": {
+        "version": 1,
+        "generated_at": "2026-02-10T21:51:42.967Z",
+        "source": "soak_test",
+        "tag": null,
+        "configured_sample_rate_hz": 20,
+        "collection_id": "col_20260209_181623_20hz",
+        "classes": {
+            "LOW": {
+                "n": 898,
+                "accel_x_g": {
+                    "n": 898,
+                    "mean": 0.3288339643652546,
+                    "std": 0.0872329307512631,
+                    "rms": 0.34020781932169664,
+                    "min": 0.1201,
+                    "max": 0.4846
+                },
+                "accel_y_g": {
+                    "n": 898,
+                    "mean": 0.012847327394209412,
+                    "std": 0.14415958756664998,
+                    "rms": 0.14473092450668804,
+                    "min": -0.2656,
+                    "max": 0.2566
+                },
+                "accel_z_g": {
+                    "n": 898,
+                    "mean": -1.065178396436525,
+                    "std": 0.029777097977823568,
+                    "rms": 1.065594525041804,
+                    "min": -1.1313,
+                    "max": -1.0056
+                },
+                "gyro_x_dps": {
+                    "n": 898,
+                    "mean": -0.6453118040089072,
+                    "std": 2.0202806086470866,
+                    "rms": 2.1208397068304508,
+                    "min": -6.67,
+                    "max": 4.61
+                },
+                "gyro_y_dps": {
+                    "n": 898,
+                    "mean": 0.5508574610244956,
+                    "std": 2.372374225245634,
+                    "rms": 2.4354883302894668,
+                    "min": -6.08,
+                    "max": 6.6
+                },
+                "gyro_z_dps": {
+                    "n": 898,
+                    "mean": -1.7254788418708131,
+                    "std": 12.406061813720857,
+                    "rms": 12.525479909353042,
+                    "min": -26.78,
+                    "max": 26.61
+                },
+                "vibration_dps": {
+                    "n": 898,
+                    "mean": 11.240075679287315,
+                    "std": 6.390703958048455,
+                    "rms": 12.929825921315507,
+                    "min": 1.80936,
+                    "max": 26.9427
+                }
+            },
+            "MEDIUM": {
+                "n": 858,
+                "accel_x_g": {
+                    "n": 858,
+                    "mean": 0.3578081585081595,
+                    "std": 0.06924899624268174,
+                    "rms": 0.3644476667172108,
+                    "min": 0.1511,
+                    "max": 0.4646
+                },
+                "accel_y_g": {
+                    "n": 858,
+                    "mean": 0.00510174825174826,
+                    "std": 0.14129074448698636,
+                    "rms": 0.14138282184519832,
+                    "min": -0.3091,
+                    "max": 0.2473
+                },
+                "accel_z_g": {
+                    "n": 858,
+                    "mean": -1.0619006993007059,
+                    "std": 0.027281273140279047,
+                    "rms": 1.0622510828610543,
+                    "min": -1.1252,
+                    "max": -0.9915
+                },
+                "gyro_x_dps": {
+                    "n": 858,
+                    "mean": -1.3238111888111905,
+                    "std": 2.9169513499275794,
+                    "rms": 3.203292250398959,
+                    "min": -10.25,
+                    "max": 6.31
+                },
+                "gyro_y_dps": {
+                    "n": 858,
+                    "mean": 0.5266666666666641,
+                    "std": 1.2744594876294446,
+                    "rms": 1.3789941128904364,
+                    "min": -2.98,
+                    "max": 2.99
+                },
+                "gyro_z_dps": {
+                    "n": 858,
+                    "mean": -2.182400932400932,
+                    "std": 16.313558436504117,
+                    "rms": 16.45889008077334,
+                    "min": -29.7,
+                    "max": 29.8
+                },
+                "vibration_dps": {
+                    "n": 858,
+                    "mean": 14.48765265734274,
+                    "std": 8.539833850302923,
+                    "rms": 16.817278070799382,
+                    "min": 1.19675,
+                    "max": 29.9189
+                }
+            },
+            "HIGH": {
+                "n": 824,
+                "accel_x_g": {
+                    "n": 824,
+                    "mean": 0.37232075242718504,
+                    "std": 0.25227596968133015,
+                    "rms": 0.44973982208227975,
+                    "min": -0.2417,
+                    "max": 0.9512
+                },
+                "accel_y_g": {
+                    "n": 824,
+                    "mean": -0.027165655339805934,
+                    "std": 0.17945079377152998,
+                    "rms": 0.1814953448859593,
+                    "min": -0.4468,
+                    "max": 0.3035
+                },
+                "accel_z_g": {
+                    "n": 824,
+                    "mean": -1.043848665048536,
+                    "std": 0.07258480470648772,
+                    "rms": 1.046369241423834,
+                    "min": -1.2329,
+                    "max": -0.8906
+                },
+                "gyro_x_dps": {
+                    "n": 824,
+                    "mean": -1.0840169902912586,
+                    "std": 6.363638352286409,
+                    "rms": 6.4553068024634275,
+                    "min": -17.38,
+                    "max": 17.54
+                },
+                "gyro_y_dps": {
+                    "n": 824,
+                    "mean": 0.4099514563106792,
+                    "std": 4.308614614981868,
+                    "rms": 4.32807348562459,
+                    "min": -9.8,
+                    "max": 10.43
+                },
+                "gyro_z_dps": {
+                    "n": 824,
+                    "mean": 3.8536407766990166,
+                    "std": 23.3890691898382,
+                    "rms": 23.704411083232504,
+                    "min": -50.74,
+                    "max": 44.07
+                },
+                "vibration_dps": {
+                    "n": 824,
+                    "mean": 20.777183118932047,
+                    "std": 13.7879093629126,
+                    "rms": 24.935873414771894,
+                    "min": 2.52723,
+                    "max": 52.0912
+                }
+            }
+        }
+    },
+    "_server_saved_at": "2026-02-10T18:51:42-03:00",
+    "_server_export": {
+        "received_at": "2026-02-10T18:51:42-03:00",
+        "meta": {
+            "lambda": 0.85,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        }
+    }
+}

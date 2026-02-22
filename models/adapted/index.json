@@ -1,0 +1,363 @@
+[
+    {
+        "file": "adapted_20260210_190947_f20hz_lambda0p95_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T19:09:47-03:00",
+        "size": 23025,
+        "meta": {
+            "lambda": 0.95,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_185142_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T18:51:42-03:00",
+        "size": 22093,
+        "meta": {
+            "lambda": 0.85,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_173859_f20hz_lambda0p70_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T17:38:59-03:00",
+        "size": 21160,
+        "meta": {
+            "lambda": 0.7,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_171639_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T17:16:39-03:00",
+        "size": 20255,
+        "meta": {
+            "lambda": 0.85,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_165803_f20hz_lambda0p70_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T16:58:03-03:00",
+        "size": 19319,
+        "meta": {
+            "lambda": 0.7,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_163630_f20hz_lambda0p85_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T16:36:30-03:00",
+        "size": 18365,
+        "meta": {
+            "lambda": 0.85,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_121313_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T12:13:13-03:00",
+        "size": 17452,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260210_115424_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-10T11:54:24-03:00",
+        "size": 16539,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260209_153102_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-09T15:31:02-03:00",
+        "size": 15595,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+        "saved_at": "2026-02-09T15:17:19-03:00",
+        "size": 14664,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260203"
+    },
+    {
+        "file": "adapted_20260209_141426_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-09T14:14:26-03:00",
+        "size": 21957,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260209_135758_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-09T13:57:58-03:00",
+        "size": 21035,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260209_120116_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-09T12:01:16-03:00",
+        "size": 20125,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260209_114728_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-09T11:47:28-03:00",
+        "size": 21967,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260209_113554_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-09T11:35:54-03:00",
+        "size": 21041,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260209_112340_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-09T11:23:40-03:00",
+        "size": 20115,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260208_214903_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-08T21:49:03-03:00",
+        "size": 20119,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260208_213351_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-08T21:33:51-03:00",
+        "size": 21034,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    },
+    {
+        "file": "adapted_20260208_204756_f15hz_lambda0p90_col_20260208_164855_15hz_base_py_20260207_m_py_20260207.json",
+        "saved_at": "2026-02-08T20:47:56-03:00",
+        "size": 20126,
+        "meta": {
+            "lambda": 0.9,
+            "tag": null,
+            "configured_sample_rate_hz": 15,
+            "collection_id": "col_20260208_164855_15hz",
+            "base_model_version": "py_20260207",
+            "model_version": "py_20260207",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        },
+        "model_version": "py_20260207"
+    }
+]

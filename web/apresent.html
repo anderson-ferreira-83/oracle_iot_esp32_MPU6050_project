@@ -1,0 +1,610 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Apresentação técnico-executiva do sistema IoT de monitoramento de vibração com Machine Learning." />
+  <meta name="author" content="Anderson Ferreira" />
+  <title>Apresentação Técnico-Executiva | IoT Fan Monitor (Oracle XE + FastAPI)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .doc-hero {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0f172a 60%, #111827 100%);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-hero::after {
+      content: '';
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.35), transparent 70%);
+      opacity: 0.8;
+    }
+
+    .doc-hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .doc-hero h1 {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 2.1rem;
+      letter-spacing: 0.4px;
+      margin-bottom: 10px;
+    }
+
+    .doc-subtitle {
+      font-size: 1rem;
+      color: #ffffff;
+      line-height: 1.7;
+    }
+
+    .doc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .doc-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .doc-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .doc-actions .btn {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .doc-actions .btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .doc-kpis {
+      display: grid;
+      gap: 12px;
+    }
+
+    .doc-kpi {
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .doc-kpi strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .doc-kpi span {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .doc-toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .doc-toc a {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--ink-2);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .doc-toc a:hover {
+      border-color: rgba(14, 165, 233, 0.45);
+      background: rgba(14, 165, 233, 0.10);
+    }
+
+    .doc-section p:not(.doc-subtitle) {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .doc-list {
+      margin-top: 10px;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .doc-list li {
+      margin-bottom: 6px;
+    }
+
+    .doc-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fef9c3;
+      color: #713f12;
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .doc-inline-code {
+      font-family: "JetBrains Mono", monospace;
+      background: rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--ink-2);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      .doc-hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor</h1>
+          <div class="brand-subtitle">Visão técnico-executiva com foco em IoT 4.0</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="tech-stack">
+          <span class="tech-badge">IoT 4.0</span>
+          <span class="tech-badge">ESP32 + MPU6050</span>
+          <span class="tech-badge">FastAPI</span>
+          <span class="tech-badge">Machine Learning</span>
+          <span class="tech-badge">Apresentação</span>
+        </div>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+            Dashboard
+          </a>
+          <a class="nav-link" href="control.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Controle
+          </a>
+          <a class="nav-link" href="documentacao.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              <line x1="8" y1="7" x2="16" y2="7" />
+              <line x1="8" y1="11" x2="16" y2="11" />
+              <line x1="8" y1="15" x2="13" y2="15" />
+            </svg>
+            Documentação
+          </a>
+          <a class="nav-link active" href="apresent.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            Apresentação
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="card doc-hero doc-section" id="resumo">
+      <div class="doc-hero-grid">
+        <div>
+          <h1>Apresentação Técnico-Executiva</h1>
+          <p class="doc-subtitle">
+            Esta página conecta visão estratégica e detalhes técnicos do sistema IoT de monitoramento de vibração.
+            O foco é explicar o valor para a indústria e, ao mesmo tempo, registrar as decisões de engenharia que
+            tornam o projeto reproduzível em contexto acadêmico.
+          </p>
+          <div class="doc-tags">
+            <span class="doc-tag">IoT 4.0</span>
+            <span class="doc-tag">ML em Tempo Real</span>
+            <span class="doc-tag">ESP32 + MPU6050</span>
+            <span class="doc-tag">FastAPI / Python / Oracle XE</span>
+          </div>
+          <div class="doc-actions">
+            <a class="btn" href="index.html" target="_blank" rel="noopener">Abrir Dashboard</a>
+            <a class="btn" href="control.html" target="_blank" rel="noopener">Abrir Controle</a>
+          </div>
+        </div>
+        <div class="doc-kpis">
+          <div class="doc-kpi">
+            <strong>Arquitetura em camadas</strong>
+            <span>Integra hardware, comunicação, backend, ML e visualização.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Estados operacionais</strong>
+            <span>LOW, MEDIUM e HIGH para leitura prática do status.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Operação contínua</strong>
+            <span>Monitoramento em tempo real com histórico de dados.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card doc-section" id="sumario">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="vertical-align: middle; margin-right: 6px;">
+          <path d="M4 6h16" />
+          <path d="M4 12h16" />
+          <path d="M4 18h16" />
+        </svg>
+        Sumário Rápido
+      </div>
+      <div class="doc-toc">
+        <a href="#arquitetura">Arquitetura</a>
+        <a href="#fluxo">Fluxo de Dados</a>
+        <a href="#controle">Coleta & Controle</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#features">Features</a>
+        <a href="#ml">Modelo ML</a>
+        <a href="#observabilidade">Observabilidade</a>
+        <a href="#resultados">Resultados</a>
+        <a href="#aplicacoes">Aplicações</a>
+        <a href="#proximos">Próximos Passos</a>
+        <a href="#glossario">Glossário</a>
+      </div>
+    </section>
+
+    <div class="grid-1x2">
+      <section class="card doc-section" id="arquitetura">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M3 7h18" />
+            <path d="M3 12h18" />
+            <path d="M3 17h18" />
+          </svg>
+          Arquitetura do Sistema
+        </div>
+        <p>
+          O projeto foi concebido como um pipeline ponta a ponta para aquisição, processamento e visualização.
+          A arquitetura prioriza rastreabilidade e clareza operacional, facilitando auditoria acadêmica e preparo
+          para integração com ambientes industriais.
+        </p>
+        <div class="arch-flow" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px;">
+          <div class="arch-node arch-tooltip" data-tooltip="ESP32 + MPU6050, leitura I2C em baixa latência.">
+            <div class="arch-icon">HW</div>
+            <div class="arch-label">Sensor + MCU</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-tooltip" data-tooltip="Envio HTTP via Wi-Fi para o servidor local.">
+            <div class="arch-icon">HTTP</div>
+            <div class="arch-label">Transporte</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-tooltip" data-tooltip="Endpoints Python para ingestão e controle.">
+            <div class="arch-icon">API</div>
+            <div class="arch-label">Python</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-tooltip" data-tooltip="Persistência Oracle XE e arquivos de log.">
+            <div class="arch-icon">DB</div>
+            <div class="arch-label">Oracle XE/Logs</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-tooltip" data-tooltip="Modelo Gaussian NB para inferência.">
+            <div class="arch-icon">ML</div>
+            <div class="arch-label">Classificação</div>
+          </div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node arch-tooltip" data-tooltip="Dashboard e painel de controle.">
+            <div class="arch-icon">UI</div>
+            <div class="arch-label">Web UI</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card doc-section" id="fluxo">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M3 12h6l3-9 3 18 3-9h6" />
+          </svg>
+          Fluxo de Dados
+        </div>
+        <p>
+          O fluxo operacional é orientado a tempo real: os sensores enviam amostras contínuas, a API consolida os dados
+          e o dashboard atualiza indicadores. Em paralelo, o painel de controle organiza a coleta e sustenta a qualidade
+          do dataset.
+        </p>
+        <ul class="doc-list">
+          <li>Coleta de vibração e giroscópio em frequência configurável.</li>
+          <li>Transmissão via HTTP para a camada de ingestão local.</li>
+          <li>Persistência em banco e atualização do cache de visualização.</li>
+          <li>Inferência do modelo e cálculo de probabilidades por classe.</li>
+          <li>Registro de transições e eventos críticos para análise posterior.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="grid-1x2">
+      <section class="card doc-section" id="controle">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          Coleta & Controle
+        </div>
+        <p>
+          O painel de controle é a interface de experimentação e operação. Ele organiza sessões de coleta,
+          viabiliza a rotulagem do estado do ventilador e automatiza ciclos para construir datasets consistentes.
+        </p>
+        <ul class="doc-list">
+          <li>Nova coleta com geração de sessão dedicada.</li>
+          <li>Controle de taxa de amostragem e pausa do streaming.</li>
+          <li>Modos de coleta: <strong>RAW</strong>, <strong>LOW</strong>, <strong>MEDIUM</strong>, <strong>HIGH</strong>.</li>
+          <li>Automação por tempo (3 a 15 minutos) para sequências padronizadas.</li>
+          <li>Reset de banco para repetir experimentos com consistência.</li>
+        </ul>
+      </section>
+
+      <section class="card doc-section" id="dashboard">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          Dashboard & Visualização
+        </div>
+        <p>
+          O dashboard consolida indicadores em tempo real, gráficos de vibração e a decisão do modelo. É a camada
+          executiva de observação que permite validar comportamento e acompanhar classificações ao vivo.
+        </p>
+        <ul class="doc-list">
+          <li>Status de conexão, saúde do fluxo e leitura mais recente.</li>
+          <li>Gráficos de aceleração/giroscópio com histórico configurável.</li>
+          <li>Classificação ML com probabilidade por classe e histerese.</li>
+          <li>Diagnóstico de transições e registro de eventos críticos.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="grid-1x2">
+      <section class="card doc-section" id="features">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M4 19h16" />
+            <path d="M7 16V8" />
+            <path d="M12 16V4" />
+            <path d="M17 16v-6" />
+          </svg>
+          Engenharia de Features
+        </div>
+        <p>
+          A engenharia de atributos transforma sinais brutos em indicadores estatísticos que sustentam a decisão do
+          modelo. O processo é detalhado nos notebooks e replicado na lógica de inferência do dashboard.
+        </p>
+        <ul class="doc-list">
+          <li>Extração por janelas de tempo para manter consistência temporal.</li>
+          <li>Estatísticas como média, RMS, desvio padrão, amplitude e curtose.</li>
+          <li>Seleção de features com ANOVA F-test e filtro de correlação.</li>
+          <li>Padronização para reduzir variações entre sessões.</li>
+        </ul>
+        <p>
+          Notebooks de referência: <span class="doc-inline-code">notebooks/01_EDA.ipynb</span>,
+          <span class="doc-inline-code">notebooks/02_Feature_Engineering.ipynb</span>.
+        </p>
+      </section>
+
+      <section class="card doc-section" id="ml">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z" />
+            <path d="M12 6h.01" />
+          </svg>
+          Modelo de Machine Learning
+        </div>
+        <p>
+          O modelo principal é o <strong>Gaussian Naive Bayes</strong>, escolhido por estabilidade e velocidade de
+          inferência. O dashboard inclui suavização, histerese e monitoramento do buffer para reduzir ruídos.
+        </p>
+        <ul class="doc-list">
+          <li>Classes finais: LOW, MEDIUM e HIGH.</li>
+          <li>Probabilidades exibidas em tempo real para transparência da decisão.</li>
+          <li>Suavização por janela e contagem mínima antes da confirmação.</li>
+          <li>Modelo versionado em <span class="doc-inline-code">models/</span>.</li>
+        </ul>
+        <div class="doc-note">
+          Observação: resultados acadêmicos (ex.: validação cruzada) estão documentados nos notebooks e podem variar
+          conforme o conjunto de dados utilizado.
+        </div>
+      </section>
+    </div>
+
+    <div class="grid-1x2">
+      <section class="card doc-section" id="observabilidade">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M21 16v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6" />
+            <path d="M7 16v4h10v-4" />
+          </svg>
+          Observabilidade & Logs
+        </div>
+        <p>
+          O projeto mantém rastreabilidade através de logs e registros históricos. Isso permite comparar o comportamento
+          real com a predição do modelo e apoiar auditorias acadêmicas e operacionais.
+        </p>
+        <ul class="doc-list">
+          <li>Registro de transições via <span class="doc-inline-code">api/log_transition</span>.</li>
+          <li>Arquivos históricos em <span class="doc-inline-code">logs/</span>.</li>
+          <li>Reset e replay controlados para experimentos repetíveis.</li>
+        </ul>
+      </section>
+
+      <section class="card doc-section" id="resultados">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M3 3v18h18" />
+            <path d="M7 14l4-4 4 4 4-6" />
+          </svg>
+          Resultados & Limitações
+        </div>
+        <p>
+          O projeto demonstra um ciclo completo de ciência de dados aplicada a IoT, com métricas e validações
+          reportadas nos notebooks. Como todo sistema acadêmico, os resultados dependem do cenário de coleta,
+          da estabilidade do hardware e do volume de dados disponível.
+        </p>
+        <ul class="doc-list">
+          <li>Resultados estatísticos disponíveis em <span class="doc-inline-code">notebooks/03_Model_Training_Evaluation.ipynb</span>.</li>
+          <li>Limitações atuais: ambiente local, dataset limitado e ruído físico.</li>
+          <li>Recomenda-se calibrar o sensor antes de cada rodada experimental.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="grid-1x2">
+      <section class="card doc-section" id="aplicacoes">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M12 2v6" />
+            <path d="M12 16v6" />
+            <path d="M4.93 4.93l4.24 4.24" />
+            <path d="M14.83 14.83l4.24 4.24" />
+            <path d="M2 12h6" />
+            <path d="M16 12h6" />
+            <path d="M4.93 19.07l4.24-4.24" />
+            <path d="M14.83 9.17l4.24-4.24" />
+          </svg>
+          Aplicações na Indústria 4.0
+        </div>
+        <p>
+          A lógica implementada é transferível para ambientes industriais que exigem monitoramento contínuo e
+          manutenção preditiva. O foco acadêmico prepara o sistema para evoluções em escala industrial.
+        </p>
+        <ul class="doc-list">
+          <li>Monitoramento de ventiladores, motores e sistemas rotativos.</li>
+          <li>Detecção precoce de falhas por análise de vibração.</li>
+          <li>Integração com dashboards corporativos e centros de operação.</li>
+          <li>Automação de alertas e rotinas de manutenção.</li>
+        </ul>
+      </section>
+
+      <section class="card doc-section" id="proximos">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M22 12h-6" />
+            <path d="M2 12h6" />
+            <path d="M12 2v6" />
+            <path d="M12 16v6" />
+          </svg>
+          Próximos Passos
+        </div>
+        <p>
+          O repositório já está preparado para uma evolução em nuvem, com foco em escalabilidade e disponibilidade
+          para demonstrações acadêmicas e pilotos industriais.
+        </p>
+        <ul class="doc-list">
+          <li>Publicação do front-end estático em <strong>CloudFront + S3</strong>.</li>
+          <li>API serverless com <strong>API Gateway + Lambda</strong>.</li>
+          <li>Armazenamento temporal em <strong>Timestream</strong> ou equivalente.</li>
+          <li>Automação de treinamento com pipelines MLOps.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="card doc-section" id="glossario">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="vertical-align: middle; margin-right: 6px;">
+          <path d="M4 19a2 2 0 0 1 2-2h14" />
+          <path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z" />
+        </svg>
+        Glossário Rápido
+      </div>
+      <ul class="doc-list">
+        <li><strong>RMS:</strong> medida de energia média do sinal.</li>
+        <li><strong>Curtose:</strong> indicador de picos e impulsos na vibração.</li>
+        <li><strong>Histerese:</strong> mecanismo para reduzir trocas rápidas de classe.</li>
+        <li><strong>Feature Window:</strong> janela temporal usada para extrair atributos.</li>
+        <li><strong>IoT 4.0:</strong> integração de sensores, dados e automação industrial.</li>
+      </ul>
+    </section>
+  </div>
+</body>
+
+</html>
+
+

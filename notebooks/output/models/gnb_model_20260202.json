@@ -1,0 +1,209 @@
+{
+  "type": "gaussian_nb",
+  "version": "py_20260202",
+  "generated_at": "2026-02-02 21:15:24",
+  "generated_by": "02_Model_Training_Evaluation.ipynb",
+  "features": [
+    "gyro_x_dps_std",
+    "accel_x_g_P10",
+    "accel_x_g_kurtosis",
+    "gyro_z_dps_shape_factor",
+    "gyro_z_dps_P8",
+    "gyro_y_dps_kurtosis",
+    "accel_y_g_std",
+    "gyro_z_dps_P10",
+    "accel_z_g_P5",
+    "accel_y_g_P8",
+    "gyro_x_dps_P11",
+    "accel_y_g_P3"
+  ],
+  "labels": [
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "priors": {
+    "HIGH": 0.33245614035087717,
+    "LOW": 0.3350877192982456,
+    "MEDIUM": 0.33245614035087717
+  },
+  "stats": {
+    "HIGH": {
+      "gyro_x_dps_std": {
+        "mean": 7.2671338557976615,
+        "var": 0.5219601972098276
+      },
+      "accel_x_g_P10": {
+        "mean": 0.8914981112736731,
+        "var": 0.0030166070083159527
+      },
+      "accel_x_g_kurtosis": {
+        "mean": -0.5080142738498591,
+        "var": 0.10944203152927
+      },
+      "gyro_z_dps_shape_factor": {
+        "mean": 1.2939104050819668,
+        "var": 0.003513824569763362
+      },
+      "gyro_z_dps_P8": {
+        "mean": 2.673133160478318,
+        "var": 0.0029403312347701343
+      },
+      "gyro_y_dps_kurtosis": {
+        "mean": -0.5028040834904933,
+        "var": 0.0892688705667701
+      },
+      "accel_y_g_std": {
+        "mean": 0.14939679885804055,
+        "var": 0.000598072338799111
+      },
+      "gyro_z_dps_P10": {
+        "mean": 0.9619099850096657,
+        "var": 0.007486315488344518
+      },
+      "accel_z_g_P5": {
+        "mean": 1.9830106832987109,
+        "var": 0.0018579532685495993
+      },
+      "accel_y_g_P8": {
+        "mean": 2.634649254610532,
+        "var": 0.0026948281938966316
+      },
+      "gyro_x_dps_P11": {
+        "mean": 0.3714190830885394,
+        "var": 0.03668564283711701
+      },
+      "accel_y_g_P3": {
+        "mean": 0.5131958821658433,
+        "var": 0.035811874906442075
+      }
+    },
+    "LOW": {
+      "gyro_x_dps_std": {
+        "mean": 1.6373111774857805,
+        "var": 0.04072939270530547
+      },
+      "accel_x_g_P10": {
+        "mean": 0.7952511860897057,
+        "var": 0.0006377386162651914
+      },
+      "accel_x_g_kurtosis": {
+        "mean": -1.1883269458793555,
+        "var": 0.018364213484523377
+      },
+      "gyro_z_dps_shape_factor": {
+        "mean": 1.17053628246214,
+        "var": 0.0012215557019733347
+      },
+      "gyro_z_dps_P8": {
+        "mean": 2.527508847183764,
+        "var": 0.0025806570035173306
+      },
+      "gyro_y_dps_kurtosis": {
+        "mean": -1.147250448631859,
+        "var": 0.03688843194054047
+      },
+      "accel_y_g_std": {
+        "mean": 0.09471429869555757,
+        "var": 0.0003927369114129618
+      },
+      "gyro_z_dps_P10": {
+        "mean": 0.7955848334009011,
+        "var": 0.002473198699172356
+      },
+      "accel_z_g_P5": {
+        "mean": 1.9313093795467702,
+        "var": 0.0008007740702912295
+      },
+      "accel_y_g_P8": {
+        "mean": 2.5311926533408893,
+        "var": 0.0024452645264556845
+      },
+      "gyro_x_dps_P11": {
+        "mean": 0.16269167713297136,
+        "var": 0.018457352167814366
+      },
+      "accel_y_g_P3": {
+        "mean": 0.40806937579280206,
+        "var": 0.026823556352892346
+      }
+    },
+    "MEDIUM": {
+      "gyro_x_dps_std": {
+        "mean": 2.2144333854064064,
+        "var": 0.06203108255133506
+      },
+      "accel_x_g_P10": {
+        "mean": 0.9534099263673492,
+        "var": 0.0011006873065629716
+      },
+      "accel_x_g_kurtosis": {
+        "mean": -0.8571925890821872,
+        "var": 0.025832733973023714
+      },
+      "gyro_z_dps_shape_factor": {
+        "mean": 1.2001434471311543,
+        "var": 0.0008983775874072609
+      },
+      "gyro_z_dps_P8": {
+        "mean": 2.5618733265595632,
+        "var": 0.0028957544516924243
+      },
+      "gyro_y_dps_kurtosis": {
+        "mean": -0.6685311606358464,
+        "var": 0.04513132515862657
+      },
+      "accel_y_g_std": {
+        "mean": 0.10648921810223935,
+        "var": 0.00036566702905315373
+      },
+      "gyro_z_dps_P10": {
+        "mean": 0.8422571848551933,
+        "var": 0.0024808920500883885
+      },
+      "accel_z_g_P5": {
+        "mean": 1.907419753696349,
+        "var": 0.000371803433458529
+      },
+      "accel_y_g_P8": {
+        "mean": 2.5753574922924094,
+        "var": 0.0029119774854585003
+      },
+      "gyro_x_dps_P11": {
+        "mean": 0.27594688088873254,
+        "var": 0.0216159351254766
+      },
+      "accel_y_g_P3": {
+        "mean": 0.6239463669474313,
+        "var": 0.031292192892245475
+      }
+    }
+  },
+  "metrics": {
+    "train_accuracy": 1.0,
+    "cv_accuracy_mean": 1.0
+  },
+  "training_info": {
+    "total_samples": 1140,
+    "window_size": 100
+  },
+  "eda_traceability": {
+    "feature_config_version": "5.5",
+    "eda_id": "eda_20260202_211020",
+    "eda_generated_at": "20260202_211020",
+    "sample_rate_hz": 17,
+    "selection_method": "anova_f_test_with_correlation_and_pairwise_separation_filter",
+    "features_count": 12,
+    "collection_ids": [
+      "col_20260202_175920_20hz"
+    ],
+    "sampling_validation": {
+      "status": "from_csv",
+      "expected_hz": 17,
+      "actual_hz": 16.06,
+      "deviation_pct": 5.55,
+      "samples": 23120,
+      "source": "raw_sensor_data_20260202_175955.csv"
+    }
+  }
+}

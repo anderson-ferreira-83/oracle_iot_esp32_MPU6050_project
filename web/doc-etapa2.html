@@ -1,0 +1,344 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Documentacao detalhada da Etapa 2 (Validacao da Taxa) do Painel de Controle IoT Fan Monitor." />
+  <meta name="author" content="Anderson Ferreira" />
+  <title>Etapa 2: Validacao da Taxa | IoT Fan Monitor</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .doc-hero{background:linear-gradient(135deg,#0f172a 0%,#111827 45%,#0ea5e9 120%);color:#fff;position:relative;overflow:hidden;border:1px solid rgba(14,165,233,0.25)}
+    .doc-hero::after{content:'';position:absolute;right:-140px;top:-140px;width:320px;height:320px;background:radial-gradient(circle,rgba(14,165,233,0.35),transparent 70%);opacity:0.9}
+    .doc-hero-grid{display:grid;grid-template-columns:1.3fr 0.7fr;gap:20px;position:relative;z-index:1}
+    .doc-hero h1{font-family:"Space Grotesk",sans-serif;font-size:2.0rem;letter-spacing:0.4px;margin-bottom:10px}
+    .doc-subtitle{font-size:1rem;color:rgba(255,255,255,0.92);line-height:1.7}
+    .doc-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .doc-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:0.7rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.20);color:#fff}
+    .doc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-actions .btn{background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.25)}
+    .doc-actions .btn:hover{background:rgba(255,255,255,0.26)}
+    .doc-kpis{display:flex;flex-direction:column;gap:10px}
+    .doc-kpi{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:12px}
+    .doc-kpi strong{display:block;font-size:0.85rem;letter-spacing:0.4px;text-transform:uppercase}
+    .doc-kpi span{display:block;margin-top:4px;font-size:0.9rem;color:rgba(255,255,255,0.85);line-height:1.5}
+    .doc-toc{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-toc a{text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(148,163,184,0.12);color:var(--ink-2);font-size:0.8rem;font-weight:700}
+    .doc-toc a:hover{border-color:rgba(14,165,233,0.45);background:rgba(14,165,233,0.10)}
+    .doc-hero .doc-toc a{color:rgba(255,255,255,0.92);border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.10)}
+    .doc-hero .doc-toc a:hover{border-color:rgba(255,255,255,0.40);background:rgba(255,255,255,0.16)}
+    .doc-hero .doc-inline-code{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.95)}
+    .doc-section p{color:var(--muted);line-height:1.75;font-size:0.92rem}
+    .doc-list{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:0.92rem}
+    .doc-inline-code{font-family:"JetBrains Mono",monospace;background:rgba(15,23,42,0.06);border:1px solid rgba(148,163,184,0.22);padding:2px 8px;border-radius:999px;font-size:0.8rem;color:var(--ink-2);white-space:nowrap}
+    .doc-callout{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid rgba(148,163,184,0.25);border-left:4px solid rgba(14,165,233,0.65);color:var(--ink-2);font-size:0.92rem;line-height:1.65}
+    .doc-callout strong{color:var(--ink-2)}
+    .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+    .doc-mini{background:rgba(148,163,184,0.10);border:1px solid rgba(148,163,184,0.22);border-radius:12px;padding:12px}
+    .doc-mini-title{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:0.2px;margin-bottom:8px;color:var(--ink-2)}
+    .doc-mini ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.65;font-size:0.9rem}
+    .doc-btn-ref{display:flex;align-items:flex-start;gap:14px;padding:12px;border-radius:10px;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.18);margin-bottom:10px}
+    .doc-btn-sample{flex-shrink:0;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.82rem;font-family:'Manrope',sans-serif;pointer-events:none}
+    .doc-btn-desc{font-size:0.88rem;color:var(--muted);line-height:1.65}
+    .doc-btn-desc strong{color:var(--ink-2)}
+    .doc-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.88rem}
+    .doc-table th,.doc-table td{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,0.18)}
+    .doc-table th{font-weight:700;color:var(--ink-2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.3px}
+    .doc-table td{color:var(--muted)}
+    @media(max-width:980px){.doc-hero-grid{grid-template-columns:1fr}.doc-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor (Oracle XE + FastAPI)</h1>
+          <div class="brand-subtitle">Etapa 2: Validacao da Taxa</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="tech-stack">
+          <span class="tech-badge">Validacao</span>
+          <span class="tech-badge">Taxa</span>
+        </div>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+          <a class="nav-link" href="control.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Controle
+          </a>
+          <a class="nav-link" href="apresent.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Apresentacao
+          </a>
+          <a class="nav-link" href="documentacao.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg>
+            Documentacao
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="card doc-hero doc-section" id="topo">
+      <div class="doc-hero-grid">
+        <div>
+          <h1>Etapa 2: Validacao da Taxa</h1>
+          <p class="doc-subtitle">
+            Confirme que a taxa de amostragem real corresponde a configurada.
+            Mede jitter, eficiencia e intervalos para garantir qualidade dos dados antes da coleta.
+          </p>
+          <div class="doc-tags">
+            <span class="doc-tag">Validacao</span>
+            <span class="doc-tag">Jitter</span>
+            <span class="doc-tag">Eficiencia</span>
+            <span class="doc-tag">RAW</span>
+          </div>
+          <div class="doc-actions">
+            <a class="btn" href="control.html" target="_blank" rel="noopener">Abrir Controle</a>
+            <a class="btn" href="documentacao.html#controle" target="_blank" rel="noopener">Visao Geral</a>
+          </div>
+        </div>
+        <div class="doc-kpis">
+          <div class="doc-kpi">
+            <strong>Objetivo</strong>
+            <span>Medir a taxa real de chegada de dados e comparar com a configurada.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Modo automatico</strong>
+            <span>Coloca o sistema em RAW durante a validacao.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Duracao ideal</strong>
+            <span>Minimo 2 minutos para resultado confiavel.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-toc">
+        <a href="#iniciar">Iniciar / Resetar</a>
+        <a href="#rate-hero">Display de Taxa</a>
+        <a href="#metricas">6 Metricas</a>
+        <a href="#progresso">Barra de Observacao</a>
+        <a href="#interpretacao">Tabela de Decisao</a>
+      </div>
+    </section>
+
+    <!-- Iniciar / Resetar -->
+    <section class="card doc-section" id="iniciar">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Botoes INICIAR e RESETAR
+      </div>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#10b981;color:#fff;">Iniciar Validacao</span>
+        <div class="doc-btn-desc">
+          <strong>Iniciar Validacao:</strong> coloca o modo em <span class="doc-inline-code">RAW</span> e comeca a
+          contabilizar amostras, calculando taxa real, intervalos e jitter. Um heartbeat visual indica que a
+          validacao esta ativa.
+        </div>
+      </div>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#6b7280;color:#fff;">Resetar</span>
+        <div class="doc-btn-desc">
+          <strong>Resetar:</strong> zera os contadores e estatisticas da validacao. O modo permanece como estava.
+          Use para recomecar a medicao se algo mudou (ex.: reconexao Wi-Fi).
+        </div>
+      </div>
+
+      <div class="doc-callout">
+        <strong>Importante:</strong> durante a validacao, o sistema usa modo RAW — nenhum rotulo e aplicado aos dados.
+        Isso evita contaminar o dataset com dados de teste.
+      </div>
+    </section>
+
+    <!-- Display de Taxa -->
+    <section class="card doc-section" id="rate-hero">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M3 12h6l3-9 3 18 3-9h6"/>
+        </svg>
+        Display Esperada &rarr; Real &rarr; Eficiencia
+      </div>
+      <p>
+        O display principal mostra tres valores centrais com cores semaforicas para interpretacao rapida.
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">Taxa Esperada</div>
+          <ul>
+            <li>Valor configurado no slider (ex.: 15 Hz)</li>
+            <li>Referencia para calculo de eficiencia</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Taxa Real</div>
+          <ul>
+            <li>Calculada: amostras / tempo decorrido</li>
+            <li>Tipicamente ~87% da esperada (overhead I2C + HTTP)</li>
+          </ul>
+        </div>
+      </div>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Eficiencia</th><th>Cor</th><th>Interpretacao</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&ge; 85%</td><td style="color:#10b981;font-weight:700;">Verde</td><td>Excelente — prossiga com a coleta</td></tr>
+          <tr><td>70% - 84%</td><td style="color:#f59e0b;font-weight:700;">Amarelo</td><td>Aceitavel — monitore a estabilidade</td></tr>
+          <tr><td>&lt; 70%</td><td style="color:#ef4444;font-weight:700;">Vermelho</td><td>Problematico — investigue antes de coletar</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 6 Metricas -->
+    <section class="card doc-section" id="metricas">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+        6 Tiles de Metricas
+      </div>
+      <p>
+        Abaixo do display principal, seis tiles detalham as estatisticas da validacao.
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">Amostras</div>
+          <ul>
+            <li>Total de leituras recebidas desde o inicio da validacao</li>
+            <li>Quanto mais amostras, mais confiavel a estatistica</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Intervalo Medio</div>
+          <ul>
+            <li>Tempo medio entre amostras consecutivas (ms)</li>
+            <li>Para 15Hz esperado: ideal ~67ms, real tipico ~77ms</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Intervalo Min / Max</div>
+          <ul>
+            <li>Menor e maior intervalo observado</li>
+            <li>Diferenca grande indica jitter elevado</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">CV (Coeficiente de Variacao)</div>
+          <ul>
+            <li>Desvio padrao / media dos intervalos (&times; 100%)</li>
+            <li>CV &lt; 15% = consistente; CV &gt; 30% = instavel</li>
+          </ul>
+        </div>
+      </div>
+
+      <ul class="doc-list">
+        <li><strong>Status:</strong> tile final que resume a avaliacao (OK, ATENCAO ou PROBLEMA).</li>
+        <li><strong>Eficiencia:</strong> taxa_real / taxa_esperada &times; 100%.</li>
+      </ul>
+    </section>
+
+    <!-- Barra de Observacao -->
+    <section class="card doc-section" id="progresso">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
+        </svg>
+        Barra de Progresso / Observacao
+      </div>
+      <p>
+        Uma barra de progresso visual indica o tempo de observacao acumulado e a confiabilidade dos resultados.
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Tempo</th><th>Confiabilidade</th><th>Recomendacao</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt; 30s</td><td style="color:#ef4444;font-weight:700;">Insuficiente</td><td>Aguarde mais tempo</td></tr>
+          <tr><td>30s - 2min</td><td style="color:#f59e0b;font-weight:700;">Parcial</td><td>Dados ainda instabilizando</td></tr>
+          <tr><td>&ge; 2min</td><td style="color:#10b981;font-weight:700;">Confiavel</td><td>Resultados estaveis — pode prosseguir</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout">
+        <strong>Por que 2 minutos?</strong> Com ~1800 amostras (a 15Hz), as estatisticas de intervalo e jitter
+        convergem. Abaixo disso, um unico outlier (ex.: reconexao Wi-Fi) distorce os valores.
+      </div>
+    </section>
+
+    <!-- Tabela de Decisao -->
+    <section class="card doc-section" id="interpretacao">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        Tabela de Decisao: Prosseguir ou Investigar?
+      </div>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Cenario</th><th>Eficiencia</th><th>CV</th><th>Acao</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Ideal</td><td>&ge; 85%</td><td>&lt; 15%</td><td>Prossiga para Etapa 3</td></tr>
+          <tr><td>Aceitavel</td><td>70-84%</td><td>&lt; 25%</td><td>Ok para coleta, mas monitore</td></tr>
+          <tr><td>Instavel</td><td>&ge; 70%</td><td>&gt; 30%</td><td>Wi-Fi instavel — aproxime ESP32 do roteador</td></tr>
+          <tr><td>Lento</td><td>&lt; 70%</td><td>Qualquer</td><td>Reduza a taxa ou investigue o canal Wi-Fi</td></tr>
+          <tr><td>Sem dados</td><td>0%</td><td>N/A</td><td>Verifique conexao (Gestao de Rede)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout">
+        <strong>Resumo:</strong> a Etapa 2 e um "teste de saude" da conexao. Se eficiencia e CV estao no verde,
+        voce pode confiar que os dados coletados na Etapa 3 terao a resolucao temporal esperada.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <strong>IoT Fan Monitor</strong> v1.0
+          <span class="footer-separator">|</span>
+          Desenvolvido por <strong>Anderson Ferreira</strong>
+        </div>
+        <div class="footer-tech">
+          <span>Stack:</span>
+          ESP32 &bull; MPU6050 &bull; FastAPI &bull; Python &bull; Oracle XE &bull; Gaussian Naive Bayes
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>
+
+

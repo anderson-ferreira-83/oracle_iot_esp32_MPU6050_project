@@ -1,0 +1,1110 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-02-07T21:36:03Z",
+  "repo_root": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project",
+  "eda_id": "eda_20260207_171939",
+  "fe_id": "fe_20260207_171939",
+  "model": {
+    "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\models\\gnb_model_20260207.json",
+    "sha256": "331d4657fc431cf0ddb35cc4b326bf06cf8befc2efa52f434ab0b804822feb80",
+    "version": "py_20260207",
+    "generated_at": "2026-02-07 17:21:44",
+    "generated_by": "03_Model_Training_Evaluation.ipynb",
+    "feature_count": 6,
+    "labels": [
+      "HIGH",
+      "LOW",
+      "MEDIUM"
+    ],
+    "eda_traceability": {
+      "feature_config_version": "5.10",
+      "eda_id": "eda_20260207_171939",
+      "fe_id": "fe_20260207_171939",
+      "eda_generated_at": "20260207_171939",
+      "sample_rate_hz": 15.0,
+      "selection_method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk",
+      "features_count": 6,
+      "collection_ids": [
+        "col_20260207_191320_5hz"
+      ],
+      "sampling_validation": {
+        "status": "computed_from_loaded_data",
+        "expected_hz": 15.0,
+        "per_class": {
+          "LOW": {
+            "samples": 7275,
+            "duration_s": 545.2616000175476,
+            "actual_hz": 13.34,
+            "deviation_pct": 11.05
+          },
+          "MEDIUM": {
+            "samples": 7250,
+            "duration_s": 522.0142002105713,
+            "actual_hz": 13.89,
+            "deviation_pct": 7.41
+          },
+          "HIGH": {
+            "samples": 7275,
+            "duration_s": 561.9821000099182,
+            "actual_hz": 12.95,
+            "deviation_pct": 13.7
+          }
+        },
+        "note": "Taxa estimada via timestamps das classes (LOW/MEDIUM/HIGH)."
+      },
+      "features_csv_file": "features_latest.csv",
+      "features_csv_hash": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d"
+    }
+  },
+  "metrics": {
+    "data_source_config": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\data_source_config.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "5ba5601e5717fc67adaeca6b93a817f9b242442ab4e67b158f59f82725c4bccf",
+      "size": 118,
+      "mtime": "2026-02-07T20:19:31Z"
+    },
+    "eda_run_config": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\eda_run_config.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "ac8b0b62cf9c0895a0d505970d3d2dd7a409a1c6e8a71cfdc3edad1ea81e15e7",
+      "size": 885,
+      "mtime": "2026-02-07T20:19:40Z"
+    },
+    "feature_engineering_run": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\feature_engineering_run.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "8c5dc65d2d855d3bae9ec4703da0db2b1405053085b72efc39b72f3c4b4250f1",
+      "size": 1236,
+      "mtime": "2026-02-07T20:19:40Z"
+    },
+    "pipeline_registry": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\metrics\\pipeline_registry.json",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "d06678fd36361c46b0748a632225b8d088ab2fc26ec75ced49b4f23d154087bc",
+      "size": 1960,
+      "mtime": "2026-02-07T20:21:44Z"
+    },
+    "data_source_config_content": {
+      "data_source": "CSV",
+      "csv_file": "raw_sensor_data_20260207_151423.csv",
+      "updated_at": "20260207_171931"
+    },
+    "eda_run_config_content": {
+      "generated_at": "20260207_171939",
+      "eda_id": "eda_20260207_171939",
+      "fe_id": "fe_20260207_171939",
+      "feature_config_version": "5.10",
+      "raw_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\raw_sensor_data_20260207_171939.csv",
+      "features_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_extracted_20260207_171939.csv",
+      "features_latest_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_latest.csv",
+      "features_csv_hash": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "window_size": 100,
+      "step_size": 20,
+      "sample_rate_hz": 15.0,
+      "selected_features": [
+        "accel_x_g_std",
+        "gyro_y_dps_std",
+        "gyro_y_dps_rms",
+        "accel_x_g_range",
+        "gyro_y_dps_range",
+        "accel_x_g_rms"
+      ]
+    },
+    "feature_engineering_run_content": {
+      "generated_at": "20260207_171939",
+      "eda_id": "eda_20260207_171939",
+      "fe_id": "fe_20260207_171939",
+      "feature_config_version": "5.10",
+      "raw_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\raw_sensor_data_20260207_171939.csv",
+      "features_csv_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_extracted_20260207_171939.csv",
+      "features_latest_path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_latest.csv",
+      "features_csv_hash": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "window_size": 100,
+      "step_size": 20,
+      "sample_rate_hz": 15.0,
+      "selected_features": [
+        "accel_x_g_std",
+        "gyro_y_dps_std",
+        "gyro_y_dps_rms",
+        "accel_x_g_range",
+        "gyro_y_dps_range",
+        "accel_x_g_rms"
+      ],
+      "selection_criteria": {
+        "anova_alpha": 0.05,
+        "correlation_threshold": 1.0,
+        "correlation_mode": "classwise_median",
+        "pairwise_min_separation": 0.0,
+        "pairwise_min_pairs": 0,
+        "score_formula": "min_sep * log(1 + F)",
+        "top_k": 6,
+        "method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk"
+      }
+    }
+  },
+  "data": {
+    "raw_csv": {
+      "path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\raw_sensor_data_20260207_171939.csv",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "594d0864b445364b48c1c69aab76516c94fb8536a34717e90bfecbf793bb85c6",
+      "size": 3223846,
+      "mtime": "2026-02-07T20:19:39Z"
+    },
+    "features_csv": {
+      "path": "c:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_extracted_20260207_171939.csv",
+      "exists": true,
+      "expected_sha256": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "sha256": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "size": 190736,
+      "mtime": "2026-02-07T20:19:40Z"
+    },
+    "features_latest_csv": {
+      "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\data\\features_latest.csv",
+      "exists": true,
+      "expected_sha256": null,
+      "sha256": "2a601b1d03fa1706e63b446fcf420dac8a87502b65e34d9203c41d0cfd999a2d",
+      "size": 190736,
+      "mtime": "2026-02-07T20:19:40Z"
+    }
+  },
+  "figures": {
+    "dir": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures",
+    "count": 116,
+    "files": [
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\01_distribuicao_classes.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "e3d67c98dcb09e89f707fafdbfe9b177778061d32bbca0b08b0239e0d1ef1be7",
+        "size": 38385,
+        "mtime": "2026-02-07T19:53:16Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_accel_x_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "298c53325f9d53b807464bbac637e72f9371fe6381304f3c6c6aad5e4a5213f5",
+        "size": 60748,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_accel_y_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "878d111bc6023b02ebb567ddf7163d815c1b4d6c2f3da786aa633a5e509bd3b3",
+        "size": 67492,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_accel_z_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "dd3f6c75119a8c64101f75897a36b9d918c0596717f5b324e076c8ae23038224",
+        "size": 54959,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_gyro_x_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a559aec51616cf4d36ca2b475f342668de5ac749ae3024c257cc09b9b47ab71f",
+        "size": 62601,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_gyro_y_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "060f4222b02a752c82c88fd509fe986c9b186a1014e002c36d768e6f467f3523",
+        "size": 59829,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_gyro_z_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "480a2ea940eaee659fb902967e71cd410bab2ade0b9f080b21f6c5d93ffb7d6f",
+        "size": 69359,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_densidade_temperature.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2a00126f1acf703b074a26aa154c900bd45d5dcad4cbcb03e5239aead41a2ed1",
+        "size": 75442,
+        "mtime": "2026-02-02T14:59:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_interactive_individual_accel_x_g.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "6ce04e1679dc2a241882f3f84f4f55a9aa8301ab6781fd976163bdb3fb38a85e",
+        "size": 5180246,
+        "mtime": "2026-02-07T19:53:16Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_interactive_individual_accel_y_g.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2e7bbdb901652657517cb14e938ce8d6fd9746706ce6a2c4c2c2644a07191a1b",
+        "size": 5178196,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_interactive_individual_accel_z_g.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "294e95956d799e7ea7e7f616c0ab8067b03b5dbe86720b4b175d5c2563cf53d5",
+        "size": 5187996,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_interactive_individual_gyro_x_dps.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "640300e2028b768837f70badf3912d9549bc48bfe73d4af9325e7df205a07547",
+        "size": 5157220,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_interactive_individual_gyro_y_dps.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "cdcd8ca7102ff8fdb4f4e4f8c0d480bab771f841577c2c0b2dcfd1abf2674a37",
+        "size": 5174375,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_interactive_individual_gyro_z_dps.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "c453729ed7484707a3895d02bd1ecd5b8ee8f707eb7bf196afad50bcf3a3f37e",
+        "size": 5137630,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_assinatura_vibracao.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "16b01a6f0c25fc4e7eb85cae81c3948e213df647650799767cb5d6ff6c3c89a6",
+        "size": 77011,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_individual_accel_x_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "b9e99c1628b9dd74610effacc5131f31ee94ae5460b90f460a740cbf00b96d8d",
+        "size": 294116,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_individual_accel_y_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "537875cea118a15d46392ce71dd03418b0acf0113fc9fa623d32027e66a355d9",
+        "size": 274351,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_individual_accel_z_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "daeb426ec93b4712b2de42b57df904871ef8436fa9f430d449cd56e034201e0c",
+        "size": 297937,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_individual_gyro_x_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "164e9c7f698f43c4dfbe6770d3398bc02c197a0a74e175406b9a7ac94bcbf0c6",
+        "size": 281542,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_individual_gyro_y_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "b30579d23d3c395144934a073260b5a883681a32a7b09bf3320cc0695d338483",
+        "size": 290577,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\02_timeseries_individual_gyro_z_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f6e4d3d5774009f0eae7502ce5761eaf1523ab7e21fe9f8ca4b0b526ababec9b",
+        "size": 275900,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_accel_x_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2fde4c2c2d692611e0a04c8242c574687ebed6230e4d59502cd03affcd7dc6cd",
+        "size": 25139,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_accel_y_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "23bbc47d0f0f8518ba02f96e31df85f517505ffd74d37ab8979fbaf1117a5514",
+        "size": 21107,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_accel_z_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "d1e419d9bc27d38ad0927b86096459488483c61cd3c6d8ee62e6a71cae56c20d",
+        "size": 26151,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_gyro_x_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "0d91ffefe63c8d8ef8a9179b4244612422889009f24fdc3c6a6f85ed6668ea34",
+        "size": 21533,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_gyro_y_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "b479d84a06e9af1e42237f21440643a482168d4f8fabdb46a433952569cacd0d",
+        "size": 23564,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_gyro_z_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "8e0ea7910c15bf0e92532a7487d42f14bb05623217b5b196ae18a9e6ad8bfcdd",
+        "size": 21817,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_boxplot_temperature.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "e7e9ed33edb62e161f31f9bc17db3679ac4800196ca433b45eadf2b954d9191a",
+        "size": 24787,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_accel_x_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "298c53325f9d53b807464bbac637e72f9371fe6381304f3c6c6aad5e4a5213f5",
+        "size": 60748,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_accel_y_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "878d111bc6023b02ebb567ddf7163d815c1b4d6c2f3da786aa633a5e509bd3b3",
+        "size": 67492,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_accel_z_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "dd3f6c75119a8c64101f75897a36b9d918c0596717f5b324e076c8ae23038224",
+        "size": 54959,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_gyro_x_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a559aec51616cf4d36ca2b475f342668de5ac749ae3024c257cc09b9b47ab71f",
+        "size": 62601,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_gyro_y_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "060f4222b02a752c82c88fd509fe986c9b186a1014e002c36d768e6f467f3523",
+        "size": 59829,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_gyro_z_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "480a2ea940eaee659fb902967e71cd410bab2ade0b9f080b21f6c5d93ffb7d6f",
+        "size": 69359,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_densidade_temperature.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2a00126f1acf703b074a26aa154c900bd45d5dcad4cbcb03e5239aead41a2ed1",
+        "size": 75442,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_interactive_sobreposto_accel_x_g.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f0d7b6d1e394e20adad09d1226e432e2a139834306669aa1e7db7c014b6c5a78",
+        "size": 5178750,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_interactive_sobreposto_accel_y_g.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "84e571f93f36d2ca787bad60b3b2bc98aa869ba1ef9efb3b01e61c71a87c6e34",
+        "size": 5176700,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_interactive_sobreposto_accel_z_g.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a65758179ad24888cbb7d4062cd7a7a3a859be1cff1cbf0b0c155aed7289e0e6",
+        "size": 5186500,
+        "mtime": "2026-02-07T19:53:17Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_interactive_sobreposto_gyro_x_dps.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "751ad947c590077953ed8496aa990f95ba8bb58f7a776cb1e7592f1c7c988786",
+        "size": 5155722,
+        "mtime": "2026-02-07T19:53:18Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_interactive_sobreposto_gyro_y_dps.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "ddaca53859058f8bdce9a788c89406cfa6af053b182a749b70772a85a4374484",
+        "size": 5172877,
+        "mtime": "2026-02-07T19:53:18Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_interactive_sobreposto_gyro_z_dps.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "26ba21a98536c71b04cec683e7c634bdc9460bfcc5bdd5b904881f932e418fd3",
+        "size": 5136132,
+        "mtime": "2026-02-07T19:53:18Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_timeseries_sobreposto_accel_x_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "dadfe271ed07f4c79d7a0a4b15c8ce6bbaea8840d0b915e6503b0392f8d3f6a2",
+        "size": 238022,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_timeseries_sobreposto_accel_y_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "0420557e5ac021132e63264ed283c921dee599324d11758b5a3bf29ff0d6f056",
+        "size": 254257,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_timeseries_sobreposto_accel_z_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f4ce0116bd5eb178774f63052df4bc928bec6cb0a4984b568b659457c00a353c",
+        "size": 249964,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_timeseries_sobreposto_gyro_x_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "50a1e9fc3350cf987952cc1959f97acaf9025b86b2a42a42347ea43888da3653",
+        "size": 249680,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_timeseries_sobreposto_gyro_y_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "e2e2bdc226b954aad9e4cd4ea2d8f5adbd23a7ebad8bd77ee3f630546540495c",
+        "size": 254891,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03_timeseries_sobreposto_gyro_z_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "ad3a0e94fd9e5c38bb0626fe3d21f78d120df4097c92947b3b9ff013fb357664",
+        "size": 251524,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03v2_confusion_matrix_comparison.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "036727914d06035ccd9a46aea3535e7d80f8208faecddaefe1d90acd55df9b35",
+        "size": 62114,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03v2_convergencia_temporal.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "ede72e3a66186ba875bdfcea1f302c0ef5a33f8073ee35f9e9b2f50639299008",
+        "size": 222197,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03v2_scaler_comparison.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "4ad4e810f4381b5272b9803d6ae0191186442832222d4c7b1a415bbf13a267fa",
+        "size": 61012,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03v2_transition_curves.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f12c94460743dcdf591efc267b953ac0702a35169eddd3093ef8cb4000052099",
+        "size": 158643,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\03v2_variancia_assimetrica_heatmap.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "014182264b2ebe108a62daa0bbb1a01a2e1d5b73868eebe1ef0b81179c6d9363",
+        "size": 115454,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_boxplot_advanced_crest_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "7944758a89a7f3d578d88b110e73c4cc7120dc1898f31a4aca800aded4bdd1bb",
+        "size": 24875,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_boxplot_advanced_impulse_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2bc96e767030bd72e1ec4d5c5a7140fbe2ae55806e07f62b181193c8c76c985d",
+        "size": 24238,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_boxplot_advanced_kurtosis.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "e04b6cec05ba0d1231a20268a4abb249d35bdf69a94539c6fa8e0cc2fa30c14b",
+        "size": 23271,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_boxplot_advanced_shape_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "c3c764c95001a6da38b5c69386130b285ebb1656c694da74b1328cf9c6d398db",
+        "size": 26332,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_clearance_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "7f66ddad1051cdc3ed32cb9d3cc4756c08e9c1654c78ab9b9b727609cd065761",
+        "size": 65238,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_crest_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "e3e809a5f251f8ac186d18fafdf066fd92d10760fd9b1809e51dc0c43f759b5b",
+        "size": 66013,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_impulse_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2aa96fbed0bb613b8930fade26c6298d07cf945167a80c8126b1dcdfd850768d",
+        "size": 66692,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_kurtosis.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "61502837bad358d2b8f173bdb98d21a67a418eb3221bc5f6ec461bc32e2ec2c9",
+        "size": 68006,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_mean.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a2d5d63bc9304f741eb7e681e0f822043e734411b91be7f6be3a1e2f06386eca",
+        "size": 73582,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_peak.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "abb46d0030afc464cb7c18dd2fba2e7503c639a6d38b2a5e75056c58e68b0045",
+        "size": 66771,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_rms.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "af4a4b5ff492ba3511ddb65c44bc9731ff9daaa985fc88e16072f6d769d8378c",
+        "size": 63864,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_root_amplitude.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f6b70150f6e4f2abd1b975f3e66efa21aaf1843836e21021bca62089fb607046",
+        "size": 74045,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_shape_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f2dd728497d7f222d1ef1a2c3f3c678969c458b5a87fead87f0dc8860a781139",
+        "size": 68939,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_skew.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "73aae782bca9603c535e2abf777066fce0bd57697e9ac04dbe33dce1e270418f",
+        "size": 59303,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_catplot_feature_std.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "99f3f596defa159f2d4a5182644dbe69a2c76b44ea277d3ba54c496587d46b09",
+        "size": 60171,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_confusion_matrix_spectral.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "70f494fdd4c8902484605d1827c21f655bd684092769cc71892ad4efa1237a07",
+        "size": 36633,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_accel_x_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "298c53325f9d53b807464bbac637e72f9371fe6381304f3c6c6aad5e4a5213f5",
+        "size": 60748,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_accel_y_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "878d111bc6023b02ebb567ddf7163d815c1b4d6c2f3da786aa633a5e509bd3b3",
+        "size": 67492,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_accel_z_g.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "dd3f6c75119a8c64101f75897a36b9d918c0596717f5b324e076c8ae23038224",
+        "size": 54959,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_features_brutas.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "7d9b98c580da1351151552cbf6775091e863b303e31f24a2464796cad247f8f3",
+        "size": 4765844,
+        "mtime": "2026-02-07T19:53:19Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_features_brutas.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "53041bd508601134fe209f4f8b7d75767505fc64b07793d86498b06028a056af",
+        "size": 265686,
+        "mtime": "2026-02-03T14:47:22Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_gyro_x_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a559aec51616cf4d36ca2b475f342668de5ac749ae3024c257cc09b9b47ab71f",
+        "size": 62601,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_gyro_y_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "060f4222b02a752c82c88fd509fe986c9b186a1014e002c36d768e6f467f3523",
+        "size": 59829,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_gyro_z_dps.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "480a2ea940eaee659fb902967e71cd410bab2ade0b9f080b21f6c5d93ffb7d6f",
+        "size": 69359,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_densidade_temperature.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2a00126f1acf703b074a26aa154c900bd45d5dcad4cbcb03e5239aead41a2ed1",
+        "size": 75442,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_fft_medio_por_classe.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a596070d550fc2b616d7eb55da777dbffcc13bfaec13999c4865f63b852025ee",
+        "size": 339200,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\04_heatmap_correlacao.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a64b67ff37af90d8a05a341430974fff585bbd6c925d344792ca866f3f20f867",
+        "size": 108062,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_clearance_factor.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "ffc77c96d4aa782a5d144970cb84ff7b22f144f4369981e762aabc8279df3aee",
+        "size": 5154182,
+        "mtime": "2026-02-04T02:06:45Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_crest_factor.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2623a324829d98d95f75e8ca34b87a2fbbf3dc0513f5b4142b1b0fa8c41adc53",
+        "size": 5131278,
+        "mtime": "2026-02-04T02:06:44Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_impulse_factor.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f65ba76305733fa2983fddfa156260f6a410509a47ecb73551c708f8f928085e",
+        "size": 5138130,
+        "mtime": "2026-02-04T02:06:44Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_kurtosis.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "0b5e86cf8562926414e0d260a1c360bd4b282450f934cdec8216a577f92ea34a",
+        "size": 5116829,
+        "mtime": "2026-02-04T02:06:42Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_mean.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "639d6b44a21fcc76b6a087e1aa9661c91f2c5412504a2cac2177424ab35dba94",
+        "size": 5067082,
+        "mtime": "2026-02-04T02:06:41Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_peak.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "45f2a91dbbae739a5d603f2d82aa21b0e7efab6c4724bd3247cf0ba4cbc244de",
+        "size": 5007476,
+        "mtime": "2026-02-04T02:06:43Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_rms.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "ba572078cf61a1318940c48f5d8c4338f1ce4a48e15bfa0ddbb1f2a27f2c8467",
+        "size": 5069683,
+        "mtime": "2026-02-04T02:06:43Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_root_amplitude.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "48099da5f07cfdaf135549bf3bcbaea3c8d3bac7684606bec782757ec2e61fe3",
+        "size": 5146088,
+        "mtime": "2026-02-04T02:06:43Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_shape_factor.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "fb47d14b9c6691dbbd6ceea81bde2475553c182a69b797f856713ce1bfea5c2c",
+        "size": 5137301,
+        "mtime": "2026-02-04T02:06:44Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_skew.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "7e2f99c7eb889ea6301bbd9921bc5e8024a91175fb47ee7fc645e9e7b95563c8",
+        "size": 5095421,
+        "mtime": "2026-02-04T02:06:42Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_boxplot_feature_std.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "d68148b90cdd5316cce47d24b4034c87627b4ec1ed4ce688739bbfbd08a4f99c",
+        "size": 5073527,
+        "mtime": "2026-02-04T02:06:42Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_clearance_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "fcc86c109b10df64f6db687d0eec1b4f2d3c47a24c061f9f68598477b3867d07",
+        "size": 94443,
+        "mtime": "2026-02-03T14:47:58Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_crest_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "5f934a0519b6ae4b587db48505dbd1ff42bdb8cbaf3e96a96401419d5c0956bb",
+        "size": 85649,
+        "mtime": "2026-02-03T14:47:53Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_impulse_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f515d38c7ca6063b5b732ff593c73cd8949dfefe2334cb9da1ef13fbd60f1e8b",
+        "size": 90770,
+        "mtime": "2026-02-03T14:47:56Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_kurtosis.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "6099ebb33c32a67160fa645dcba6aa7c4df20db78be7d39f3852f2ead63dc832",
+        "size": 101282,
+        "mtime": "2026-02-03T14:47:46Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_mean.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "bfdc566b9ad43ab7dae75dd04cc3f3a1a327ebe52af299d934ee12fa179a9561",
+        "size": 96329,
+        "mtime": "2026-02-03T14:47:42Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_peak.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "4047ae0e5a72602ab124da1b3bc96587da299f0535803c875ac737b1cda69b3c",
+        "size": 80960,
+        "mtime": "2026-02-03T14:47:50Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_rms.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "f32c8cf3ca37b9de8d59f7d91213efe3355d71b7d7060facc7a62a822196b2c6",
+        "size": 95565,
+        "mtime": "2026-02-03T14:47:48Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_root_amplitude.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "779dbf4f24fdbe23b577249a941c17f7c9aeca04f071c8a59e8d75850ee700b3",
+        "size": 98546,
+        "mtime": "2026-02-03T14:47:51Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_shape_factor.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "1b3a6ee26fa395baf14c450752bc12e0d9c30f590f0eb557f9327493241f78a4",
+        "size": 90395,
+        "mtime": "2026-02-03T14:47:54Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_skew.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "dd3bbc309316230d1d40690e3d05a7811c1448f9e49143ada7217027777f15ca",
+        "size": 91986,
+        "mtime": "2026-02-03T14:47:45Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_catplot_feature_std.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "d261245067bbe38c6715fdd276311ead1b62fef99c7e3201ed24deeb4480965e",
+        "size": 84227,
+        "mtime": "2026-02-03T14:47:43Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_heatmap_correlacao.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "a64b67ff37af90d8a05a341430974fff585bbd6c925d344792ca866f3f20f867",
+        "size": 108062,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_pairplot_promising_features.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "bf56140421b69be6e011e91e64019db159f72e3feef5eab1b9457153c25ced92",
+        "size": 201358,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\05_pairplot_std.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "560793a57e03385929a0e91023b53fb927daa5e6e3a16cab6fac769fb2baed2e",
+        "size": 77563,
+        "mtime": "2026-02-07T19:53:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\06_heatmap_correlacao_features.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "44d53d13105a0f12cbceea3f598375d532335f77cc0921b47f45386f00c9d250",
+        "size": 2239562,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\06_pairplot_promising_features.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "bf56140421b69be6e011e91e64019db159f72e3feef5eab1b9457153c25ced92",
+        "size": 201358,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\06_pairplot_std_features.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "2f04705d14f65b10f9695426a7427e8e03a870f24a13de4a1088147ec9f16a18",
+        "size": 995194,
+        "mtime": "2026-02-04T02:07:00Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\06_violin_features.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "e02f1fa24a24ec341cd34ca55fd3333c41cd27fe486dabf19de547c1ade130ae",
+        "size": 4800216,
+        "mtime": "2026-02-07T19:53:21Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\07_heatmap_correlacao.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "ae70c73bb610e66e242b5931cd7b2d1554050d36399421e4d6a32045c7c6da72",
+        "size": 91186,
+        "mtime": "2026-02-07T19:55:07Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\07_heatmap_correlacao_features.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "44d53d13105a0f12cbceea3f598375d532335f77cc0921b47f45386f00c9d250",
+        "size": 2239562,
+        "mtime": "2026-02-02T14:59:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\08_violin_plots.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "1e8aef5811258a5314a5720575160f707c085ab0a2afa3a04ae27230cbe2d06e",
+        "size": 5037620,
+        "mtime": "2026-02-04T02:07:14Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\08_violin_plots.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "dbd32893c6b924c8a38ddd71c49c06716be552f62d258d2fcccf90f55dae2019",
+        "size": 438805,
+        "mtime": "2026-02-03T14:48:23Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\09_pca_tsne.png",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "6dddc7dcef41fb469f067227ded103d1f4edc29c190d91f98385e7e790093784",
+        "size": 401209,
+        "mtime": "2026-02-07T19:53:24Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\boxplot_range.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "673cab7f527d827b6e0fb9224d4b8409d2c68d4559a22841a6e54fcef857cd61",
+        "size": 4709143,
+        "mtime": "2026-02-07T19:53:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\boxplot_rms.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "d4582f085c8c7bc7f9dc9266377b7f46233db290cb70d2caa3eaa7799d568ccb",
+        "size": 4710351,
+        "mtime": "2026-02-07T19:53:20Z"
+      },
+      {
+        "path": "C:\\xampp\\htdocs\\xampp_iot_esp32_MPU6050_project\\notebooks\\output\\figures\\boxplot_std.html",
+        "exists": true,
+        "expected_sha256": null,
+        "sha256": "b824d3e8ef92aa72019a3f4039bc86f661b9b1bd2c3e64a07d81d41127cfa725",
+        "size": 4710286,
+        "mtime": "2026-02-07T19:53:19Z"
+      }
+    ]
+  }
+}

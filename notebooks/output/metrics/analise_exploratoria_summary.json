@@ -1,0 +1,129 @@
+{
+  "timestamp": "20260222_152508",
+  "raw_samples": 49840,
+  "filtered_samples": 45737,
+  "common_window_s": 329.74044489860535,
+  "window_size": 100,
+  "step_size": 20,
+  "total_windows": 2255,
+  "feature_count": 104,
+  "selected_feature_count": 16,
+  "class_distribution_raw": {
+    "FAN_OFF": 10240,
+    "LOW_ROT_ON": 6600,
+    "MEDIUM_ROT_ON": 6600,
+    "HIGH_ROT_ON": 6600,
+    "LOW_ROT_OFF": 6600,
+    "MEDIUM_ROT_OFF": 6600,
+    "HIGH_ROT_OFF": 6600
+  },
+  "class_distribution_filtered": {
+    "MEDIUM_ROT_ON": 6600,
+    "HIGH_ROT_ON": 6597,
+    "MEDIUM_ROT_OFF": 6596,
+    "LOW_ROT_ON": 6595,
+    "HIGH_ROT_OFF": 6595,
+    "LOW_ROT_OFF": 6594,
+    "FAN_OFF": 6160
+  },
+  "class_distribution_windows": {
+    "MEDIUM_ROT_ON": 326,
+    "LOW_ROT_ON": 325,
+    "HIGH_ROT_ON": 325,
+    "LOW_ROT_OFF": 325,
+    "MEDIUM_ROT_OFF": 325,
+    "HIGH_ROT_OFF": 325,
+    "FAN_OFF": 304
+  },
+  "anova_alpha": 0.05,
+  "correlation_threshold": 0.85,
+  "correlation_mode": "classwise_median",
+  "pairwise_min_separation": 1.0,
+  "pairwise_min_pairs": 2,
+  "top_k": 16,
+  "score_formula": "d_min_all",
+  "selection_method": "cohens_d",
+  "min_cohens_d": 0.3,
+  "cohens_score_mode": "d_min_all",
+  "selected_features": [
+    "gyro_x_dps_p90",
+    "vibration_dps_range",
+    "accel_y_g_fft_low",
+    "vibration_dps_p10",
+    "accel_z_g_fft_low",
+    "accel_mag_g_p95",
+    "accel_y_g_rms",
+    "vibration_dps_p90",
+    "accel_x_g_p90",
+    "vibration_dps_fft_mid",
+    "accel_z_g_p10",
+    "accel_x_g_p25",
+    "accel_y_g_p75",
+    "gyro_y_dps_p90",
+    "gyro_y_dps_fft_low",
+    "gyro_y_dps_range"
+  ],
+  "sampling_validation": {
+    "status": "computed_from_loaded_data",
+    "expected_hz": 20.0,
+    "per_class": {
+      "LOW_ROT_ON": {
+        "samples": 6600,
+        "duration_s": 329.9513740539551,
+        "actual_hz": 20.0,
+        "deviation_pct": 0.01
+      },
+      "MEDIUM_ROT_ON": {
+        "samples": 6600,
+        "duration_s": 329.74044489860535,
+        "actual_hz": 20.02,
+        "deviation_pct": 0.08
+      },
+      "HIGH_ROT_ON": {
+        "samples": 6600,
+        "duration_s": 329.8872060775757,
+        "actual_hz": 20.01,
+        "deviation_pct": 0.03
+      },
+      "LOW_ROT_OFF": {
+        "samples": 6600,
+        "duration_s": 329.9906129837036,
+        "actual_hz": 20.0,
+        "deviation_pct": 0.0
+      },
+      "MEDIUM_ROT_OFF": {
+        "samples": 6600,
+        "duration_s": 329.932657957077,
+        "actual_hz": 20.0,
+        "deviation_pct": 0.02
+      },
+      "HIGH_ROT_OFF": {
+        "samples": 6600,
+        "duration_s": 329.9646511077881,
+        "actual_hz": 20.0,
+        "deviation_pct": 0.01
+      },
+      "FAN_OFF": {
+        "samples": 10240,
+        "duration_s": 538.1614580154419,
+        "actual_hz": 19.03,
+        "deviation_pct": 4.86
+      }
+    },
+    "note": "Taxa estimada via timestamps das 7 classes ativas."
+  },
+  "collection_ids": [
+    "col_20260222_112119_20hz"
+  ],
+  "features_csv_hash": "5dc687c9dd9a53c288c377d4155479dd3e17ec42e6d0e418d22f84be364aa669",
+  "n_classes": 7,
+  "classes": [
+    "LOW_ROT_ON",
+    "MEDIUM_ROT_ON",
+    "HIGH_ROT_ON",
+    "LOW_ROT_OFF",
+    "MEDIUM_ROT_OFF",
+    "HIGH_ROT_OFF",
+    "FAN_OFF"
+  ]
+}

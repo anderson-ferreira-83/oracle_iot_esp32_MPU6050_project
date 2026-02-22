@@ -1,0 +1,21 @@
+{
+  "mode": "RAW",
+  "sample_rate": 10,
+  "ingest_enabled": true,
+  "cmd_speed_label": "UNKNOWN",
+  "rot_state_label": "UNKNOWN",
+  "use_state_label": "UNKNOWN",
+  "vib_profile_label": "UNKNOWN",
+  "label_source": "CONTROL",
+  "transition_marker": 0,
+  "network_revision": 0,
+  "network_apply_pending": false,
+  "open_portal": false,
+  "wifi_profiles": [],
+  "server_hostname": "",
+  "server_fallback_ip": "",
+  "server_fallback_ips": [],
+  "api_path": "/api/ingest",
+  "collection_id": "col_20260213_231445_4hz",
+  "new_collection": true
+}

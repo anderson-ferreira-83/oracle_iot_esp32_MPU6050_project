@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Documentacao do Pipeline de Machine Learning do IoT Fan Monitor: Random Forest 7 classes, feature engineering, Cohen's d, inferencia no browser." />
+  <meta name="author" content="Anderson Ferreira" />
+  <title>Pipeline ML | IoT Fan Monitor</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .doc-hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 45%,#7c3aed 120%);color:#fff;position:relative;overflow:hidden;border:1px solid rgba(124,58,237,0.30)}
+    .doc-hero::after{content:'';position:absolute;right:-140px;top:-140px;width:320px;height:320px;background:radial-gradient(circle,rgba(124,58,237,0.40),transparent 70%);opacity:0.9}
+    .doc-hero-grid{display:grid;grid-template-columns:1.3fr 0.7fr;gap:20px;position:relative;z-index:1}
+    .doc-hero h1{font-family:"Space Grotesk",sans-serif;font-size:2.0rem;letter-spacing:0.4px;margin-bottom:10px}
+    .doc-subtitle{font-size:1rem;color:rgba(255,255,255,0.92);line-height:1.7}
+    .doc-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .doc-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:0.7rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.20);color:#fff}
+    .doc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-actions .btn{background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.25)}
+    .doc-actions .btn:hover{background:rgba(255,255,255,0.26)}
+    .doc-kpis{display:flex;flex-direction:column;gap:10px}
+    .doc-kpi{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:12px}
+    .doc-kpi strong{display:block;font-size:0.85rem;letter-spacing:0.4px;text-transform:uppercase}
+    .doc-kpi span{display:block;margin-top:4px;font-size:0.9rem;color:rgba(255,255,255,0.85);line-height:1.5}
+    .doc-toc{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-toc a{text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(148,163,184,0.12);color:var(--ink-2);font-size:0.8rem;font-weight:700}
+    .doc-toc a:hover{border-color:rgba(124,58,237,0.45);background:rgba(124,58,237,0.10)}
+    .doc-hero .doc-toc a{color:rgba(255,255,255,0.92);border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.10)}
+    .doc-hero .doc-toc a:hover{border-color:rgba(255,255,255,0.40);background:rgba(255,255,255,0.16)}
+    .doc-hero .doc-inline-code{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.95)}
+    .doc-section p{color:var(--muted);line-height:1.75;font-size:0.92rem}
+    .doc-list{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:0.92rem}
+    .doc-inline-code{font-family:"JetBrains Mono",monospace;background:rgba(15,23,42,0.06);border:1px solid rgba(148,163,184,0.22);padding:2px 8px;border-radius:999px;font-size:0.8rem;color:var(--ink-2);white-space:nowrap}
+    .doc-callout{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid rgba(148,163,184,0.25);border-left:4px solid rgba(124,58,237,0.65);color:var(--ink-2);font-size:0.92rem;line-height:1.65}
+    .doc-callout strong{color:var(--ink-2)}
+    .doc-callout.info{border-left-color:rgba(14,165,233,0.65)}
+    .doc-callout.success{border-left-color:rgba(16,185,129,0.65)}
+    .doc-callout.warn{border-left-color:rgba(245,158,11,0.65)}
+    .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+    .doc-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:12px}
+    .doc-mini{background:rgba(148,163,184,0.10);border:1px solid rgba(148,163,184,0.22);border-radius:12px;padding:14px}
+    .doc-mini-title{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:0.2px;margin-bottom:8px;color:var(--ink-2)}
+    .doc-mini ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.65;font-size:0.9rem}
+    .doc-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.88rem}
+    .doc-table th,.doc-table td{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,0.18)}
+    .doc-table th{font-weight:700;color:var(--ink-2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.3px}
+    .doc-table td{color:var(--muted)}
+    .doc-table tr:last-child td{border-bottom:none}
+    .class-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:0.78rem;font-weight:700;font-family:"JetBrains Mono",monospace;border:1px solid transparent}
+    .imp-bar-wrap{display:flex;align-items:center;gap:8px}
+    .imp-bar{height:8px;border-radius:4px;background:rgba(124,58,237,0.70);flex-shrink:0}
+    .pipeline-flow{display:flex;flex-wrap:wrap;gap:0;margin:14px 0;align-items:center}
+    .pipeline-step{background:rgba(124,58,237,0.10);border:1px solid rgba(124,58,237,0.30);border-radius:10px;padding:10px 14px;font-size:0.82rem;font-weight:700;color:var(--ink-2);text-align:center;white-space:nowrap}
+    .pipeline-arrow{font-size:1.1rem;color:rgba(124,58,237,0.60);padding:0 6px;flex-shrink:0}
+    .metric-card{background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.25);border-radius:14px;padding:14px;text-align:center}
+    .metric-value{font-family:"Space Grotesk",sans-serif;font-size:1.8rem;font-weight:700;color:#7c3aed}
+    .metric-label{font-size:0.78rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.4px}
+    .metric-sub{font-size:0.82rem;color:var(--muted);margin-top:2px}
+    .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+    .code-block{background:#0f172a;border:1px solid rgba(148,163,184,0.20);border-radius:10px;padding:14px;font-family:"JetBrains Mono",monospace;font-size:0.8rem;color:#94a3b8;overflow-x:auto;margin-top:10px;line-height:1.7}
+    .code-block .kw{color:#c084fc}
+    .code-block .fn{color:#60a5fa}
+    .code-block .cm{color:#475569}
+    .code-block .str{color:#86efac}
+    .code-block .num{color:#fb923c}
+    @media(max-width:980px){.doc-hero-grid{grid-template-columns:1fr}.doc-grid{grid-template-columns:1fr}.doc-grid-3{grid-template-columns:1fr}.metrics-row{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.metrics-row{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor (Oracle XE + FastAPI)</h1>
+          <div class="brand-subtitle">Pipeline de Machine Learning</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="tech-stack">
+          <span class="tech-badge">Random Forest</span>
+          <span class="tech-badge">7 Classes</span>
+          <span class="tech-badge">FFT + Percentis</span>
+        </div>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+          <a class="nav-link" href="control.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Controle
+          </a>
+          <a class="nav-link" href="documentacao.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg>
+            Documentacao
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="card doc-hero doc-section" id="topo">
+      <div class="doc-hero-grid">
+        <div>
+          <h1>Pipeline de ML</h1>
+          <p class="doc-subtitle">
+            Random Forest de 7 classes com 16 features selecionadas por Cohen&rsquo;s d de 104 candidatos
+            (FFT + percentis + estatisticas temporais). Inferencia em tempo real no browser via
+            <span class="doc-inline-code">classifier.js</span>.
+          </p>
+          <div class="doc-tags">
+            <span class="doc-tag">Random Forest</span>
+            <span class="doc-tag">97.34% CV</span>
+            <span class="doc-tag">7 Classes</span>
+            <span class="doc-tag">16 Features</span>
+            <span class="doc-tag">FFT</span>
+            <span class="doc-tag">Percentis</span>
+          </div>
+          <div class="doc-actions">
+            <a class="btn" href="index.html" target="_blank" rel="noopener">Abrir Dashboard</a>
+            <a class="btn" href="documentacao.html">Visao Geral</a>
+          </div>
+        </div>
+        <div class="doc-kpis">
+          <div class="doc-kpi">
+            <strong>Random Forest (primario)</strong>
+            <span>97.34% acuracia CV &mdash; 200 arvores, 16 features, 7 classes</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>GNB (fallback)</strong>
+            <span>93.70% acuracia CV &mdash; Gaussian Naive Bayes, mesmo conjunto de features</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Dataset</strong>
+            <span>2.255 janelas &middot; 20 Hz &middot; ESP32 + MPU-6050</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-toc">
+        <a href="#visao-geral">Visao Geral</a>
+        <a href="#classes">7 Classes</a>
+        <a href="#features">Feature Engineering</a>
+        <a href="#selecao">Selecao Cohen's d</a>
+        <a href="#random-forest">Random Forest</a>
+        <a href="#inferencia">Inferencia JS</a>
+        <a href="#notebooks">Notebooks</a>
+        <a href="#rastreabilidade">Rastreabilidade</a>
+      </div>
+    </section>
+
+    <!-- Visao Geral -->
+    <section class="card doc-section" id="visao-geral">
+      <h2>1. Visao Geral do Pipeline</h2>
+      <p>O pipeline transforma dados brutos do sensor em predicoes de classe em tempo real, rodando inteiramente no browser sem servidor ML dedicado.</p>
+
+      <div class="pipeline-flow" style="margin-top:16px">
+        <div class="pipeline-step">Oracle XE<br><small style="font-weight:400;font-size:0.75rem">Dados brutos</small></div>
+        <div class="pipeline-arrow">&#8594;</div>
+        <div class="pipeline-step">Feature Eng.<br><small style="font-weight:400;font-size:0.75rem">104 candidatas</small></div>
+        <div class="pipeline-arrow">&#8594;</div>
+        <div class="pipeline-step">Cohen's d<br><small style="font-weight:400;font-size:0.75rem">Filtro ≥ 0.30</small></div>
+        <div class="pipeline-arrow">&#8594;</div>
+        <div class="pipeline-step">TOP-16<br><small style="font-weight:400;font-size:0.75rem">Por importancia</small></div>
+        <div class="pipeline-arrow">&#8594;</div>
+        <div class="pipeline-step">RF Training<br><small style="font-weight:400;font-size:0.75rem">sklearn</small></div>
+        <div class="pipeline-arrow">&#8594;</div>
+        <div class="pipeline-step">JSON Export<br><small style="font-weight:400;font-size:0.75rem">Arrays planos</small></div>
+        <div class="pipeline-arrow">&#8594;</div>
+        <div class="pipeline-step">classifier.js<br><small style="font-weight:400;font-size:0.75rem">Browser / RT</small></div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-value">97.34%</div>
+          <div class="metric-label">RF Acuracia CV</div>
+          <div class="metric-sub">± 0.63% (5 folds)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">93.70%</div>
+          <div class="metric-label">GNB Acuracia CV</div>
+          <div class="metric-sub">fallback no browser</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">16 / 104</div>
+          <div class="metric-label">Features Selecionadas</div>
+          <div class="metric-sub">Cohen's d + TOP-K</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">2.255</div>
+          <div class="metric-label">Janelas de Treino</div>
+          <div class="metric-sub">100 pts &middot; 20 Hz &middot; step=20</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 Classes -->
+    <section class="card doc-section" id="classes">
+      <h2>2. As 7 Classes Compostas</h2>
+      <p>
+        Cada classe combina <strong>velocidade do motor</strong> com <strong>estado do eixo (girando ou parado)</strong>.
+        Isso permite distinguir, por exemplo, um motor configurado como HIGH mas cujo eixo parou de girar
+        (<span class="doc-inline-code">HIGH_ROT_OFF</span>) de um que esta genuinamente desligado
+        (<span class="doc-inline-code">FAN_OFF</span>).
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Label</th>
+            <th>Descricao</th>
+            <th>Condicao Fisica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(0,217,255,0.15);border-color:rgba(0,217,255,0.40);color:#00a3c4">LOW_ROT_ON</span></td>
+            <td>Velocidade baixa — eixo girando</td>
+            <td>Motor em LOW, helice em rotacao</td>
+          </tr>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(0,255,136,0.15);border-color:rgba(0,255,136,0.40);color:#059669">MEDIUM_ROT_ON</span></td>
+            <td>Velocidade media — eixo girando</td>
+            <td>Motor em MEDIUM, helice em rotacao</td>
+          </tr>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(255,82,82,0.15);border-color:rgba(255,82,82,0.40);color:#dc2626">HIGH_ROT_ON</span></td>
+            <td>Velocidade alta — eixo girando</td>
+            <td>Motor em HIGH, helice em rotacao</td>
+          </tr>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(126,207,223,0.15);border-color:rgba(126,207,223,0.40);color:#0e7490">LOW_ROT_OFF</span></td>
+            <td>Velocidade baixa — eixo parado</td>
+            <td>Motor em LOW, helice parada (preso/desequilibrado)</td>
+          </tr>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(126,223,154,0.15);border-color:rgba(126,223,154,0.40);color:#15803d">MEDIUM_ROT_OFF</span></td>
+            <td>Velocidade media — eixo parado</td>
+            <td>Motor em MEDIUM, helice parada</td>
+          </tr>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(223,126,126,0.15);border-color:rgba(223,126,126,0.40);color:#b91c1c">HIGH_ROT_OFF</span></td>
+            <td>Velocidade alta — eixo parado</td>
+            <td>Motor em HIGH, helice parada</td>
+          </tr>
+          <tr>
+            <td><span class="class-badge" style="background:rgba(156,163,175,0.15);border-color:rgba(156,163,175,0.40);color:#6b7280">FAN_OFF</span></td>
+            <td>Ventilador desligado</td>
+            <td>Sem alimentacao, sensor em repouso</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout warn" style="margin-top:14px">
+        <strong>Atencao:</strong> Essas 7 classes de ML sao diferentes dos 4 modos de controle
+        da API (<span class="doc-inline-code">LOW</span> / <span class="doc-inline-code">MEDIUM</span> /
+        <span class="doc-inline-code">HIGH</span> / <span class="doc-inline-code">PAUSE</span>).
+        O modelo infere o estado real do hardware, que pode diferir do modo comandado.
+      </div>
+    </section>
+
+    <!-- Feature Engineering -->
+    <section class="card doc-section" id="features">
+      <h2>3. Feature Engineering</h2>
+      <p>
+        A partir de cada janela deslizante de 100 amostras (5 segundos a 20 Hz, passo de 1 segundo),
+        sao calculadas <strong>13 metricas por eixo</strong>, totalizando <strong>104 features candidatas</strong>.
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">8 Eixos Sensoriais</div>
+          <ul>
+            <li><span class="doc-inline-code">accel_x_g</span> &mdash; aceleracao X (g)</li>
+            <li><span class="doc-inline-code">accel_y_g</span> &mdash; aceleracao Y (g)</li>
+            <li><span class="doc-inline-code">accel_z_g</span> &mdash; aceleracao Z (g)</li>
+            <li><span class="doc-inline-code">gyro_x_dps</span> &mdash; giroscopio X (°/s)</li>
+            <li><span class="doc-inline-code">gyro_y_dps</span> &mdash; giroscopio Y (°/s)</li>
+            <li><span class="doc-inline-code">gyro_z_dps</span> &mdash; giroscopio Z (°/s)</li>
+            <li><span class="doc-inline-code">vibration_dps</span> &mdash; magnitude giroscopio (°/s)</li>
+            <li><span class="doc-inline-code">accel_mag_g</span> &mdash; magnitude aceleracao (g)</li>
+          </ul>
+          <p style="font-size:0.82rem;color:var(--muted);margin-top:8px">
+            <em>vibration_dps</em> = &radic;(gx&sup2; + gy&sup2; + gz&sup2;) &mdash; derivado.<br>
+            <em>accel_mag_g</em> = &radic;(ax&sup2; + ay&sup2; + az&sup2;) &mdash; derivado.
+          </p>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">13 Metricas por Eixo</div>
+          <ul>
+            <li><strong>Temporais:</strong> std, range, rms</li>
+            <li><strong>Forma:</strong> skew, kurtosis</li>
+            <li><strong>Percentis:</strong> p10, p25, p75, p90, p95</li>
+            <li><strong>FFT bandas:</strong>
+              <ul style="margin-top:2px">
+                <li><span class="doc-inline-code">fft_low</span> &mdash; 0–5 Hz</li>
+                <li><span class="doc-inline-code">fft_mid</span> &mdash; 5–10 Hz</li>
+                <li><span class="doc-inline-code">fft_high</span> &mdash; 10–20 Hz (Nyquist)</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="doc-callout info" style="margin-top:16px">
+        <strong>Janela deslizante:</strong> 100 amostras &times; 50 ms = <strong>5 segundos</strong> de contexto por predicao.
+        Passo de 20 amostras (1 segundo) gera sobreposicao de 80% para maximizar o dataset com 2.255 janelas.
+        A funcao <span class="doc-inline-code">extract_features_windowed_extended()</span>
+        implementa esse processo no notebook <span class="doc-inline-code">02_Feature_Engineering.ipynb</span>.
+      </div>
+
+      <p style="margin-top:14px">
+        As bandas FFT sao calculadas via RMS da amplitude discreta (DFT) dentro de cada faixa de frequencia.
+        No browser, <span class="doc-inline-code">Stats.fftBandRms(arr, fLow, fHigh, 20.0)</span>
+        realiza DFT real em O(n&sup2;) sobre janelas de n=100 pontos &mdash; viavel para inferencia em tempo real.
+      </p>
+    </section>
+
+    <!-- Selecao -->
+    <section class="card doc-section" id="selecao">
+      <h2>4. Selecao de Features &mdash; Cohen's d + TOP-K</h2>
+      <p>
+        A selecao usa <strong>Cohen's d minimo entre todos os 21 pares de classes</strong>
+        (<span class="doc-inline-code">d_min_all</span>) como criterio de separabilidade,
+        combinado com filtro de correlacao e selecao TOP-K por importancia de floresta.
+      </p>
+
+      <div class="doc-grid">
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Criterio de Selecao</h3>
+          <table class="doc-table">
+            <tbody>
+              <tr>
+                <td><span class="doc-inline-code">min_cohens_d</span></td>
+                <td>0.30 &mdash; limiar de separabilidade minima</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">score_formula</span></td>
+                <td>d_min_all &mdash; pior par entre as 7 classes</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">correlation_threshold</span></td>
+                <td>0.85 &mdash; remove features redundantes</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">top_k</span></td>
+                <td>16 &mdash; features finais selecionadas</td>
+              </tr>
+              <tr>
+                <td>Candidatas avaliadas</td>
+                <td>104 (8 eixos &times; 13 metricas)</td>
+              </tr>
+              <tr>
+                <td>Aprovam d ≥ 0.30</td>
+                <td>~14 features</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Interpretacao do Cohen's d</h3>
+          <table class="doc-table">
+            <thead><tr><th>d</th><th>Separabilidade</th></tr></thead>
+            <tbody>
+              <tr><td>&lt; 0.20</td><td>Insignificante</td></tr>
+              <tr><td>0.20 – 0.49</td><td>Pequena</td></tr>
+              <tr><td>0.50 – 0.79</td><td>Media</td></tr>
+              <tr><td>≥ 0.80</td><td>Grande</td></tr>
+            </tbody>
+          </table>
+          <div class="doc-callout" style="margin-top:10px;font-size:0.85rem">
+            O par mais dificil do dataset e <strong>LOW_ROT_ON &harr; LOW_ROT_OFF</strong>
+            para features como <span class="doc-inline-code">vibration_dps_p10</span> (d=0.427).
+            O RF supera o GNB precisamente nesses pares limítrofes.
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem;margin-top:20px;margin-bottom:8px">16 Features Finais &mdash; Importancia RF + Cohen's d</h3>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Feature</th>
+            <th>Importancia RF</th>
+            <th>Cohen's d (d_min_all)</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><span class="doc-inline-code">vibration_dps_range</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:100px"></div><span>14.4%</span></div></td>
+            <td>0.540</td>
+            <td>Temporal</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><span class="doc-inline-code">accel_y_g_fft_low</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:69px"></div><span>10.0%</span></div></td>
+            <td>0.443</td>
+            <td>FFT 0–5 Hz</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><span class="doc-inline-code">vibration_dps_p90</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:67px"></div><span>9.7%</span></div></td>
+            <td>0.330</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><span class="doc-inline-code">accel_x_g_p90</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:66px"></div><span>9.4%</span></div></td>
+            <td>0.322</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><span class="doc-inline-code">accel_z_g_fft_low</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:56px"></div><span>8.0%</span></div></td>
+            <td>0.421</td>
+            <td>FFT 0–5 Hz</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><span class="doc-inline-code">gyro_y_dps_range</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:54px"></div><span>7.7%</span></div></td>
+            <td>0.164</td>
+            <td>Temporal</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><span class="doc-inline-code">gyro_y_dps_fft_low</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:45px"></div><span>6.4%</span></div></td>
+            <td>0.165</td>
+            <td>FFT 0–5 Hz</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><span class="doc-inline-code">accel_mag_g_p95</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:42px"></div><span>6.0%</span></div></td>
+            <td>0.384</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><span class="doc-inline-code">vibration_dps_fft_mid</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:40px"></div><span>5.7%</span></div></td>
+            <td>0.318</td>
+            <td>FFT 5–10 Hz</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td><span class="doc-inline-code">accel_x_g_p25</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:38px"></div><span>5.4%</span></div></td>
+            <td>0.243</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td><span class="doc-inline-code">accel_y_g_rms</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:36px"></div><span>5.2%</span></div></td>
+            <td>0.343</td>
+            <td>Temporal</td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td><span class="doc-inline-code">gyro_x_dps_p90</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:29px"></div><span>4.1%</span></div></td>
+            <td>0.541</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td><span class="doc-inline-code">vibration_dps_p10</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:25px"></div><span>3.7%</span></div></td>
+            <td>0.427</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td><span class="doc-inline-code">gyro_y_dps_p90</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:15px"></div><span>2.1%</span></div></td>
+            <td>0.190</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td><span class="doc-inline-code">accel_y_g_p75</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:10px"></div><span>1.4%</span></div></td>
+            <td>0.215</td>
+            <td>Percentil</td>
+          </tr>
+          <tr>
+            <td>16</td>
+            <td><span class="doc-inline-code">accel_z_g_p10</span></td>
+            <td><div class="imp-bar-wrap"><div class="imp-bar" style="width:6px"></div><span>0.8%</span></div></td>
+            <td>0.245</td>
+            <td>Percentil</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout success" style="margin-top:12px">
+        <strong>Insight:</strong> As 3 features mais importantes sao todas relacionadas a
+        <strong>vibracao</strong> (<span class="doc-inline-code">vibration_dps_range</span>,
+        <span class="doc-inline-code">vibration_dps_p90</span>,
+        <span class="doc-inline-code">vibration_dps_fft_mid</span>) e <strong>FFT de baixa frequencia</strong>
+        &mdash; confirmando que a assinatura de rotacao do motor e principalmente espectral.
+      </div>
+    </section>
+
+    <!-- Random Forest -->
+    <section class="card doc-section" id="random-forest">
+      <h2>5. Random Forest &mdash; Arquitetura e Export</h2>
+
+      <div class="doc-grid">
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Configuracao do Modelo</h3>
+          <table class="doc-table">
+            <tbody>
+              <tr>
+                <td>Estimadores</td>
+                <td>200 arvores</td>
+              </tr>
+              <tr>
+                <td>max_depth</td>
+                <td>None (sem poda)</td>
+              </tr>
+              <tr>
+                <td>Implementacao</td>
+                <td>sklearn RandomForestClassifier</td>
+              </tr>
+              <tr>
+                <td>Acuracia CV</td>
+                <td>97.34% ± 0.63% (StratifiedKFold, 5 folds)</td>
+              </tr>
+              <tr>
+                <td>Acuracia holdout</td>
+                <td>94.24% (test set separado)</td>
+              </tr>
+              <tr>
+                <td>Adjacent confusion</td>
+                <td>2.62% (melhor que GNB: 5.54%)</td>
+              </tr>
+              <tr>
+                <td>Nos totais (200 arvores)</td>
+                <td>29.884 (media 149.4 por arvore)</td>
+              </tr>
+              <tr>
+                <td>Arquivo exportado</td>
+                <td><span class="doc-inline-code">models/rf_model_20260222.json</span> (~985 KB)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Formato de Serializacao JSON</h3>
+          <p>Cada arvore e serializada como arrays planos (flat arrays) compatíveis com traversal eficiente em JavaScript:</p>
+          <div class="code-block">
+<span class="cm">// Estrutura por arvore</span>
+{
+  <span class="str">"feature"</span>: [<span class="num">0</span>, <span class="num">3</span>, <span class="num">-2</span>, ...],
+  <span class="str">"threshold"</span>: [<span class="num">1.23</span>, <span class="num">0.45</span>, <span class="num">-2.0</span>, ...],
+  <span class="str">"children_left"</span>: [<span class="num">1</span>, <span class="num">3</span>, <span class="num">-1</span>, ...],
+  <span class="str">"children_right"</span>: [<span class="num">2</span>, <span class="num">4</span>, <span class="num">-1</span>, ...],
+  <span class="str">"value"</span>: [[<span class="num">0</span>,<span class="num">0</span>,<span class="num">10</span>,...], ...]
+}
+<span class="cm">// feature[i] == -2 indica no-folha</span>
+<span class="cm">// children == -1 indica ausencia de filho</span></div>
+          <p style="font-size:0.85rem;color:var(--muted);margin-top:8px">
+            Formato baseado na saida interna do sklearn (<span class="doc-inline-code">tree_.feature</span>,
+            <span class="doc-inline-code">tree_.threshold</span>, etc.) convertida para JSON
+            pelo notebook <span class="doc-inline-code">03_Model_Training_Evaluation.ipynb</span>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inferencia JS -->
+    <section class="card doc-section" id="inferencia">
+      <h2>6. Inferencia em Tempo Real &mdash; classifier.js v6.0</h2>
+      <p>
+        O arquivo <span class="doc-inline-code">web/js/classifier.js</span> implementa toda a
+        inferencia no browser, sem dependencias externas. Funciona com tres tipos de modelo:
+        Random Forest, Softmax LogReg e Gaussian NB.
+      </p>
+
+      <div class="doc-grid-3" style="margin-top:14px">
+        <div class="doc-mini">
+          <div class="doc-mini-title">Stats.percentile()</div>
+          <ul>
+            <li>Interpolacao linear alinhada com <span class="doc-inline-code">np.percentile</span></li>
+            <li>Calcula P10, P25, P75, P90, P95 por janela</li>
+            <li>Ordena o buffer in-place para eficiencia</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Stats.fftBandRms()</div>
+          <ul>
+            <li>DFT real discreta, O(n&sup2;), n=100</li>
+            <li>Parametros: fLow, fHigh, samplingHz=20.0</li>
+            <li>Retorna RMS das amplitudes na banda</li>
+            <li>Bandas: 0–5 Hz, 5–10 Hz, 10–20 Hz</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">RandomForestClassifier._predictTree()</div>
+          <ul>
+            <li>Traversal de arvore via arrays planos</li>
+            <li>Loop while: vai para filho esq/dir pelo threshold</li>
+            <li>No-folha identificado por feature==-2</li>
+            <li>Voto final: media das distribuicoes de probabilidade</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem;margin-top:20px;margin-bottom:8px">Fluxo de Inferencia em Tempo Real</h3>
+      <div class="doc-grid">
+        <div>
+          <table class="doc-table">
+            <tbody>
+              <tr>
+                <td><span class="doc-inline-code">ClassifierConfig.SAMPLING_HZ</span></td>
+                <td>20.0 Hz (deve casar com treinamento)</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">WINDOW_SIZE</span></td>
+                <td>100 amostras (5 segundos)</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">MIN_POINTS</span></td>
+                <td>40 (2 segundos para primeira predicao)</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">HYSTERESIS_COUNT</span></td>
+                <td>3 predicoes consecutivas para mudar classe</td>
+              </tr>
+              <tr>
+                <td><span class="doc-inline-code">PREDICTION_INTERVAL_MS</span></td>
+                <td>250 ms (4 predicoes/segundo)</td>
+              </tr>
+              <tr>
+                <td>Dispatch por tipo</td>
+                <td><span class="doc-inline-code">random_forest</span> → RF &nbsp;|&nbsp; <span class="doc-inline-code">softmax_logreg</span> → LogReg &nbsp;|&nbsp; default → GNB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h4 style="font-size:0.9rem;margin-bottom:6px">Pipeline por ciclo de 250 ms:</h4>
+          <ol class="doc-list">
+            <li>Buffer circular recebe novos pontos do sensor (via WebSocket/polling)</li>
+            <li><span class="doc-inline-code">FeatureExtractor.extract(buffer)</span> calcula as 16 features</li>
+            <li><span class="doc-inline-code">RealTimeClassifier.predict(features)</span> dispara o modelo</li>
+            <li>Histerese: acumula predicao; muda estado so apos N confirmacoes</li>
+            <li>Deteccao de mudanca brusca: flush parcial do buffer ao detectar transicao</li>
+            <li>Resultado emitido via callback para o dashboard</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notebooks -->
+    <section class="card doc-section" id="notebooks">
+      <h2>7. Notebooks &mdash; Guia de Uso</h2>
+      <p>Todos os notebooks estao em <span class="doc-inline-code">notebooks/</span> e requerem as dependencias em
+        <span class="doc-inline-code">backend/requirements.txt</span> (Python 3.11).</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Notebook</th>
+            <th>Funcao</th>
+            <th>Output Principal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="doc-inline-code">00_Monitor.ipynb</span></td>
+            <td>Monitor Oracle em tempo real com auto-refresh, filtro por colecao e slider de linhas</td>
+            <td>Visualizacao interativa (nenhum arquivo)</td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">01_EDA.ipynb</span></td>
+            <td>Analise exploratoria: boxplots por classe, testes Kruskal-Wallis, distribuicao de colecoes</td>
+            <td><span class="doc-inline-code">config/eda_baselines_per_class.json</span></td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">02_Feature_Engineering.ipynb</span></td>
+            <td>Janela deslizante, calculo das 104 features, ranking Cohen's d, correlacao, selecao TOP-K</td>
+            <td><span class="doc-inline-code">config/feature_config.json</span> &middot; <span class="doc-inline-code">notebooks/dataset_features_final.csv</span></td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">03_Model_Training_Evaluation.ipynb</span></td>
+            <td>Treino GNB / LogReg / RF, validacao cruzada, matriz de confusao, export JSON, rastreabilidade</td>
+            <td><span class="doc-inline-code">models/rf_model_20260222.json</span> &middot; <span class="doc-inline-code">models/gnb_model_20260222.json</span></td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">03_Transition_Asymmetry_Analysis.ipynb</span></td>
+            <td>Analise de assimetria em transicoes de classe (ex: LOW→MEDIUM vs MEDIUM→LOW)</td>
+            <td>Figuras em <span class="doc-inline-code">notebooks/output/figures/</span></td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">04_Spectral_Feature_Analysis.ipynb</span></td>
+            <td>Analise espectral detalhada: espectrogramas, bandas de frequencia por classe</td>
+            <td>Figuras e metricas espectrais</td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">05_Robust_Ensemble_Model.ipynb</span></td>
+            <td>Experimento com Soft Voting ensemble (GNB + LogReg + KNN) &mdash; referencia</td>
+            <td>Modelo experimental (nao deployado)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout info" style="margin-top:12px">
+        <strong>Credenciais Oracle para notebooks:</strong> usar usuario
+        <span class="doc-inline-code">dersao</span> (nao <span class="doc-inline-code">student</span>)
+        para evitar <span class="doc-inline-code">ORA-00942</span> em acessos cross-schema com SQLAlchemy.
+        Connection string: <span class="doc-inline-code">oracle+oracledb://dersao:senha@localhost:1521/?service_name=xepdb1</span>
+      </div>
+    </section>
+
+    <!-- Rastreabilidade -->
+    <section class="card doc-section" id="rastreabilidade">
+      <h2>8. Rastreabilidade</h2>
+      <p>
+        O projeto mantem tres arquivos de rastreabilidade para garantir reproducibilidade completa
+        do pipeline de ML.
+      </p>
+
+      <div class="doc-grid-3">
+        <div class="doc-mini">
+          <div class="doc-mini-title">feature_config.json</div>
+          <ul>
+            <li>Versao: 5.16</li>
+            <li>Hash SHA-256 do CSV de features usado no treino</li>
+            <li>16 features selecionadas e 104 candidatas</li>
+            <li>Criterios de selecao completos</li>
+            <li>Ranking Cohen's d de todos os pares</li>
+            <li>Distribuicao de classes e collection IDs</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">pipeline_registry.json</div>
+          <ul>
+            <li>Historico de runs de Feature Engineering</li>
+            <li>Historico de runs de treinamento</li>
+            <li>Hashes SHA-256 de inputs e outputs</li>
+            <li>Associa cada modelo ao CSV que o gerou</li>
+            <li>Permite auditoria completa da linhagem de dados</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">MODEL_REGISTRY.json</div>
+          <ul>
+            <li>Historico de todos os modelos exportados</li>
+            <li>Metadados: versao, data, notebook, features</li>
+            <li>Status: deployed / archived / failed</li>
+            <li>Referencia ao modelo pai (parent_model)</li>
+            <li>Acuracia CV e configuracao de feature_config</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem;margin-top:20px;margin-bottom:8px">Modelos Exportados (estado atual)</h3>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Arquivo</th>
+            <th>Tipo</th>
+            <th>Acuracia CV</th>
+            <th>Data</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="doc-inline-code">rf_model_20260222.json</span></td>
+            <td>Random Forest (200 arvores)</td>
+            <td>97.34%</td>
+            <td>2026-02-22</td>
+            <td><span class="doc-tag" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.30);color:#059669">Primario</span></td>
+          </tr>
+          <tr>
+            <td><span class="doc-inline-code">gnb_model_20260222.json</span></td>
+            <td>Gaussian Naive Bayes</td>
+            <td>93.70%</td>
+            <td>2026-02-22</td>
+            <td><span class="doc-tag" style="background:rgba(14,165,233,0.15);border-color:rgba(14,165,233,0.30);color:#0284c7">Fallback</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout" style="margin-top:12px">
+        <strong>Nota sobre Bayesian Online Learning:</strong> O diretorio
+        <span class="doc-inline-code">models/adapted/</span> contem snapshots do modelo
+        apos atualizacoes online (<span class="doc-inline-code">bayesianUpdate()</span> em
+        <span class="doc-inline-code">classifier.js</span>). Esses modelos adaptados
+        nao sao usados como base para novos treinamentos &mdash; apenas como historico de
+        personalizacao em sessao.
+      </div>
+    </section>
+
+    <!-- Footer nav -->
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <a href="documentacao.html" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink-2);font-weight:700;font-size:0.9rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Voltar para Documentacao
+      </a>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="doc-etapa1.html" style="color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:600">Etapa 1: Preparacao</a>
+        <a href="doc-etapa2.html" style="color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:600">Etapa 2: Coleta</a>
+        <a href="doc-etapa3.html" style="color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:600">Etapa 3: Analise</a>
+        <a href="doc-etapa4.html" style="color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:600">Etapa 4: ML</a>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv*/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Device runtime config/secrets (MicroPython)
+tools/device_config.json
+tools/wifi_profiles.json
+
+# Credenciais reais do ambiente local
+.env.oracle
+.env
+
+# Runtime logs e logs datados
+logs/*.log
+logs/ml_transitions_2[0-9]*.json
+logs/ml_transitions_current.txt
+
+# Windows shortcuts
+*.lnk
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/

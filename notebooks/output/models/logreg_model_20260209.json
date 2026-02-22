@@ -1,0 +1,213 @@
+{
+  "type": "softmax_logreg",
+  "version": "py_20260209",
+  "generated_at": "2026-02-09 15:00:52",
+  "generated_by": "03_Model_Training_Evaluation.ipynb",
+  "features": [
+    "accel_z_g_std",
+    "accel_z_g_range",
+    "accel_x_g_range",
+    "vibration_dps_range",
+    "vibration_dps_std",
+    "gyro_y_dps_range",
+    "accel_mag_g_range",
+    "accel_mag_g_std",
+    "gyro_x_dps_range",
+    "gyro_x_dps_std",
+    "vibration_dps_rms",
+    "gyro_z_dps_range"
+  ],
+  "labels": [
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "scaler": {
+    "mean": [
+      0.026895810782167576,
+      0.12893323847467272,
+      0.34767057484348324,
+      28.52052812464428,
+      7.789119256250263,
+      9.628941377347754,
+      0.13892708782139224,
+      0.027688580232340734,
+      14.464297097324986,
+      2.7222449953627157,
+      15.609813066823763,
+      44.35704040978942
+    ],
+    "scale": [
+      0.011832003101685432,
+      0.0604187229462424,
+      0.16422420770908752,
+      9.62677891384219,
+      2.8573569889764503,
+      4.526762399408149,
+      0.08270052138926888,
+      0.016380973868402742,
+      9.398111111424054,
+      1.628791083034284,
+      3.9586186164121226,
+      17.61870073531331
+    ]
+  },
+  "weights": {
+    "coef": [
+      [
+        1.0247319323051296,
+        0.9485236821930348,
+        1.0485828560206194,
+        1.3422853277746936,
+        1.4659291033604942,
+        0.3675291988686772,
+        1.0295000187683807,
+        1.0542304286765294,
+        1.0987184607078693,
+        1.134544991222442,
+        0.8864250839876088,
+        1.1104188971653968
+      ],
+      [
+        -2.7341005924053556,
+        -1.6869119635558938,
+        -2.395658467619285,
+        -1.513696139118732,
+        -1.4363706838055326,
+        -1.4121339821245775,
+        -0.7272119057243819,
+        -0.5827421665790036,
+        -0.864810395204651,
+        -1.026373854597369,
+        -1.2664392459839406,
+        -0.9804694595548037
+      ],
+      [
+        1.7093686601002223,
+        0.7383882813628563,
+        1.3470756115986673,
+        0.17141081134403768,
+        -0.02955841955496334,
+        1.044604783255897,
+        -0.3022881130440005,
+        -0.47148826209752864,
+        -0.23390806550321958,
+        -0.10817113662507527,
+        0.3800141619963326,
+        -0.1299494376105964
+      ]
+    ],
+    "intercept": [
+      3.21215179997823,
+      -8.616399009507656,
+      5.404247209529462
+    ]
+  },
+  "metrics": {
+    "train_accuracy": 1.0,
+    "cv": {
+      "stratified": {
+        "accuracy_mean": 1.0,
+        "accuracy_std": 0.0,
+        "fold_scores": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "low_med_confusion_rate": 0.0,
+        "confusion_matrix": {
+          "HIGH": {
+            "HIGH": 595,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "LOW": {
+            "HIGH": 0,
+            "LOW": 566,
+            "MEDIUM": 0
+          },
+          "MEDIUM": {
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 596
+          }
+        },
+        "classification_report": {
+          "HIGH": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 595.0
+          },
+          "LOW": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 566.0
+          },
+          "MEDIUM": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 596.0
+          },
+          "accuracy": 1.0,
+          "macro avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 1757.0
+          },
+          "weighted avg": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 1757.0
+          }
+        }
+      },
+      "groupkfold": null
+    }
+  },
+  "eda_traceability": {
+    "feature_config_version": "5.13",
+    "eda_id": "eda_20260209_145315",
+    "fe_id": "fe_20260209_145315",
+    "eda_generated_at": "20260209_145315",
+    "sample_rate_hz": 20.0,
+    "selection_method": "cohens_d_min_adjacent_classwise_corr_pairwise_score_topk",
+    "features_count": 12,
+    "collection_ids": [
+      "col_20260209_181623_20hz"
+    ],
+    "sampling_validation": {
+      "status": "computed_from_loaded_data",
+      "expected_hz": 20.0,
+      "per_class": {
+        "LOW": {
+          "samples": 12000,
+          "duration_s": 629.5457000732422,
+          "actual_hz": 19.06,
+          "deviation_pct": 4.69
+        },
+        "MEDIUM": {
+          "samples": 12000,
+          "duration_s": 599.9460999965668,
+          "actual_hz": 20.0,
+          "deviation_pct": 0.01
+        },
+        "HIGH": {
+          "samples": 12000,
+          "duration_s": 600.2221999168396,
+          "actual_hz": 19.99,
+          "deviation_pct": 0.04
+        }
+      },
+      "note": "Taxa estimada via timestamps das classes (LOW/MEDIUM/HIGH)."
+    },
+    "features_csv_file": "features_latest.csv",
+    "features_csv_hash": "e252093f729ca42f867db343ed7a47d96c2c9f561b376fdd4c6a5ebe8d35269a"
+  }
+}

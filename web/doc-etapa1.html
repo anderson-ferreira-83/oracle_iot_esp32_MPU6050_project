@@ -1,0 +1,382 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Documentacao detalhada da Etapa 1 (Preparacao) do Painel de Controle IoT Fan Monitor." />
+  <meta name="author" content="Anderson Ferreira" />
+  <title>Etapa 1: Preparacao | IoT Fan Monitor</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .doc-hero{background:linear-gradient(135deg,#0f172a 0%,#111827 45%,#0ea5e9 120%);color:#fff;position:relative;overflow:hidden;border:1px solid rgba(14,165,233,0.25)}
+    .doc-hero::after{content:'';position:absolute;right:-140px;top:-140px;width:320px;height:320px;background:radial-gradient(circle,rgba(14,165,233,0.35),transparent 70%);opacity:0.9}
+    .doc-hero-grid{display:grid;grid-template-columns:1.3fr 0.7fr;gap:20px;position:relative;z-index:1}
+    .doc-hero h1{font-family:"Space Grotesk",sans-serif;font-size:2.0rem;letter-spacing:0.4px;margin-bottom:10px}
+    .doc-subtitle{font-size:1rem;color:rgba(255,255,255,0.92);line-height:1.7}
+    .doc-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .doc-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:0.7rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.20);color:#fff}
+    .doc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-actions .btn{background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.25)}
+    .doc-actions .btn:hover{background:rgba(255,255,255,0.26)}
+    .doc-kpis{display:flex;flex-direction:column;gap:10px}
+    .doc-kpi{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:12px}
+    .doc-kpi strong{display:block;font-size:0.85rem;letter-spacing:0.4px;text-transform:uppercase}
+    .doc-kpi span{display:block;margin-top:4px;font-size:0.9rem;color:rgba(255,255,255,0.85);line-height:1.5}
+    .doc-toc{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-toc a{text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(148,163,184,0.12);color:var(--ink-2);font-size:0.8rem;font-weight:700}
+    .doc-toc a:hover{border-color:rgba(14,165,233,0.45);background:rgba(14,165,233,0.10)}
+    .doc-hero .doc-toc a{color:rgba(255,255,255,0.92);border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.10)}
+    .doc-hero .doc-toc a:hover{border-color:rgba(255,255,255,0.40);background:rgba(255,255,255,0.16)}
+    .doc-hero .doc-inline-code{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.95)}
+    .doc-section p{color:var(--muted);line-height:1.75;font-size:0.92rem}
+    .doc-list{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:0.92rem}
+    .doc-inline-code{font-family:"JetBrains Mono",monospace;background:rgba(15,23,42,0.06);border:1px solid rgba(148,163,184,0.22);padding:2px 8px;border-radius:999px;font-size:0.8rem;color:var(--ink-2);white-space:nowrap}
+    .doc-callout{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid rgba(148,163,184,0.25);border-left:4px solid rgba(14,165,233,0.65);color:var(--ink-2);font-size:0.92rem;line-height:1.65}
+    .doc-callout strong{color:var(--ink-2)}
+    .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+    .doc-mini{background:rgba(148,163,184,0.10);border:1px solid rgba(148,163,184,0.22);border-radius:12px;padding:12px}
+    .doc-mini-title{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:0.2px;margin-bottom:8px;color:var(--ink-2)}
+    .doc-mini ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.65;font-size:0.9rem}
+    .doc-btn-ref{display:flex;align-items:flex-start;gap:14px;padding:12px;border-radius:10px;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.18);margin-bottom:10px}
+    .doc-btn-sample{flex-shrink:0;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.82rem;font-family:'Manrope',sans-serif;pointer-events:none}
+    .doc-btn-desc{font-size:0.88rem;color:var(--muted);line-height:1.65}
+    .doc-btn-desc strong{color:var(--ink-2)}
+    .doc-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.88rem}
+    .doc-table th,.doc-table td{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,0.18)}
+    .doc-table th{font-weight:700;color:var(--ink-2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.3px}
+    .doc-table td{color:var(--muted)}
+    @media(max-width:980px){.doc-hero-grid{grid-template-columns:1fr}.doc-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor (Oracle XE + FastAPI)</h1>
+          <div class="brand-subtitle">Etapa 1: Preparacao</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="tech-stack">
+          <span class="tech-badge">Preparacao</span>
+          <span class="tech-badge">Controle</span>
+        </div>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+          <a class="nav-link" href="control.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Controle
+          </a>
+          <a class="nav-link" href="apresent.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Apresentacao
+          </a>
+          <a class="nav-link" href="documentacao.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg>
+            Documentacao
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="card doc-hero doc-section" id="topo">
+      <div class="doc-hero-grid">
+        <div>
+          <h1>Etapa 1: Preparacao</h1>
+          <p class="doc-subtitle">
+            Configure a sessao de coleta antes de iniciar: crie um
+            <span class="doc-inline-code">collection_id</span>, ajuste a taxa de amostragem e controle o estado do banco de dados.
+          </p>
+          <div class="doc-tags">
+            <span class="doc-tag">Sessao</span>
+            <span class="doc-tag">Taxa</span>
+            <span class="doc-tag">Banco</span>
+            <span class="doc-tag">Config</span>
+          </div>
+          <div class="doc-actions">
+            <a class="btn" href="control.html" target="_blank" rel="noopener">Abrir Controle</a>
+            <a class="btn" href="documentacao.html#controle" target="_blank" rel="noopener">Visao Geral</a>
+          </div>
+        </div>
+        <div class="doc-kpis">
+          <div class="doc-kpi">
+            <strong>Objetivo</strong>
+            <span>Garantir que sessao, taxa e banco estejam corretos antes de coletar dados.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Quando usar</strong>
+            <span>Sempre no inicio de cada sessao de coleta ou experimento.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Risco de pular</strong>
+            <span>Dados sem sessao ou com taxa errada contaminam o dataset.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-toc">
+        <a href="#nova-coleta">Nova Coleta</a>
+        <a href="#taxa">Slider Hz</a>
+        <a href="#banco">Banco de Dados</a>
+        <a href="#sessao">Info de Sessao</a>
+        <a href="#diagnostico">Runtime</a>
+        <a href="#fluxo">Fluxo Tipico</a>
+      </div>
+    </section>
+
+    <!-- Nova Coleta -->
+    <section class="card doc-section" id="nova-coleta">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        Botao Nova Coleta
+      </div>
+      <p>
+        O botao <strong>Nova Coleta</strong> gera um novo <span class="doc-inline-code">collection_id</span> automaticamente,
+        no formato <span class="doc-inline-code">coleta_YYYYMMDD_HHmmss_XXhz</span>. Esse identificador e enviado em cada
+        leitura do ESP32, permitindo separar lotes de dados por sessao.
+      </p>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#0ea5e9;color:#fff;">Nova Coleta</span>
+        <div class="doc-btn-desc">
+          <strong>Quando usar:</strong> sempre que iniciar um novo experimento, trocar a taxa de amostragem ou
+          mudar o objetivo da coleta. O sistema alerta quando o nome nao reflete a taxa atual (mismatch).
+        </div>
+      </div>
+
+      <div class="doc-callout">
+        <strong>Dica:</strong> o <span class="doc-inline-code">collection_id</span> inclui a taxa (ex.: <span class="doc-inline-code">_15hz</span>).
+        Se voce mudar a taxa sem criar nova coleta, o Controle exibe um alerta de mismatch e sugere criar uma nova sessao.
+      </div>
+
+      <ul class="doc-list">
+        <li>O <span class="doc-inline-code">collection_id</span> e salvo no estado do servidor via <span class="doc-inline-code">api/set_mode</span>.</li>
+        <li>O ESP32 recebe o novo ID na proxima resposta do servidor e passa a envia-lo nos payloads.</li>
+        <li>Dados antigos permanecem no banco — a nova sessao nao apaga nada.</li>
+        <li>Nos notebooks de analise, o <span class="doc-inline-code">collection_id</span> e usado para filtrar dados por sessao.</li>
+      </ul>
+    </section>
+
+    <!-- Slider Hz -->
+    <section class="card doc-section" id="taxa">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M3 12h6l3-9 3 18 3-9h6"/>
+        </svg>
+        Slider de Taxa (Hz)
+      </div>
+      <p>
+        O slider de taxa controla o <span class="doc-inline-code">sample_rate</span> — a frequencia de amostragem em Hz
+        enviada ao ESP32. O dispositivo ajusta o intervalo entre leituras do MPU6050 de acordo.
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Taxa (Hz)</th><th>Intervalo (ms)</th><th>Uso tipico</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1 Hz</td><td>1000 ms</td><td>Debug lento, economia de energia</td></tr>
+          <tr><td>5 Hz</td><td>200 ms</td><td>Monitoramento basico</td></tr>
+          <tr><td>10 Hz</td><td>100 ms</td><td>Balanco entre resolucao e volume</td></tr>
+          <tr><td>15 Hz</td><td>~67 ms</td><td>Padrao recomendado para ML (taxa real ~13Hz)</td></tr>
+          <tr><td>20 Hz</td><td>50 ms</td><td>Alta resolucao (pode saturar Wi-Fi)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout">
+        <strong>Importante:</strong> a taxa real nunca e exatamente a configurada — o ESP32 tem overhead de I2C e HTTP.
+        A Etapa 2 (Validacao) serve justamente para medir a taxa efetiva. A 15Hz configurados, a taxa real tipica e ~13Hz.
+      </div>
+
+      <ul class="doc-list">
+        <li>Ao mover o slider, o valor e enviado imediatamente via <span class="doc-inline-code">set_mode</span>.</li>
+        <li>O ESP32 aplica a nova taxa no proximo ciclo de leitura.</li>
+        <li>Se a taxa nao combina com o <span class="doc-inline-code">collection_id</span>, o sistema exibe alerta de mismatch.</li>
+      </ul>
+    </section>
+
+    <!-- Banco de Dados -->
+    <section class="card doc-section" id="banco">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        Controle do Banco de Dados
+      </div>
+      <p>
+        Tres botoes controlam a gravacao e o conteudo do banco Oracle XE. O badge <strong>DB:ON</strong> ou
+        <strong>DB:OFF</strong> indica o estado atual.
+      </p>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#f59e0b;color:#fff;">Pausar DB</span>
+        <div class="doc-btn-desc">
+          <strong>Pausar DB:</strong> desativa <span class="doc-inline-code">ingest_enabled</span>. Os dados continuam
+          chegando do ESP32 e aparecendo no dashboard, mas <strong>nao sao gravados</strong> no Oracle XE. Util para
+          testes rapidos sem poluir o dataset.
+        </div>
+      </div>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#10b981;color:#fff;">Retomar DB</span>
+        <div class="doc-btn-desc">
+          <strong>Retomar DB:</strong> reativa a gravacao. O badge volta para <strong>DB:ON</strong> e as leituras
+          passam a ser inseridas no Oracle XE normalmente.
+        </div>
+      </div>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#ef4444;color:#fff;">Zerar Banco</span>
+        <div class="doc-btn-desc">
+          <strong>Zerar Banco:</strong> apaga <strong>todas</strong> as leituras da tabela <span class="doc-inline-code">sensor_data</span>.
+          Acao <strong>irreversivel</strong>. Pede confirmacao antes de executar. Use apenas quando quiser comecar do zero.
+        </div>
+      </div>
+
+      <div class="doc-callout" style="border-left-color:#ef4444;">
+        <strong>Atencao:</strong> "Zerar Banco" e irreversivel. Se voce tem dados importantes, exporte-os antes
+        (via notebooks ou Oracle EM Express). O botao chama <span class="doc-inline-code">api/reset_db</span> que faz
+        <span class="doc-inline-code">TRUNCATE TABLE sensor_data</span>.
+      </div>
+    </section>
+
+    <!-- Info de Sessao -->
+    <section class="card doc-section" id="sessao">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        Informacoes de Sessao
+      </div>
+      <p>
+        A area de informacoes exibe o estado atual da sessao de coleta, incluindo o
+        <span class="doc-inline-code">collection_id</span> ativo, o dispositivo conectado e alertas de inconsistencia.
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">collection_id</div>
+          <ul>
+            <li>Identificador unico da sessao de coleta</li>
+            <li>Formato: <span class="doc-inline-code">coleta_YYYYMMDD_HHmmss_XXhz</span></li>
+            <li>Inclui a taxa para rastreabilidade</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Mismatch Warning</div>
+          <ul>
+            <li>Aparece quando a taxa no nome da sessao difere da taxa atual</li>
+            <li>Ex.: sessao diz <span class="doc-inline-code">_5hz</span> mas taxa esta em 15Hz</li>
+            <li>Sugere criar nova coleta com um botao direto</li>
+          </ul>
+        </div>
+      </div>
+
+      <ul class="doc-list">
+        <li><strong>Device:</strong> identificador do ESP32 conectado (baseado no MAC address).</li>
+        <li><strong>Taxa:</strong> valor configurado atualmente no slider.</li>
+        <li><strong>DB:</strong> badge indicando se a gravacao esta ativa (ON) ou pausada (OFF).</li>
+        <li><strong>Modo:</strong> rotulo atual (RAW, LOW, MEDIUM, HIGH ou PAUSE).</li>
+      </ul>
+    </section>
+
+    <!-- Diagnostico Runtime -->
+    <section class="card doc-section" id="diagnostico">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+        Painel de Runtime (Diagnostico)
+      </div>
+      <p>
+        O painel de runtime mostra o estado da conexao em tempo real com indicadores visuais (pills coloridas).
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Estado</th><th>Cor</th><th>Significado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>LIVE</td><td style="color:#10b981;font-weight:700;">Verde</td><td>Dados chegando dentro do intervalo esperado</td></tr>
+          <tr><td>DELAY</td><td style="color:#f59e0b;font-weight:700;">Amarelo</td><td>Dados com atraso — possivelmente WiFi lento</td></tr>
+          <tr><td>STALE</td><td style="color:#ef4444;font-weight:700;">Vermelho</td><td>Dados antigos — ESP32 provavelmente desconectado</td></tr>
+          <tr><td>NO DATA</td><td style="color:#6b7280;font-weight:700;">Cinza</td><td>Nenhum dado recebido desde o inicio</td></tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout">
+        <strong>Dica:</strong> se o estado ficar em STALE ou NO DATA, verifique: (1) o ESP32 esta ligado? (2) o Wi-Fi
+        esta conectado? (3) o servidor backend FastAPI esta rodando? Use a secao de Gestao de Rede para diagnosticar.
+      </div>
+    </section>
+
+    <!-- Fluxo Tipico -->
+    <section class="card doc-section" id="fluxo">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+        Fluxo Tipico de Preparacao
+      </div>
+
+      <div class="doc-callout">
+        <strong>Passo a passo recomendado:</strong>
+      </div>
+
+      <ol class="doc-list">
+        <li><strong>Ligue o ESP32</strong> e aguarde a conexao Wi-Fi (LED ou painel de runtime).</li>
+        <li><strong>Ajuste a taxa</strong> no slider (recomendado: 15Hz para ML).</li>
+        <li><strong>Crie uma Nova Coleta</strong> — o sistema gera um <span class="doc-inline-code">collection_id</span> com a taxa no nome.</li>
+        <li><strong>Verifique DB:ON</strong> — se estiver OFF, clique em "Retomar DB".</li>
+        <li><strong>Confira o runtime</strong> — o estado deve estar LIVE (verde).</li>
+        <li><strong>Prossiga para a Etapa 2</strong> (Validacao da Taxa) para confirmar que a taxa real esta dentro do esperado.</li>
+      </ol>
+
+      <div class="doc-callout">
+        <strong>Resumo:</strong> a Etapa 1 e uma checklist de pre-voo. Se tudo estiver verde e sem alertas de mismatch,
+        voce esta pronto para validar a taxa e iniciar a coleta.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <strong>IoT Fan Monitor</strong> v1.0
+          <span class="footer-separator">|</span>
+          Desenvolvido por <strong>Anderson Ferreira</strong>
+        </div>
+        <div class="footer-tech">
+          <span>Stack:</span>
+          ESP32 &bull; MPU6050 &bull; FastAPI &bull; Python &bull; Oracle XE &bull; Gaussian Naive Bayes
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>
+
+

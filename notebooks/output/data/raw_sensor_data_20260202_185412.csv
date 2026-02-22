@@ -1,0 +1,1 @@
+id,timestamp,temperature,vibration,accel_x_g,accel_y_g,accel_z_g,gyro_x_dps,gyro_y_dps,gyro_z_dps,fan_state,collection_id,timestamp_iso,sample_rate_configured_hz

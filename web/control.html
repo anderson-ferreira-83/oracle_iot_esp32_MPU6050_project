@@ -1,0 +1,3717 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Painel de controle para coleta de dados IoT">
+  <title>Controle | IoT Fan Monitor (FastAPI)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .step-section {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .step-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .ctrl-btn {
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      border: 2px solid transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .ctrl-btn:active { transform: scale(0.96); }
+    .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .ctrl-btn-new { background: #8b5cf6; color: #fff; }
+    .ctrl-btn-reset { background: #ef4444; color: #fff; font-size: 0.85rem; padding: 10px 18px; }
+    .ctrl-btn-raw { background: #3b82f6; color: #fff; }
+    .ctrl-btn-pause { background: #f59e0b; color: #000; }
+    .ctrl-btn-low { background: #00d9ff; color: #000; }
+    .ctrl-btn-medium { background: #00ff88; color: #000; }
+    .ctrl-btn-high { background: #ff5252; color: #fff; }
+    .ctrl-btn-stop-auto { background: #ef4444; color: #fff; }
+    .auto-time-btn {
+      padding: 6px 14px !important;
+      font-size: 0.8rem !important;
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.2s ease;
+    }
+    .auto-time-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .auto-time-active { background: var(--primary) !important; color: #fff !important; border-color: var(--primary) !important; }
+    .train-time-btn {
+      padding: 6px 14px !important;
+      font-size: 0.8rem !important;
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.2s ease;
+    }
+    .train-time-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .train-time-active { background: var(--primary) !important; color: #fff !important; border-color: var(--primary) !important; }
+    .train-class-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .train-class-btn {
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.7);
+      color: #f8fafc;
+    }
+    .train-class-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .train-class-btn.on {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.12);
+      color: #15803d;
+    }
+    .train-class-btn.off {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #b45309;
+    }
+    .train-class-btn.idle {
+      border-color: rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.12);
+      color: #b91c1c;
+    }
+
+    /* Hz Slider */
+    .hz-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 200px;
+    }
+    .hz-control input[type="range"] { flex: 1; accent-color: var(--primary); cursor: pointer; }
+    .hz-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Collection ID */
+    .collection-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: #7c3aed;
+      font-weight: 600;
+      padding: 6px 12px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 6px;
+    }
+
+    /* Ingest (DB) status + warnings */
+    .ingest-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(148, 163, 184, 0.08);
+      color: var(--muted);
+      user-select: none;
+      white-space: nowrap;
+    }
+    .ingest-on {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.12);
+      color: #15803d;
+    }
+    .ingest-off {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #b45309;
+    }
+    .ctrl-btn-mini { padding: 10px 16px; font-size: 0.85rem; }
+    .ctrl-btn-ingest-pause {
+      background: rgba(245, 158, 11, 0.14);
+      border-color: rgba(245, 158, 11, 0.55);
+      color: #b45309;
+      font-size: 0.85rem;
+      padding: 10px 18px;
+    }
+    .ctrl-btn-ingest-resume {
+      background: rgba(34, 197, 94, 0.14);
+      border-color: rgba(34, 197, 94, 0.55);
+      color: #15803d;
+      font-size: 0.85rem;
+      padding: 10px 18px;
+    }
+    .control-warning {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: rgba(245, 158, 11, 0.08);
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .control-warning strong { color: #b45309; }
+    .meta-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(148, 163, 184, 0.08);
+      color: #475569;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .meta-chip.warn {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #b45309;
+    }
+    .runtime-panel {
+      margin-top: 6px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(15, 23, 42, 0.18);
+      display: grid;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      min-height: 122px;
+      align-content: start;
+      contain: layout paint style;
+    }
+    .runtime-panel.live {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.08);
+    }
+    .runtime-panel.delay {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.08);
+    }
+    .runtime-panel.stale,
+    .runtime-panel.no_data {
+      border-color: rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.08);
+    }
+    .runtime-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+    }
+    .runtime-row + .runtime-row {
+      border-top: 1px dashed rgba(148, 163, 184, 0.22);
+      padding-top: 6px;
+      margin-top: 1px;
+    }
+    .runtime-row::-webkit-scrollbar {
+      height: 5px;
+    }
+    .runtime-row::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+    }
+    .runtime-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(148, 163, 184, 0.08);
+      color: #334155;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .runtime-pill.wide {
+      max-width: 380px;
+    }
+    .runtime-pill.good {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.12);
+      color: #15803d;
+    }
+    .runtime-pill.warn {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #b45309;
+    }
+    .runtime-pill.bad {
+      border-color: rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.12);
+      color: #b91c1c;
+    }
+    .runtime-pill.info {
+      border-color: rgba(14, 165, 233, 0.45);
+      background: rgba(14, 165, 233, 0.12);
+      color: #0369a1;
+    }
+    .net-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .net-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .net-field label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .net-field input {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 8px;
+      color: #f8fafc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 8px 10px;
+    }
+    .net-field input:focus {
+      outline: none;
+      border-color: rgba(59, 130, 246, 0.7);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    /* --- Network Card System --- */
+    .net-device-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--ink);
+      background: rgba(15, 23, 42, 0.35);
+      border: 1.5px solid rgba(148, 163, 184, 0.25);
+      margin-bottom: 12px;
+      transition: border-color 0.3s;
+    }
+    .net-device-banner.online { border-color: rgba(16, 185, 129, 0.6); }
+    .net-device-banner.stale  { border-color: rgba(245, 158, 11, 0.5); }
+    .net-device-banner.offline { border-color: rgba(148, 163, 184, 0.25); }
+    .net-banner-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #94a3b8;
+      flex-shrink: 0;
+    }
+    .net-device-banner.online .net-banner-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
+    .net-device-banner.stale  .net-banner-dot { background: #f59e0b; }
+    .net-card {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: rgba(15, 23, 42, 0.2);
+      transition: border-color 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+    .net-card.active {
+      border-left: 3px solid #10b981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
+    }
+    .net-card.dragging { opacity: 0.5; border-style: dashed; }
+    .net-card.drag-over {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
+    }
+    .net-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(148, 163, 184, 0.05);
+      transition: background 0.15s;
+    }
+    .net-card-header:hover { background: rgba(148, 163, 184, 0.1); }
+    .net-grip {
+      cursor: grab;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1;
+      flex-shrink: 0;
+      padding: 2px;
+    }
+    .net-grip:active { cursor: grabbing; }
+    .net-card-badge {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+    .net-card-ssid {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .net-card-alias-chip {
+      font-size: 0.65rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(139, 92, 246, 0.15);
+      color: #7c3aed;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .net-card-active-badge {
+      font-size: 0.6rem;
+      padding: 2px 8px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.18);
+      color: #047857;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      animation: net-pulse 2s ease-in-out infinite;
+    }
+    @keyframes net-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .net-card-chevron {
+      color: var(--muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+    }
+    .net-card.collapsed .net-card-chevron { transform: rotate(-90deg); }
+    .net-card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .net-card.collapsed .net-card-body { display: none; }
+    .net-card-body .net-field { min-width: 0; }
+    .net-card-body .net-field.full-width { grid-column: 1 / -1; }
+    .net-pwd-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .net-pwd-wrap input { flex: 1; padding-right: 34px; }
+    .net-pwd-toggle {
+      position: absolute;
+      right: 6px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 0.8rem;
+      line-height: 1;
+    }
+    .net-pwd-toggle:hover { color: var(--ink); }
+    .net-btn-primary {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      background: #10b981;
+      color: #062e1f;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s, box-shadow 0.2s;
+    }
+    .net-btn-primary:hover { box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3); }
+    .net-btn-primary:active { transform: scale(0.96); }
+    .net-btn-secondary {
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(148, 163, 184, 0.08);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: 'Manrope', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+    .net-btn-secondary:hover { border-color: rgba(148, 163, 184, 0.6); }
+    .net-btn-secondary:active { transform: scale(0.96); }
+    .net-btn-danger {
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.12);
+      color: #b91c1c;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s;
+    }
+    .net-btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+    .net-btn-danger:active { transform: scale(0.96); }
+    .net-btn-remove-card {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .net-btn-remove-card:disabled { opacity: 0.35; cursor: not-allowed; }
+    .net-server-details {
+      margin-top: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .net-server-details summary {
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      background: rgba(148, 163, 184, 0.05);
+      user-select: none;
+    }
+    .net-server-details summary:hover { background: rgba(148, 163, 184, 0.1); }
+    .net-server-details[open] summary { border-bottom: 1px solid rgba(148, 163, 184, 0.12); }
+    .net-server-details .net-grid { padding: 12px; margin-top: 0; }
+    .net-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .net-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .net-status {
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: rgba(148, 163, 184, 0.06);
+    }
+    .net-status.warn {
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+      color: #b45309;
+    }
+    .net-status.good {
+      border-color: rgba(34, 197, 94, 0.45);
+      background: rgba(34, 197, 94, 0.12);
+      color: #15803d;
+    }
+    .net-status.bad {
+      border-color: rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.12);
+      color: #b91c1c;
+    }
+    .net-card-warn-chip {
+      font-size: 0.6rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      color: #92400e;
+      font-weight: 700;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    }
+    .net-banner-reason {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      white-space: nowrap;
+      margin-left: auto;
+    }
+    .net-banner-reason.primary {
+      background: rgba(16, 185, 129, 0.15);
+      color: #047857;
+    }
+    .net-banner-reason.fallback {
+      background: rgba(245, 158, 11, 0.18);
+      color: #92400e;
+    }
+    .net-banner-reason.unknown {
+      background: rgba(148, 163, 184, 0.15);
+      color: #475569;
+    }
+    .net-diag {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.25);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .net-diag-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .net-diag-icon {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .net-diag-icon.ok {
+      background: rgba(16, 185, 129, 0.2);
+      color: #047857;
+    }
+    .net-diag-icon.warn {
+      background: rgba(245, 158, 11, 0.2);
+      color: #92400e;
+    }
+    .net-diag-icon.fail {
+      background: rgba(239, 68, 68, 0.2);
+      color: #b91c1c;
+    }
+    @media (max-width: 900px) {
+      .net-card-body { grid-template-columns: 1fr; }
+      .net-card-body .net-field.full-width { grid-column: 1; }
+      .net-actions { flex-direction: column; }
+      .net-actions button { width: 100%; justify-content: center; }
+      .net-diag { gap: 10px; }
+    }
+
+    /* Hz Monitor Grid */
+    .hz-monitor {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .hz-stat {
+      text-align: center;
+      padding: 10px 8px;
+      background: rgba(148, 163, 184, 0.06);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .hz-stat-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .hz-stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .hz-stat-value.small { font-size: 1rem; }
+    .hz-ok { color: #15803d !important; }
+    .hz-warn { color: #b45309 !important; }
+    .hz-bad { color: #b91c1c !important; }
+
+    /* Main Rate Display */
+    .rate-hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08));
+      border-radius: var(--radius);
+      margin: 12px 0;
+    }
+    .rate-block {
+      text-align: center;
+    }
+    .rate-block-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .rate-block-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .rate-block-value.expected { color: var(--muted); }
+    .rate-arrow {
+      font-size: 1.5rem;
+      color: var(--muted);
+    }
+    .rate-efficiency {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(34, 197, 94, 0.15);
+      color: #15803d;
+    }
+    .rate-efficiency.warn { background: rgba(245, 158, 11, 0.15); color: #b45309; }
+    .rate-efficiency.bad { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+
+    /* Observation Progress */
+    .obs-progress-wrap {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(148, 163, 184, 0.05);
+      border-radius: var(--radius-sm);
+    }
+    .obs-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+    }
+    .obs-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(148, 163, 184, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .obs-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .obs-progress-fill.complete { background: #22c55e; }
+
+    /* Timer display */
+    .timer-display-large {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #047857;
+      text-align: center;
+      line-height: 1;
+    }
+    .timer-display-large.exceeded { color: #b91c1c; }
+    .timer-meta {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Mode badge */
+    .mode-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mode-RAW { background: rgba(59, 130, 246, 0.15); color: #1d4ed8; border: 1px solid #3b82f6; }
+    .mode-PAUSE { background: rgba(245, 158, 11, 0.15); color: #b45309; border: 1px solid #f59e0b; }
+    .mode-LOW { background: rgba(0, 217, 255, 0.15); color: #0e7490; border: 1px solid #00d9ff; }
+    .mode-MEDIUM { background: rgba(0, 255, 136, 0.15); color: #047857; border: 1px solid #00ff88; }
+    .mode-HIGH { background: rgba(255, 82, 82, 0.15); color: #b91c1c; border: 1px solid #ff5252; }
+
+    /* Automation */
+    .auto-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(139, 92, 246, 0.05);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: var(--radius-sm);
+    }
+    .auto-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .auto-header label { font-weight: 600; font-size: 0.9rem; color: var(--ink); cursor: pointer; }
+    .auto-progress {
+      width: 100%;
+      height: 10px;
+      background: rgba(148, 163, 184, 0.15);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .auto-progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #00d9ff, #00ff88, #ff5252);
+      transition: width 0.5s ease;
+    }
+    .auto-status {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-top: 8px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .label-section {
+      margin-top: 16px;
+      padding: 14px;
+      background: rgba(34, 197, 94, 0.06);
+      border: 1px solid rgba(34, 197, 94, 0.22);
+      border-radius: var(--radius-sm);
+    }
+    .label-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .label-field label {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .label-field select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #f8fafc;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      padding: 7px 9px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .label-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .label-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--ink);
+      user-select: none;
+    }
+    .label-preview {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(148, 163, 184, 0.08);
+      color: #1e293b;
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.4;
+    }
+    .label-btn {
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--ink);
+    }
+    .label-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Dashboard link */
+    .dashboard-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+      margin-top: 12px;
+    }
+    .dashboard-link:hover { background: var(--primary-dark); }
+
+    /* Heartbeat indicator */
+    .heartbeat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+    .heartbeat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 1s infinite;
+    }
+    .heartbeat-dot.stale { background: #f59e0b; animation: none; }
+    .heartbeat-dot.dead { background: #ef4444; animation: none; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* --- Card Doc Button (?) --- */
+    .card-doc-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(14, 165, 233, 0.12);
+      color: #0369a1;
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 8px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .card-doc-btn:hover {
+      background: rgba(14, 165, 233, 0.25);
+      color: #0284c7;
+    }
+
+    /* --- Collapsible Details/Summary --- */
+    .ctrl-details {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      background: rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+    .ctrl-details > summary {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .ctrl-details > summary:hover { background: rgba(148, 163, 184, 0.08); }
+    .ctrl-details > summary::-webkit-details-marker { display: none; }
+    .ctrl-details > summary::before {
+      content: '▸';
+      font-size: 0.72rem;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .ctrl-details[open] > summary::before {
+      transform: rotate(90deg);
+    }
+    .ctrl-details[open] > summary {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    }
+    .ctrl-details-body {
+      padding: 12px 14px;
+    }
+
+    /* --- Contrast fixes --- */
+    #lastDbInfo, .auto-status {
+      color: #475569;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor (FastAPI)</h1>
+          <div class="brand-subtitle">Painel de Controle de Coleta</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <nav class="header-nav">
+          <a class="nav-link" href="apresent.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            Apresentação
+          </a>
+          <a class="nav-link" href="documentacao.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              <line x1="8" y1="7" x2="16" y2="7" />
+              <line x1="8" y1="11" x2="16" y2="11" />
+              <line x1="8" y1="15" x2="13" y2="15" />
+            </svg>
+            Documentação
+          </a>
+          <a class="nav-link" href="index.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+            </svg>
+            Dashboard
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ETAPA 1: Preparacao -->
+    <div class="step-section">
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title">Preparacao</div>
+        <span class="ingest-badge ingest-on" id="ingestBadge" style="margin-left:auto;">DB: ON</span>
+        <a class="card-doc-btn" href="doc-etapa1.html" target="_blank" title="Ver documentacao desta etapa">?</a>
+      </div>
+      <div class="step-controls">
+        <button class="ctrl-btn ctrl-btn-new" onclick="newCollection()" title="Cria nova sessao de coleta com ID unico baseado na taxa atual">Nova Coleta</button>
+        <div class="hz-control">
+          <span style="font-size:0.85rem;font-weight:600;color:var(--muted);white-space:nowrap;">Taxa:</span>
+          <input type="range" id="hzSlider" min="1" max="25" value="4" oninput="updateHzDisplay(this.value)" onchange="setSampleRate(this.value)" title="Define a taxa de amostragem do ESP32 (Hz)">
+          <span class="hz-display" id="hzDisplay">4 Hz</span>
+        </div>
+        <button class="ctrl-btn ctrl-btn-ingest-pause" id="btnIngestPause" onclick="pauseIngest()" title="Pausa a gravacao de dados no Oracle XE">Pausar DB</button>
+        <button class="ctrl-btn ctrl-btn-ingest-resume" id="btnIngestResume" onclick="resumeIngest()" disabled title="Retoma a gravacao de dados no Oracle XE">Retomar DB</button>
+        <button class="ctrl-btn ctrl-btn-reset" onclick="resetDatabase()" title="Remove TODOS os dados do banco Oracle XE (irreversivel)">Zerar Banco</button>
+      </div>
+      <div style="margin-top:10px;font-size:0.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+        <span>Sessao:</span>
+        <span class="collection-id" id="currentCollectionId">v5_stream</span>
+        <span class="meta-chip" id="activeDeviceId">device: --</span>
+        <span class="meta-chip" id="collectionHzTag" style="display:none;"></span>
+        <span class="meta-chip" id="collectionConfigInfo">config: --</span>
+      </div>
+      <div id="collectionWarningBox" class="control-warning" style="display:none;">
+        <div id="collectionWarningText"></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="ctrl-btn ctrl-btn-mini" id="btnFixCollection" style="background:#f59e0b;color:#000;border-color:#f59e0b;" onclick="fixCollectionForRate()" title="Cria sessao com nome compativel com a taxa atual">Criar nova sessao</button>
+        </div>
+      </div>
+      <div id="ingestNote" style="margin-top:8px;font-size:0.75rem;color:#92400e;font-family:'JetBrains Mono',monospace;display:none;">
+        Gravacao no DB esta pausada: validacao de taxa e estatisticas nao atualizam.
+      </div>
+      <details class="ctrl-details">
+        <summary>Diagnostico de conexao</summary>
+        <div class="ctrl-details-body">
+          <div id="lastDbInfo" style="font-size:0.75rem;font-family:'JetBrains Mono',monospace;">
+            Ultimo no DB: --
+          </div>
+          <div id="runtimeInfoControl" class="runtime-panel no_data" style="margin-top:8px;">
+            Runtime: --
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ETAPA 1B: Gestao de Rede -->
+    <div class="step-section">
+      <div class="step-header">
+        <div class="step-number">R</div>
+        <div class="step-title">Gestao de Rede (Hotspot + Domestica)</div>
+        <a class="card-doc-btn" href="doc-rede.html" target="_blank" title="Ver documentacao de gestao de rede" style="margin-left:auto;">?</a>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">
+        Defina perfis de Wi-Fi e IP do servidor por rede. O ESP32 recebe a configuracao e reinicia para aplicar.
+      </div>
+
+      <div id="espDeviceStatusBanner" class="net-device-banner offline">
+        <span class="net-banner-dot" id="espBannerDot"></span>
+        ESP32: <span id="espStatusIp">--</span> | <span id="espStatusSsid">--</span> | <span id="espStatusFresh">--</span>
+        <span class="net-banner-reason unknown" id="espNetReason">--</span>
+      </div>
+
+      <details class="ctrl-details" style="margin-top:0;margin-bottom:12px;">
+        <summary>Diagnostico de rede</summary>
+        <div class="ctrl-details-body">
+          <div class="net-diag" id="netDiagPanel" style="margin-bottom:0;">
+            <div class="net-diag-item">
+              <span class="net-diag-icon fail" id="diagWifiIcon">✗</span>
+              <span id="diagWifiLabel">WiFi</span>
+            </div>
+            <div class="net-diag-item">
+              <span class="net-diag-icon fail" id="diagServerIcon">✗</span>
+              <span id="diagServerLabel">Servidor</span>
+            </div>
+            <div class="net-diag-item">
+              <span class="net-diag-icon fail" id="diagDataIcon">✗</span>
+              <span id="diagDataLabel">Dados</span>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div id="networkCardsContainer"></div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+        <button class="net-btn-secondary" onclick="addNetworkProfileRow()" title="Adiciona um novo perfil de rede Wi-Fi">+ Adicionar rede</button>
+        <button class="net-btn-secondary" onclick="applyHotspotDefaults()" title="Preenche perfil padrao do hotspot S20_Ders@0">Usar hotspot padrao</button>
+      </div>
+
+      <details class="net-server-details">
+        <summary>Servidor & API Path</summary>
+        <div class="net-grid">
+          <div class="net-field">
+            <label for="netServerHostname">Servidor (.local)</label>
+            <input id="netServerHostname" placeholder="meu-notebook.local" oninput="onNetworkSettingsChange()">
+          </div>
+          <div class="net-field">
+            <label for="netApiPath">API Path</label>
+            <input id="netApiPath" placeholder="/api/ingest" oninput="onNetworkSettingsChange()">
+          </div>
+        </div>
+      </details>
+
+      <div class="net-meta-row">
+        <label class="label-toggle" style="margin:0;">
+          <input type="checkbox" id="netKeepHotspot" checked onchange="onNetworkSettingsChange()">
+          Manter hotspot como fallback automatico
+        </label>
+        <span class="meta-chip" id="netRevisionChip">rev: --</span>
+        <span class="meta-chip" id="netPendingChip">pending: no</span>
+      </div>
+
+      <div class="net-actions">
+        <button class="net-btn-primary" onclick="applyNetworkConfigToDevice()" title="Envia perfis de rede ao ESP32 via proximo POST">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          Aplicar no ESP32
+        </button>
+        <button class="net-btn-secondary" onclick="cancelPendingNetworkConfig()" title="Cancela configuracao de rede pendente no servidor">Cancelar pendencia</button>
+        <button class="net-btn-danger" onclick="openPortalOnDevice()" title="Abre portal de configuracao Wi-Fi diretamente no ESP32">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+          Abrir Portal
+        </button>
+      </div>
+
+      <div class="net-status" id="networkConfigStatus">
+        Aguardando configuracao de rede.
+      </div>
+    </div>
+
+    <!-- ETAPA 2: Validacao da Taxa -->
+    <div class="step-section">
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-title">Validacao da Taxa de Amostragem</div>
+        <a class="card-doc-btn" href="doc-etapa2.html" target="_blank" title="Ver documentacao desta etapa" style="margin-left:auto;">?</a>
+      </div>
+      <div class="step-controls">
+        <button class="ctrl-btn ctrl-btn-raw" onclick="setMode('RAW'); startValidation();" title="Entra em modo RAW e monitora taxa real vs esperada por 2 min">INICIAR VALIDACAO</button>
+        <button class="ctrl-btn" style="background:#94a3b8;color:#fff;padding:10px 18px;font-size:0.85rem;" onclick="resetValidation()" title="Zera contadores e reinicia a validacao da taxa">RESETAR</button>
+        <div class="heartbeat" id="heartbeatIndicator">
+          <span class="heartbeat-dot dead" id="heartbeatDot"></span>
+          <span id="heartbeatText">Aguardando...</span>
+        </div>
+      </div>
+
+      <!-- Hero Rate Display -->
+      <div class="rate-hero">
+        <div class="rate-block">
+          <div class="rate-block-label">Esperada</div>
+          <div class="rate-block-value expected" id="hzExpected">4.00 Hz</div>
+        </div>
+        <div class="rate-arrow">→</div>
+        <div class="rate-block">
+          <div class="rate-block-label">Real</div>
+          <div class="rate-block-value hz-ok" id="hzReal">-- Hz</div>
+        </div>
+        <div class="rate-block">
+          <div class="rate-block-label">Eficiencia</div>
+          <div class="rate-efficiency" id="hzEfficiency">--%</div>
+        </div>
+      </div>
+
+      <!-- Metrics Grid -->
+      <details class="ctrl-details">
+        <summary>Metricas detalhadas</summary>
+        <div class="ctrl-details-body">
+          <div class="hz-monitor" style="margin-top:0;">
+            <div class="hz-stat">
+              <div class="hz-stat-label">Amostras</div>
+              <div class="hz-stat-value" id="hzTotalSamples">0</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Intervalo Medio</div>
+              <div class="hz-stat-value small" id="hzIntervalMean">-- ms</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Intervalo Min</div>
+              <div class="hz-stat-value small" id="hzIntervalMin">-- ms</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Intervalo Max</div>
+              <div class="hz-stat-value small" id="hzIntervalMax">-- ms</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">CV (Jitter)</div>
+              <div class="hz-stat-value" id="hzCV">--%</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Status</div>
+              <div class="hz-stat-value" id="hzStatus">--</div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Observation Progress -->
+      <div class="obs-progress-wrap">
+        <div class="obs-progress-header">
+          <span style="color:var(--muted);">Tempo de Observacao</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-weight:600;" id="obsTimeDisplay">00:00 / 02:00</span>
+        </div>
+        <div class="obs-progress-bar">
+          <div class="obs-progress-fill" id="obsProgressFill" style="width:0%"></div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;text-align:center;" id="obsHint">
+          Aguarde pelo menos 2 minutos para validacao estatistica confiavel
+        </div>
+      </div>
+    </div>
+
+    <!-- ETAPA 3: Coleta de Treinamento -->
+    <div class="step-section">
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-title">Coleta de Treinamento</div>
+        <span class="mode-badge mode-PAUSE" id="currentModeBadge" style="margin-left:auto;">PAUSE</span>
+        <a class="card-doc-btn" href="doc-etapa3.html" target="_blank" title="Ver documentacao desta etapa">?</a>
+      </div>
+      <!-- Zona primaria: sempre visivel -->
+      <div class="step-controls">
+        <button class="ctrl-btn ctrl-btn-low" onclick="applyTrainingClassPreset('LOW_ROT_ON')" title="Define ventilador em velocidade baixa (ROT_ON)">LOW</button>
+        <button class="ctrl-btn ctrl-btn-medium" onclick="applyTrainingClassPreset('MEDIUM_ROT_ON')" title="Define ventilador em velocidade media (ROT_ON)">MEDIUM</button>
+        <button class="ctrl-btn ctrl-btn-high" onclick="applyTrainingClassPreset('HIGH_ROT_ON')" title="Define ventilador em velocidade alta (ROT_ON)">HIGH</button>
+        <button class="ctrl-btn ctrl-btn-pause" onclick="applyPauseRotatingControl()" title="Pausa a coleta (modo PAUSE, sem rotulos)">PAUSAR</button>
+      </div>
+      <div class="label-preview" id="trainClassPreview" style="margin-top:10px;">Classe ativa: --</div>
+
+      <!-- Zona secundaria: classes e tempo -->
+      <details class="ctrl-details">
+        <summary>Classes e Tempo</summary>
+        <div class="ctrl-details-body">
+          <div class="label-section" style="margin-top:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <div style="font-size:0.84rem;color:var(--ink);font-weight:700;">Rotulos de Treino (7 classes)</div>
+              <span class="meta-chip" id="labelSourceChip">src: CONTROL</span>
+            </div>
+            <div class="train-class-grid">
+              <button class="ctrl-btn train-class-btn on" onclick="applyTrainingClassPreset('LOW_ROT_ON')" title="LOW com ventilador girando">LOW + ROT_ON</button>
+              <button class="ctrl-btn train-class-btn on" onclick="applyTrainingClassPreset('MEDIUM_ROT_ON')" title="MEDIUM com ventilador girando">MEDIUM + ROT_ON</button>
+              <button class="ctrl-btn train-class-btn on" onclick="applyTrainingClassPreset('HIGH_ROT_ON')" title="HIGH com ventilador girando">HIGH + ROT_ON</button>
+              <button class="ctrl-btn train-class-btn off" onclick="applyTrainingClassPreset('LOW_ROT_OFF')" title="LOW com ventilador parado">LOW + ROT_OFF</button>
+              <button class="ctrl-btn train-class-btn off" onclick="applyTrainingClassPreset('MEDIUM_ROT_OFF')" title="MEDIUM com ventilador parado">MEDIUM + ROT_OFF</button>
+              <button class="ctrl-btn train-class-btn off" onclick="applyTrainingClassPreset('HIGH_ROT_OFF')" title="HIGH com ventilador parado">HIGH + ROT_OFF</button>
+              <button class="ctrl-btn train-class-btn idle" onclick="applyTrainingClassPreset('FAN_OFF')" title="Ventilador completamente desligado">FAN_OFF</button>
+            </div>
+            <div class="label-actions">
+              <span style="font-size:0.8rem;color:var(--muted);font-weight:600;">Tempo por rotulo:</span>
+              <button class="ctrl-btn train-time-btn" data-minutes="2" onclick="selectTrainTime(2)" title="2 minutos por rotulo">2 min</button>
+              <button class="ctrl-btn train-time-btn" data-minutes="5" onclick="selectTrainTime(5)" title="5 minutos por rotulo">5 min</button>
+              <button class="ctrl-btn train-time-btn train-time-active" data-minutes="8" onclick="selectTrainTime(8)" title="8 minutos por rotulo (padrao)">8 min</button>
+              <button class="ctrl-btn train-time-btn" data-minutes="10" onclick="selectTrainTime(10)" title="10 minutos por rotulo">10 min</button>
+              <button class="ctrl-btn train-time-btn" data-minutes="15" onclick="selectTrainTime(15)" title="15 minutos por rotulo">15 min</button>
+              <label class="label-toggle" style="margin-left:4px;">
+                <input type="checkbox" id="trainAutoTimer" checked>
+                Auto iniciar timer
+              </label>
+            </div>
+            <details style="margin-top:10px;">
+              <summary style="cursor:pointer;font-size:0.78rem;color:var(--muted);user-select:none;">Configuracao avancada de rotulos manuais</summary>
+        <div class="label-grid">
+          <div class="label-field">
+            <label for="cmdSpeedSelect">Cmd Speed</label>
+            <select id="cmdSpeedSelect" onchange="onLabelFieldChange()">
+              <option value="OFF">OFF</option>
+              <option value="LOW">LOW</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="HIGH">HIGH</option>
+              <option value="UNKNOWN">UNKNOWN</option>
+            </select>
+          </div>
+          <div class="label-field">
+            <label for="rotStateSelect">Rot State</label>
+            <select id="rotStateSelect" onchange="onLabelFieldChange()">
+              <option value="ROTATING">ROTATING</option>
+              <option value="STOPPED">STOPPED</option>
+              <option value="UNKNOWN">UNKNOWN</option>
+            </select>
+          </div>
+          <div class="label-field">
+            <label for="useStateSelect">Use State</label>
+            <select id="useStateSelect" onchange="onLabelFieldChange()">
+              <option value="IN_USE">IN_USE</option>
+              <option value="NO_LOAD">NO_LOAD</option>
+              <option value="UNKNOWN">UNKNOWN</option>
+            </select>
+          </div>
+          <div class="label-field">
+            <label for="vibProfileSelect">Vib Profile</label>
+            <select id="vibProfileSelect" onchange="onLabelFieldChange()">
+              <option value="NATURAL">NATURAL</option>
+              <option value="ABNORMAL">ABNORMAL</option>
+              <option value="UNKNOWN">UNKNOWN</option>
+            </select>
+          </div>
+        </div>
+        <div class="label-actions">
+          <label class="label-toggle">
+            <input type="checkbox" id="labelSyncMode" checked onchange="onLabelSyncToggle()">
+            Sync Cmd Speed com modo
+          </label>
+          <label class="label-toggle">
+            <input type="checkbox" id="transitionNext">
+            Marcar transicao (proximo comando)
+          </label>
+          <button class="ctrl-btn ctrl-btn-mini" style="background:#0ea5e9;color:#fff;border-color:#0ea5e9;" onclick="applyLabelConfig()" title="Aplica configuracao manual de rotulos ao proximo envio">Aplicar rotulos</button>
+        </div>
+        <div class="label-actions">
+          <button class="ctrl-btn label-btn" onclick="applyLabelPreset('RUN_NATURAL')">Preset: RUN_NATURAL</button>
+          <button class="ctrl-btn label-btn" onclick="applyLabelPreset('RUN_NO_LOAD')">Preset: RUN_NO_LOAD</button>
+          <button class="ctrl-btn label-btn" onclick="applyLabelPreset('STOPPED_OFF')">Preset: STOPPED_OFF</button>
+          <button class="ctrl-btn label-btn" onclick="applyLabelPreset('RUN_ABNORMAL')">Preset: RUN_ABNORMAL</button>
+        </div>
+            </details>
+            <div class="label-preview" id="labelPreview">Rotulo ativo: --</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Automacao -->
+      <details class="ctrl-details">
+        <summary>Modo Automatico (sequencia customizavel)</summary>
+        <div class="ctrl-details-body">
+          <div class="auto-header" style="margin-bottom:12px;">
+            <input type="checkbox" id="autoMode" onchange="toggleAutoMode()">
+            <label for="autoMode" style="font-weight:600;font-size:0.9rem;color:var(--ink);cursor:pointer;">Ativar automacao</label>
+          </div>
+          <div id="autoControls" style="display:none;">
+            <div class="label-actions" style="margin-top:0;">
+              <span style="font-size:0.78rem;color:var(--muted);font-weight:600;">Classes da automacao:</span>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="LOW_ROT_ON" checked onchange="updateAutoPlanInfo()">LOW+ON</label>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="MEDIUM_ROT_ON" checked onchange="updateAutoPlanInfo()">MED+ON</label>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="HIGH_ROT_ON" checked onchange="updateAutoPlanInfo()">HIGH+ON</label>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="LOW_ROT_OFF" onchange="updateAutoPlanInfo()">LOW+OFF</label>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="MEDIUM_ROT_OFF" onchange="updateAutoPlanInfo()">MED+OFF</label>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="HIGH_ROT_OFF" onchange="updateAutoPlanInfo()">HIGH+OFF</label>
+              <label class="label-toggle"><input type="checkbox" class="auto-class-check" data-class-key="FAN_OFF" onchange="updateAutoPlanInfo()">FAN_OFF</label>
+              <button class="ctrl-btn label-btn" onclick="setAllAutoClasses(true)" title="Seleciona todas as classes para automacao">Todas</button>
+              <button class="ctrl-btn label-btn" onclick="setAllAutoClasses(false)" title="Desmarca todas as classes">Nenhuma</button>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:6px;">Tempo por rotulo:</label>
+              <div class="step-controls" style="gap:6px;">
+                <button class="ctrl-btn auto-time-btn" data-minutes="2" onclick="selectAutoTime(2)">2 min</button>
+                <button class="ctrl-btn auto-time-btn" data-minutes="5" onclick="selectAutoTime(5)">5 min</button>
+                <button class="ctrl-btn auto-time-btn auto-time-active" data-minutes="8" onclick="selectAutoTime(8)">8 min</button>
+                <button class="ctrl-btn auto-time-btn" data-minutes="10" onclick="selectAutoTime(10)">10 min</button>
+                <button class="ctrl-btn auto-time-btn" data-minutes="15" onclick="selectAutoTime(15)">15 min</button>
+              </div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;" id="autoTimeInfo">
+                Total estimado: 25 min (3 x 8 min + transientes)
+              </div>
+              <div style="font-size:0.74rem;color:#334155;margin-top:4px;font-family:'JetBrains Mono',monospace;" id="autoClassSeqInfo">
+                Sequencia: LOW + ROT_ON -> MEDIUM + ROT_ON -> HIGH + ROT_ON
+              </div>
+            </div>
+            <div class="step-controls" style="margin-bottom:8px;">
+              <button class="ctrl-btn" style="background:#8b5cf6;color:#fff;padding:8px 16px;font-size:0.85rem;" onclick="startAutomation()" title="Inicia sequencia automatica de coleta por classe">Iniciar Automacao</button>
+              <button class="ctrl-btn ctrl-btn-stop-auto" style="padding:8px 16px;font-size:0.85rem;" onclick="stopAutomation()" id="btnStopAuto" disabled title="Para a automacao em andamento">Parar</button>
+            </div>
+            <div class="auto-progress">
+              <div class="auto-progress-fill" id="autoProgressBar" style="width:0%"></div>
+            </div>
+            <div class="auto-status" id="autoStatus">Pronto para iniciar</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Estatisticas da Coleta -->
+      <details class="ctrl-details">
+        <summary>Estatisticas da Coleta</summary>
+        <div class="ctrl-details-body">
+          <div class="hz-monitor" style="margin-top:0;">
+            <div class="hz-stat">
+              <div class="hz-stat-label">Total Amostras</div>
+              <div class="hz-stat-value" id="trainTotalSamples">0</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Duracao</div>
+              <div class="hz-stat-value small" id="trainDuration">-- min</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Taxa Media</div>
+              <div class="hz-stat-value small" id="trainAvgRate">-- Hz</div>
+            </div>
+            <div class="hz-stat">
+              <div class="hz-stat-label">Ultimo Envio</div>
+              <div class="hz-stat-value small" id="trainLastSeen">-- s</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;" id="trainBreakdown">Aguardando dados...</div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ETAPA 4: Timer de Coleta -->
+    <div class="step-section">
+      <div class="step-header">
+        <div class="step-number">4</div>
+        <div class="step-title">Timer de Coleta</div>
+        <a class="card-doc-btn" href="doc-etapa4.html" target="_blank" title="Ver documentacao desta etapa" style="margin-left:auto;">?</a>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:30px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div class="timer-display-large" id="timer">00:00</div>
+          <div class="timer-meta" id="timerMetaText">Meta: 08:00 por rotulo</div>
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+            <button class="ctrl-btn" style="padding:6px 14px;font-size:0.8rem;background:var(--accent);color:#fff;" onclick="startTimer()" title="Inicia contagem do timer para o rotulo atual">Iniciar</button>
+            <button class="ctrl-btn" style="padding:6px 14px;font-size:0.8rem;background:#f59e0b;color:#000;" onclick="stopTimer()" title="Pausa o timer sem zerar">Pausar</button>
+            <button class="ctrl-btn" style="padding:6px 14px;font-size:0.8rem;background:#94a3b8;color:#fff;" onclick="resetTimer()" title="Zera o timer para 00:00">Zerar</button>
+          </div>
+        </div>
+        <a href="index.html" class="dashboard-link" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+          </svg>
+          Ir para Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <strong>IoT Fan Monitor</strong> v1.0
+          <span class="footer-separator">|</span>
+          Desenvolvido por <strong>Anderson Ferreira</strong>
+        </div>
+        <div class="footer-tech">
+          <span>Stack:</span>
+          ESP32 &bull; MPU6050 &bull; FastAPI &bull; Oracle XE &bull; Gaussian Naive Bayes
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const AUTH_TOKEN = "F0xb@m986960440";
+    const controlChannel = new BroadcastChannel('fan_control_channel');
+    const OBS_TARGET_SECONDS = 120; // 2 minutos de observacao
+    const DEVICE_ID_STORAGE_KEY = 'iot_fan_control_device_id';
+    const DEVICE_ID_ALIASES = {
+      'ESP32_FAN_V7': 'ESP32_MPU6050_ORACLE',
+      'ESP32_MPU6050_XAMPP': 'ESP32_MPU6050_ORACLE',
+    };
+    const DEVICE_LABELS = {
+      'ESP32_MPU6050_ORACLE': 'ESP32+MPU6050 (Oracle/FastAPI)',
+    };
+    const DEFAULT_DEVICE_ID = 'ESP32_MPU6050_ORACLE';
+    const DEFAULT_API_PATH = '/api/ingest';
+    const DEFAULT_HOTSPOT_PROFILE = {
+      alias: 'HOTSPOT_BASE',
+      ssid: 'S20_Ders@0',
+      password: 'Foxbam1844',
+      server_ip: '',
+    };
+    const NETWORK_PROFILES_STORAGE_PREFIX = 'iot_network_profiles_';
+    const NETWORK_SETTINGS_STORAGE_PREFIX = 'iot_network_settings_';
+    const LABEL_DEFAULT_STATE = {
+      cmd_speed_label: 'UNKNOWN',
+      rot_state_label: 'UNKNOWN',
+      use_state_label: 'UNKNOWN',
+      vib_profile_label: 'UNKNOWN',
+      label_source: 'CONTROL',
+      transition_marker: 0,
+    };
+    const LABEL_ALLOWED = {
+      cmd_speed_label: ['OFF', 'LOW', 'MEDIUM', 'HIGH', 'UNKNOWN'],
+      rot_state_label: ['ROTATING', 'STOPPED', 'UNKNOWN'],
+      use_state_label: ['IN_USE', 'NO_LOAD', 'UNKNOWN'],
+      vib_profile_label: ['NATURAL', 'ABNORMAL', 'UNKNOWN'],
+      label_source: ['CONTROL', 'AUTO', 'MANUAL', 'DEVICE', 'BACKFILL', 'UNKNOWN'],
+    };
+    const TRAINING_CLASS_PRESETS = {
+      LOW_ROT_ON: {
+        title: 'LOW + ROT_ON',
+        mode: 'LOW',
+        cmd_speed_label: 'LOW',
+        rot_state_label: 'ROTATING',
+        use_state_label: 'IN_USE',
+        vib_profile_label: 'NATURAL',
+      },
+      MEDIUM_ROT_ON: {
+        title: 'MEDIUM + ROT_ON',
+        mode: 'MEDIUM',
+        cmd_speed_label: 'MEDIUM',
+        rot_state_label: 'ROTATING',
+        use_state_label: 'IN_USE',
+        vib_profile_label: 'NATURAL',
+      },
+      HIGH_ROT_ON: {
+        title: 'HIGH + ROT_ON',
+        mode: 'HIGH',
+        cmd_speed_label: 'HIGH',
+        rot_state_label: 'ROTATING',
+        use_state_label: 'IN_USE',
+        vib_profile_label: 'NATURAL',
+      },
+      LOW_ROT_OFF: {
+        title: 'LOW + ROT_OFF',
+        mode: 'LOW',
+        cmd_speed_label: 'LOW',
+        rot_state_label: 'STOPPED',
+        use_state_label: 'NO_LOAD',
+        vib_profile_label: 'NATURAL',
+      },
+      MEDIUM_ROT_OFF: {
+        title: 'MEDIUM + ROT_OFF',
+        mode: 'MEDIUM',
+        cmd_speed_label: 'MEDIUM',
+        rot_state_label: 'STOPPED',
+        use_state_label: 'NO_LOAD',
+        vib_profile_label: 'NATURAL',
+      },
+      HIGH_ROT_OFF: {
+        title: 'HIGH + ROT_OFF',
+        mode: 'HIGH',
+        cmd_speed_label: 'HIGH',
+        rot_state_label: 'STOPPED',
+        use_state_label: 'NO_LOAD',
+        vib_profile_label: 'NATURAL',
+      },
+      FAN_OFF: {
+        title: 'FAN_OFF',
+        mode: 'PAUSE',
+        cmd_speed_label: 'OFF',
+        rot_state_label: 'STOPPED',
+        use_state_label: 'NO_LOAD',
+        vib_profile_label: 'NATURAL',
+      },
+    };
+
+    function normalizeDeviceId(deviceId) {
+      const clean = String(deviceId || '').trim();
+      if (!clean) return '';
+      return DEVICE_ID_ALIASES[clean] || clean;
+    }
+
+    function getDeviceLabel(deviceId) {
+      const normalized = normalizeDeviceId(deviceId);
+      if (!normalized) return '--';
+      return DEVICE_LABELS[normalized] || normalized;
+    }
+
+    let DEVICE_ID = (() => {
+      const raw = new URLSearchParams(window.location.search).get('device_id');
+      if (raw && raw.trim()) return normalizeDeviceId(raw.trim());
+      try {
+        const cached = localStorage.getItem(DEVICE_ID_STORAGE_KEY);
+        if (cached && cached.trim()) return normalizeDeviceId(cached.trim());
+      } catch (e) { /* ignore */ }
+      return DEFAULT_DEVICE_ID;
+    })();
+    const CONTROL_API_BASE = '../api/set_mode';
+    const DATA_API_BASE = '../api/get_data';
+
+    function buildApiUrl(basePath, params = null) {
+      const url = new URL(basePath, window.location.href);
+      if (params && typeof params === 'object') {
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            url.searchParams.set(key, String(value));
+          }
+        });
+      }
+      if (DEVICE_ID) url.searchParams.set('device_id', DEVICE_ID);
+      return url.toString();
+    }
+
+    function withDevicePayload(payload) {
+      if (!DEVICE_ID) return payload;
+      return { ...payload, device_id: DEVICE_ID };
+    }
+
+    function updateDeviceUi() {
+      const tag = document.getElementById('activeDeviceId');
+      if (tag) {
+        const label = getDeviceLabel(DEVICE_ID);
+        const id = normalizeDeviceId(DEVICE_ID);
+        tag.textContent = id ? `device: ${label} [${id}]` : 'device: --';
+      }
+
+      const dashLink = document.querySelector('.dashboard-link');
+      if (!dashLink) return;
+      if (DEVICE_ID) {
+        dashLink.href = `index.html?device_id=${encodeURIComponent(DEVICE_ID)}`;
+      } else {
+        dashLink.href = 'index.html';
+      }
+    }
+
+    function setActiveDeviceId(deviceId) {
+      const clean = normalizeDeviceId(deviceId);
+      if (!clean || clean === DEVICE_ID) {
+        updateDeviceUi();
+        return;
+      }
+      DEVICE_ID = clean;
+      try { localStorage.setItem(DEVICE_ID_STORAGE_KEY, DEVICE_ID); } catch (e) { /* ignore */ }
+      updateDeviceUi();
+      networkStateTouched = false;
+      networkStateLoaded = false;
+      initNetworkManager();
+    }
+
+    // --- State ---
+    let currentMode = 'PAUSE';
+    let ingestEnabled = true;
+    let validationStartTime = null;
+    let lastSampleTimestamp = null;
+    let lastDbRecord = null; // { ts, sample_rate, collection_id }
+    let lastRuntime = null;
+    let lastDeviceStatus = null;
+    const RUNTIME_STATE_CLASSES = ['live', 'delay', 'stale', 'no_data'];
+    let runtimeControlRenderState = 'no_data';
+    let runtimeControlRenderHtml = '';
+    const LAST_MODE_KEY = 'iot_fan_last_mode_before_pause';
+    let lastModeBeforePause = localStorage.getItem(LAST_MODE_KEY) || null;
+    let labelState = { ...LABEL_DEFAULT_STATE };
+    let labelsDirty = false;
+    let selectedTrainMinutes = 8;
+    let activeTrainingClassKey = null;
+    let networkProfiles = [];
+    let networkStateTouched = false;
+    let networkStateLoaded = false;
+    let _lastEspSsid = '';
+    let _netDragSrcIdx = -1;
+
+    function networkProfilesStorageKey() {
+      return `${NETWORK_PROFILES_STORAGE_PREFIX}${normalizeDeviceId(DEVICE_ID || DEFAULT_DEVICE_ID)}`;
+    }
+
+    function networkSettingsStorageKey() {
+      return `${NETWORK_SETTINGS_STORAGE_PREFIX}${normalizeDeviceId(DEVICE_ID || DEFAULT_DEVICE_ID)}`;
+    }
+
+    function sanitizeHostInput(raw) {
+      let host = String(raw || '').trim();
+      if (!host) return '';
+      if (host.toLowerCase().startsWith('http://')) host = host.slice(7);
+      if (host.toLowerCase().startsWith('https://')) host = host.slice(8);
+      const slashIdx = host.indexOf('/');
+      if (slashIdx >= 0) host = host.slice(0, slashIdx);
+      return host.replace(/\s+/g, '').slice(0, 120);
+    }
+
+    function sanitizeApiPathInput(raw) {
+      let path = String(raw || '').trim();
+      if (!path) path = DEFAULT_API_PATH;
+      if (!path.startsWith('/')) path = `/${path}`;
+      return path.replace(/\s+/g, '').slice(0, 180);
+    }
+
+    function sanitizeIpInput(raw) {
+      const ip = String(raw || '').trim();
+      if (!ip) return '';
+      return ip.replace(/[^\d.]/g, '').slice(0, 64);
+    }
+
+    function uniqueValues(values) {
+      const out = [];
+      (Array.isArray(values) ? values : []).forEach((v) => {
+        const clean = String(v || '').trim();
+        if (!clean) return;
+        if (!out.includes(clean)) out.push(clean);
+      });
+      return out;
+    }
+
+    function normalizeNetworkProfile(item) {
+      const src = item && typeof item === 'object' ? item : {};
+      return {
+        alias: String(src.alias || src.name || '').trim().slice(0, 24),
+        ssid: String(src.ssid || '').trim().slice(0, 64),
+        password: String(src.password || '').slice(0, 128),
+        server_ip: sanitizeIpInput(src.server_ip || src.serverIp || src.ip || ''),
+      };
+    }
+
+    function ensureHotspotFallbackProfile(list) {
+      const keepHotspot = document.getElementById('netKeepHotspot')?.checked === true;
+      let profiles = Array.isArray(list) ? [...list] : [];
+      if (!keepHotspot) return profiles;
+      const hasHotspot = profiles.some((p) => String(p?.ssid || '').trim() === DEFAULT_HOTSPOT_PROFILE.ssid);
+      if (hasHotspot) return profiles;
+      profiles.unshift({ ...DEFAULT_HOTSPOT_PROFILE });
+      return profiles;
+    }
+
+    function saveNetworkDraftLocal() {
+      try {
+        const payload = {
+          server_hostname: sanitizeHostInput(document.getElementById('netServerHostname')?.value || ''),
+          api_path: sanitizeApiPathInput(document.getElementById('netApiPath')?.value || DEFAULT_API_PATH),
+          keep_hotspot: document.getElementById('netKeepHotspot')?.checked === true,
+          profiles: networkProfiles,
+        };
+        localStorage.setItem(networkSettingsStorageKey(), JSON.stringify(payload));
+      } catch (e) { /* ignore */ }
+    }
+
+    function loadNetworkDraftLocal() {
+      try {
+        const raw = localStorage.getItem(networkSettingsStorageKey());
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return null;
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setNetworkStatus(message, tone = '') {
+      const el = document.getElementById('networkConfigStatus');
+      if (!el) return;
+      el.className = `net-status ${tone || ''}`.trim();
+      el.textContent = String(message || '');
+    }
+
+    function renderNetworkCards() {
+      const container = document.getElementById('networkCardsContainer');
+      if (!container) return;
+      if (!Array.isArray(networkProfiles) || networkProfiles.length === 0) {
+        container.innerHTML = '<div style="padding:12px;font-size:0.78rem;color:var(--muted);text-align:center;border:1px dashed rgba(148,163,184,0.3);border-radius:10px;">Nenhuma rede cadastrada.</div>';
+        return;
+      }
+      const gripSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/></svg>';
+      const chevronSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+      const eyeOpenSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+      container.innerHTML = networkProfiles.map((profile, idx) => {
+        const p = normalizeNetworkProfile(profile);
+        const ssidDisplay = p.ssid || '(sem SSID)';
+        const isActive = _lastEspSsid && p.ssid && p.ssid.trim().toLowerCase() === _lastEspSsid.trim().toLowerCase();
+        const activeClass = isActive ? ' active' : '';
+        const collapsedClass = idx > 0 ? ' collapsed' : '';
+        const activeBadge = isActive ? '<span class="net-card-active-badge">ATIVA</span>' : '';
+        const aliasChip = p.alias ? `<span class="net-card-alias-chip">${rtEsc(p.alias)}</span>` : '';
+        const warnChip = !p.server_ip ? '<span class="net-card-warn-chip">sem IP</span>' : '';
+        const removeDisabled = networkProfiles.length <= 1 ? 'disabled' : '';
+
+        return `
+          <div class="net-card${activeClass}${collapsedClass}" id="netCard${idx}"
+               draggable="true"
+               ondragstart="onNetCardDragStart(event, ${idx})"
+               ondragover="onNetCardDragOver(event, ${idx})"
+               ondragleave="onNetCardDragLeave(event)"
+               ondrop="onNetCardDrop(event, ${idx})"
+               ondragend="onNetCardDragEnd(event)">
+            <div class="net-card-header" onclick="toggleCardCollapse(${idx})">
+              <span class="net-grip" onclick="event.stopPropagation()" title="Arrastar para reordenar">${gripSvg}</span>
+              <span class="net-card-badge">#${idx + 1}</span>
+              <span class="net-card-ssid">${rtEsc(ssidDisplay)}</span>
+              ${aliasChip}
+              ${warnChip}
+              ${activeBadge}
+              <span class="net-card-chevron">${chevronSvg}</span>
+            </div>
+            <div class="net-card-body">
+              <div class="net-field">
+                <label>SSID</label>
+                <input value="${rtEsc(p.ssid || '')}" placeholder="Nome da rede" oninput="onNetworkProfileFieldChange(${idx}, 'ssid', this.value)">
+              </div>
+              <div class="net-field">
+                <label>Alias</label>
+                <input value="${rtEsc(p.alias || '')}" placeholder="EX: CASA, LAB" oninput="onNetworkProfileFieldChange(${idx}, 'alias', this.value)">
+              </div>
+              <div class="net-field">
+                <label>Senha</label>
+                <div class="net-pwd-wrap">
+                  <input id="netPwd${idx}" type="password" value="${rtEsc(p.password || '')}" placeholder="Senha Wi-Fi" oninput="onNetworkProfileFieldChange(${idx}, 'password', this.value)">
+                  <button class="net-pwd-toggle" type="button" onclick="event.stopPropagation(); togglePasswordVisibility(${idx})" title="Mostrar/ocultar senha">${eyeOpenSvg}</button>
+                </div>
+              </div>
+              <div class="net-field">
+                <label>IP Servidor</label>
+                <input value="${rtEsc(p.server_ip || '')}" placeholder="192.168.x.x" oninput="onNetworkProfileFieldChange(${idx}, 'server_ip', this.value)">
+              </div>
+              <div class="net-field full-width" style="display:flex;justify-content:flex-end;">
+                <button class="net-btn-remove-card" ${removeDisabled} onclick="removeNetworkProfileRow(${idx})">Remover</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleCardCollapse(idx) {
+      const card = document.getElementById('netCard' + idx);
+      if (!card) return;
+      card.classList.toggle('collapsed');
+    }
+
+    function togglePasswordVisibility(idx) {
+      const input = document.getElementById('netPwd' + idx);
+      if (!input) return;
+      const eyeOpen = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+      const eyeClosed = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      const btn = input.parentElement.querySelector('.net-pwd-toggle');
+      if (btn) btn.innerHTML = isPassword ? eyeClosed : eyeOpen;
+    }
+
+    function onNetCardDragStart(e, idx) {
+      _netDragSrcIdx = idx;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(idx));
+      const card = document.getElementById('netCard' + idx);
+      if (card) setTimeout(() => card.classList.add('dragging'), 0);
+    }
+
+    function onNetCardDragOver(e, idx) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const card = document.getElementById('netCard' + idx);
+      if (card && idx !== _netDragSrcIdx) card.classList.add('drag-over');
+    }
+
+    function onNetCardDragLeave(e) {
+      const card = e.currentTarget;
+      if (card) card.classList.remove('drag-over');
+    }
+
+    function onNetCardDrop(e, targetIdx) {
+      e.preventDefault();
+      const card = e.currentTarget;
+      if (card) card.classList.remove('drag-over');
+      const srcIdx = _netDragSrcIdx;
+      if (srcIdx < 0 || srcIdx === targetIdx || srcIdx >= networkProfiles.length) return;
+      const moved = networkProfiles.splice(srcIdx, 1)[0];
+      networkProfiles.splice(targetIdx, 0, moved);
+      networkStateTouched = true;
+      renderNetworkCards();
+      saveNetworkDraftLocal();
+    }
+
+    function onNetCardDragEnd(e) {
+      _netDragSrcIdx = -1;
+      document.querySelectorAll('.net-card').forEach(c => {
+        c.classList.remove('dragging', 'drag-over');
+      });
+    }
+
+    function updateActiveBadge() {
+      const cards = document.querySelectorAll('.net-card');
+      cards.forEach((card, idx) => {
+        if (idx >= networkProfiles.length) return;
+        const p = normalizeNetworkProfile(networkProfiles[idx]);
+        const isActive = _lastEspSsid && p.ssid && p.ssid.trim().toLowerCase() === _lastEspSsid.trim().toLowerCase();
+        card.classList.toggle('active', isActive);
+        const header = card.querySelector('.net-card-header');
+        if (!header) return;
+        const existing = header.querySelector('.net-card-active-badge');
+        if (isActive && !existing) {
+          const chevron = header.querySelector('.net-card-chevron');
+          const badge = document.createElement('span');
+          badge.className = 'net-card-active-badge';
+          badge.textContent = 'ATIVA';
+          if (chevron) header.insertBefore(badge, chevron);
+          else header.appendChild(badge);
+        } else if (!isActive && existing) {
+          existing.remove();
+        }
+      });
+    }
+
+    function onNetworkProfileFieldChange(index, field, rawValue) {
+      const idx = Number(index);
+      if (!Number.isFinite(idx) || idx < 0 || idx >= networkProfiles.length) return;
+      const next = normalizeNetworkProfile(networkProfiles[idx]);
+      if (field === 'alias') next.alias = String(rawValue || '').trim().slice(0, 24);
+      if (field === 'ssid') next.ssid = String(rawValue || '').trim().slice(0, 64);
+      if (field === 'password') next.password = String(rawValue || '').slice(0, 128);
+      if (field === 'server_ip') next.server_ip = sanitizeIpInput(rawValue);
+      networkProfiles[idx] = next;
+      networkStateTouched = true;
+      saveNetworkDraftLocal();
+    }
+
+    function onNetworkSettingsChange() {
+      networkStateTouched = true;
+      saveNetworkDraftLocal();
+    }
+
+    function addNetworkProfileRow() {
+      networkProfiles.push({ alias: '', ssid: '', password: '', server_ip: '' });
+      networkStateTouched = true;
+      renderNetworkCards();
+      saveNetworkDraftLocal();
+    }
+
+    function removeNetworkProfileRow(index) {
+      if (!Array.isArray(networkProfiles) || networkProfiles.length <= 1) return;
+      const idx = Number(index);
+      if (!Number.isFinite(idx) || idx < 0 || idx >= networkProfiles.length) return;
+      networkProfiles.splice(idx, 1);
+      networkStateTouched = true;
+      renderNetworkCards();
+      saveNetworkDraftLocal();
+    }
+
+    function applyHotspotDefaults() {
+      const hasHotspot = networkProfiles.some((p) => String(p?.ssid || '').trim() === DEFAULT_HOTSPOT_PROFILE.ssid);
+      if (!hasHotspot) {
+        networkProfiles.unshift({ ...DEFAULT_HOTSPOT_PROFILE });
+      } else {
+        networkProfiles = [
+          ...networkProfiles.filter((p) => String(p?.ssid || '').trim() === DEFAULT_HOTSPOT_PROFILE.ssid),
+          ...networkProfiles.filter((p) => String(p?.ssid || '').trim() !== DEFAULT_HOTSPOT_PROFILE.ssid),
+        ];
+      }
+      const keepEl = document.getElementById('netKeepHotspot');
+      if (keepEl) keepEl.checked = true;
+      networkStateTouched = true;
+      renderNetworkCards();
+      saveNetworkDraftLocal();
+      setNetworkStatus('Hotspot base priorizado na lista de redes.', 'good');
+    }
+
+    function collectNetworkPayloadFromUi() {
+      const serverHostname = sanitizeHostInput(document.getElementById('netServerHostname')?.value || '');
+      const apiPath = sanitizeApiPathInput(document.getElementById('netApiPath')?.value || DEFAULT_API_PATH);
+      let profiles = (Array.isArray(networkProfiles) ? networkProfiles : []).map(normalizeNetworkProfile);
+      profiles = profiles.filter((p) => p.ssid);
+      profiles = ensureHotspotFallbackProfile(profiles);
+
+      if (!profiles.length) {
+        return { ok: false, reason: 'Informe pelo menos 1 SSID valido.' };
+      }
+
+      const wifiProfiles = profiles.map((p) => {
+        const entry = { ssid: p.ssid, password: p.password || '' };
+        const sip = sanitizeIpInput(p.server_ip || '');
+        if (sip) entry.server_ip = sip;
+        return entry;
+      });
+      const ips = uniqueValues(profiles.map((p) => sanitizeIpInput(p.server_ip || '')).filter(Boolean));
+      const fallbackIp = ips.length > 0 ? ips[0] : '';
+      const fallbackIps = [...ips];
+      if (!serverHostname && !fallbackIp) {
+        return { ok: false, reason: 'Informe hostname (.local) ou pelo menos 1 IP de servidor.' };
+      }
+
+      return {
+        ok: true,
+        payload: {
+          wifi_profiles: wifiProfiles,
+          server_hostname: serverHostname,
+          server_fallback_ip: fallbackIp,
+          server_fallback_ips: fallbackIps,
+          api_path: apiPath,
+          network_commit: true,
+          network_apply_pending: true,
+          network_revision: Date.now(),
+        },
+      };
+    }
+
+    function syncNetworkManagerFromState(state, options = {}) {
+      const src = state && typeof state === 'object' ? state : {};
+      const force = options.force === true;
+      if (networkStateTouched && !force) return;
+
+      const serverHostname = sanitizeHostInput(src.server_hostname || '');
+      const apiPath = sanitizeApiPathInput(src.api_path || DEFAULT_API_PATH);
+      const fallbackIps = uniqueValues(src.server_fallback_ips || []);
+      const wifiProfiles = Array.isArray(src.wifi_profiles) ? src.wifi_profiles : [];
+      const revProbe = Number(src.network_revision);
+      const hasRemoteNetworkConfig =
+        wifiProfiles.length > 0 ||
+        fallbackIps.length > 0 ||
+        !!serverHostname ||
+        src.network_apply_pending === true ||
+        (Number.isFinite(revProbe) && revProbe > 0);
+      if (!hasRemoteNetworkConfig && !force) {
+        return;
+      }
+      const rows = [];
+      const maxRows = Math.min(8, Math.max(1, wifiProfiles.length || 1));
+
+      for (let i = 0; i < maxRows; i += 1) {
+        const wp = wifiProfiles[i] || {};
+        rows.push({
+          alias: i === 0 ? 'PRIORIDADE' : '',
+          ssid: String(wp.ssid || '').trim(),
+          password: String(wp.password || ''),
+          server_ip: String(fallbackIps[i] || fallbackIps[0] || '').trim(),
+        });
+      }
+
+      if (rows.length === 0) rows.push({ ...DEFAULT_HOTSPOT_PROFILE });
+      networkProfiles = rows;
+
+      const hostEl = document.getElementById('netServerHostname');
+      const pathEl = document.getElementById('netApiPath');
+      if (hostEl) hostEl.value = serverHostname;
+      if (pathEl) pathEl.value = apiPath;
+
+      renderNetworkCards();
+
+      const rev = Number(src.network_revision);
+      const pending = src.network_apply_pending === true;
+      const revChip = document.getElementById('netRevisionChip');
+      const pendingChip = document.getElementById('netPendingChip');
+      if (revChip) revChip.textContent = `rev: ${Number.isFinite(rev) && rev > 0 ? Math.round(rev) : '--'}`;
+      if (pendingChip) {
+        pendingChip.textContent = `pending: ${pending ? 'yes' : 'no'}`;
+        pendingChip.className = `meta-chip${pending ? ' warn' : ''}`;
+      }
+
+      if (pending) {
+        setNetworkStatus('Configuracao de rede pendente para o ESP32. Aguarde o proximo ciclo de ingestao.', 'warn');
+      } else if (networkStateLoaded || force) {
+        setNetworkStatus('Configuracao de rede sincronizada.', 'good');
+      }
+
+      networkStateTouched = false;
+      networkStateLoaded = true;
+      saveNetworkDraftLocal();
+    }
+
+    async function applyNetworkConfigToDevice() {
+      const collected = collectNetworkPayloadFromUi();
+      if (!collected.ok) {
+        setNetworkStatus(collected.reason || 'Configuracao invalida.', 'bad');
+        alert(collected.reason || 'Configuracao de rede invalida.');
+        return;
+      }
+
+      try {
+        setNetworkStatus('Enviando configuracao de rede para o ESP32...', 'warn');
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload(collected.payload))
+        });
+        const data = await res.json();
+        syncNetworkManagerFromState(data, { force: true });
+        setNetworkStatus('Comando enviado. O ESP32 deve aplicar a rede e reiniciar automaticamente.', 'warn');
+      } catch (e) {
+        setNetworkStatus('Falha ao enviar configuracao de rede.', 'bad');
+        alert('Erro ao aplicar configuracao de rede');
+      }
+    }
+
+    async function cancelPendingNetworkConfig() {
+      try {
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ network_apply_pending: false }))
+        });
+        const data = await res.json();
+        syncNetworkManagerFromState(data, { force: true });
+        setNetworkStatus('Pendencia de configuracao de rede cancelada.', 'good');
+      } catch (e) {
+        setNetworkStatus('Falha ao cancelar pendencia de rede.', 'bad');
+      }
+    }
+
+    async function openPortalOnDevice() {
+      if (!confirm('Isso interrompe o envio de dados e abre o portal Wi-Fi (AP "Config-ESP32") no ESP32.\nContinuar?')) return;
+      try {
+        setNetworkStatus('Enviando comando para abrir portal...', 'warn');
+        await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ open_portal: true }))
+        });
+        setNetworkStatus('Comando enviado. O ESP32 abrira o AP "Config-ESP32" no proximo ciclo. Conecte-se a essa rede e acesse http://192.168.4.1', 'warn');
+      } catch (e) {
+        setNetworkStatus('Falha ao enviar comando de portal.', 'bad');
+      }
+    }
+
+    async function fetchDeviceStatus() {
+      try {
+        const url = buildApiUrl(DATA_API_BASE, { mode: 'debug' });
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) {
+          updateNetDiagnostics(null, null, null);
+          return;
+        }
+        const payload = await res.json();
+        const data = payload && payload.device_status ? payload.device_status : null;
+        if (!data) {
+          updateNetDiagnostics(null, null, null);
+          return;
+        }
+        const banner = document.getElementById('espDeviceStatusBanner');
+        const ipEl = document.getElementById('espStatusIp');
+        const ssidEl = document.getElementById('espStatusSsid');
+        const freshEl = document.getElementById('espStatusFresh');
+        if (ipEl) ipEl.textContent = data.ip || '--';
+        if (ssidEl) ssidEl.textContent = data.ssid || '--';
+        const age = data.updated_at ? Math.round(Date.now() / 1000 - data.updated_at) : null;
+        let bannerState = 'offline';
+        if (freshEl) {
+          if (age !== null && age < 30) {
+            freshEl.textContent = 'online';
+            freshEl.style.color = '#047857';
+            bannerState = 'online';
+          } else if (age !== null && age < 120) {
+            freshEl.textContent = `${age}s atras`;
+            freshEl.style.color = '#92400e';
+            bannerState = 'stale';
+          } else {
+            freshEl.textContent = data.ip ? 'stale' : 'sem dados';
+            freshEl.style.color = '#475569';
+            bannerState = 'offline';
+          }
+        }
+        if (banner) {
+          banner.classList.remove('online', 'stale', 'offline');
+          banner.classList.add(bannerState);
+        }
+        const newSsid = String(data.ssid || '').trim();
+        if (newSsid !== _lastEspSsid) {
+          _lastEspSsid = newSsid;
+          updateActiveBadge();
+        }
+        updateNetReason(newSsid);
+        const hasWifi = !!newSsid;
+        const serverOk = age !== null && age < 120;
+        const dataOk = age !== null && age < 30;
+        updateNetDiagnostics(hasWifi, serverOk, dataOk);
+      } catch (e) {
+        updateNetDiagnostics(null, null, null);
+      }
+    }
+
+    function updateNetReason(ssid) {
+      const el = document.getElementById('espNetReason');
+      if (!el) return;
+      if (!ssid) {
+        el.textContent = 'Desconectado';
+        el.className = 'net-banner-reason unknown';
+        return;
+      }
+      const lowerSsid = ssid.toLowerCase();
+      let matchIdx = -1;
+      for (let i = 0; i < networkProfiles.length; i++) {
+        const p = normalizeNetworkProfile(networkProfiles[i]);
+        if (p.ssid && p.ssid.trim().toLowerCase() === lowerSsid) {
+          matchIdx = i;
+          break;
+        }
+      }
+      if (matchIdx === 0) {
+        el.textContent = 'Rede primaria';
+        el.className = 'net-banner-reason primary';
+      } else if (matchIdx > 0) {
+        el.textContent = `Fallback #${matchIdx + 1}`;
+        el.className = 'net-banner-reason fallback';
+      } else {
+        el.textContent = 'Rede desconhecida';
+        el.className = 'net-banner-reason unknown';
+      }
+    }
+
+    function updateNetDiagnostics(hasWifi, serverOk, dataOk) {
+      const items = [
+        { icon: 'diagWifiIcon', label: 'diagWifiLabel', ok: hasWifi, text: ['WiFi conectado', 'WiFi desconectado'] },
+        { icon: 'diagServerIcon', label: 'diagServerLabel', ok: serverOk, text: ['Servidor alcancavel', 'Servidor inalcancavel'] },
+        { icon: 'diagDataIcon', label: 'diagDataLabel', ok: dataOk, text: ['Dados chegando', 'Sem dados recentes'] },
+      ];
+      items.forEach(item => {
+        const iconEl = document.getElementById(item.icon);
+        const labelEl = document.getElementById(item.label);
+        if (!iconEl || !labelEl) return;
+        if (item.ok === null) {
+          iconEl.className = 'net-diag-icon fail';
+          iconEl.textContent = '?';
+          labelEl.textContent = item.text[1];
+        } else if (item.ok) {
+          iconEl.className = 'net-diag-icon ok';
+          iconEl.textContent = '\u2713';
+          labelEl.textContent = item.text[0];
+        } else {
+          iconEl.className = 'net-diag-icon fail';
+          iconEl.textContent = '\u2717';
+          labelEl.textContent = item.text[1];
+        }
+      });
+    }
+
+    function initNetworkManager() {
+      const draft = loadNetworkDraftLocal();
+      if (draft && typeof draft === 'object') {
+        const hostEl = document.getElementById('netServerHostname');
+        const pathEl = document.getElementById('netApiPath');
+        const keepEl = document.getElementById('netKeepHotspot');
+
+        if (hostEl) hostEl.value = sanitizeHostInput(draft.server_hostname || '');
+        if (pathEl) pathEl.value = sanitizeApiPathInput(draft.api_path || DEFAULT_API_PATH);
+        if (keepEl) keepEl.checked = draft.keep_hotspot !== false;
+
+        const draftProfiles = Array.isArray(draft.profiles) ? draft.profiles.map(normalizeNetworkProfile).filter((p) => p.ssid || p.password) : [];
+        networkProfiles = draftProfiles.length ? draftProfiles : [{ ...DEFAULT_HOTSPOT_PROFILE }];
+      } else {
+        networkProfiles = [{ ...DEFAULT_HOTSPOT_PROFILE }];
+        const pathEl = document.getElementById('netApiPath');
+        if (pathEl) pathEl.value = DEFAULT_API_PATH;
+      }
+      renderNetworkCards();
+      setNetworkStatus('Preencha as redes e clique em "Aplicar no ESP32".');
+      fetchDeviceStatus();
+      setInterval(fetchDeviceStatus, 10000);
+    }
+
+    // --- Timer ---
+    let timerInterval, startTime, elapsedTime = 0, isRunning = false;
+
+    function startTimer() {
+      if (isRunning) return;
+      isRunning = true;
+      startTime = Date.now() - elapsedTime;
+      timerInterval = setInterval(updateTimer, 1000);
+    }
+    function stopTimer() {
+      if (!isRunning) return;
+      isRunning = false;
+      clearInterval(timerInterval);
+    }
+    function resetTimer() {
+      stopTimer();
+      elapsedTime = 0;
+      updateTimerDisplay();
+    }
+    function updateTimer() {
+      elapsedTime = Date.now() - startTime;
+      updateTimerDisplay();
+    }
+    function updateTimerDisplay() {
+      const diff = Math.floor(elapsedTime / 1000);
+      const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+      const seconds = (diff % 60).toString().padStart(2, '0');
+      const display = document.getElementById('timer');
+      display.innerText = `${minutes}:${seconds}`;
+      const targetSeconds = Math.max(60, selectedTrainMinutes * 60);
+      display.classList.toggle('exceeded', diff >= targetSeconds);
+    }
+
+    function updateTimerMetaText() {
+      const metaEl = document.getElementById('timerMetaText');
+      if (!metaEl) return;
+      const mm = String(selectedTrainMinutes).padStart(2, '0');
+      metaEl.textContent = `Meta: ${mm}:00 por rotulo`;
+    }
+
+    function selectTrainTime(minutes) {
+      selectedTrainMinutes = Math.max(1, parseInt(minutes, 10) || 8);
+      document.querySelectorAll('.train-time-btn').forEach(btn => {
+        const m = parseInt(btn.dataset.minutes, 10);
+        btn.classList.toggle('train-time-active', m === selectedTrainMinutes);
+      });
+      if (!autoInterval) {
+        selectAutoTime(selectedTrainMinutes);
+      }
+      updateTimerMetaText();
+      updateTrainingClassPreview();
+    }
+
+    // --- Helpers (session/meta/ingest) ---
+    function parseHzFromCollectionId(collectionId) {
+      const m = String(collectionId || '').match(/_([0-9]+)hz(?:\b|_)/i);
+      if (!m) return null;
+      const hz = parseInt(m[1], 10);
+      return Number.isFinite(hz) ? hz : null;
+    }
+
+    function rememberLastNonPauseMode(mode) {
+      if (!mode || mode === 'PAUSE') return;
+      lastModeBeforePause = mode;
+      try { localStorage.setItem(LAST_MODE_KEY, mode); } catch (e) { /* ignore */ }
+    }
+
+    function sanitizeLabelEnum(field, rawValue, fallback = 'UNKNOWN') {
+      const allowed = LABEL_ALLOWED[field] || [];
+      const clean = String(rawValue ?? '').trim().toUpperCase();
+      if (allowed.includes(clean)) return clean;
+      return fallback;
+    }
+
+    function modeToCmdSpeedLabel(mode) {
+      const clean = String(mode || '').trim().toUpperCase();
+      if (clean === 'LOW' || clean === 'MEDIUM' || clean === 'HIGH' || clean === 'OFF') return clean;
+      if (clean === 'PAUSE') return 'OFF';
+      return 'UNKNOWN';
+    }
+
+    function getLabelSelectValue(id, fallback = 'UNKNOWN') {
+      const el = document.getElementById(id);
+      if (!el) return fallback;
+      return String(el.value || fallback).trim().toUpperCase();
+    }
+
+    function setLabelSelectValue(id, value, fallback = 'UNKNOWN') {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const target = String(value || fallback).trim().toUpperCase();
+      const valid = Array.from(el.options || []).some(opt => opt.value === target);
+      el.value = valid ? target : fallback;
+    }
+
+    function updateLabelSourceChip(sourceRaw) {
+      const chip = document.getElementById('labelSourceChip');
+      if (!chip) return;
+      const source = sanitizeLabelEnum('label_source', sourceRaw, 'CONTROL');
+      chip.textContent = `src: ${source}`;
+    }
+
+    function updateLabelPreview() {
+      const previewEl = document.getElementById('labelPreview');
+      if (!previewEl) return;
+      const syncEnabled = document.getElementById('labelSyncMode')?.checked === true;
+      const transitionNext = document.getElementById('transitionNext')?.checked === true ? 1 : 0;
+
+      let cmdLabel = sanitizeLabelEnum('cmd_speed_label', getLabelSelectValue('cmdSpeedSelect', labelState.cmd_speed_label), labelState.cmd_speed_label);
+      if (syncEnabled) {
+        cmdLabel = modeToCmdSpeedLabel(currentMode);
+        setLabelSelectValue('cmdSpeedSelect', cmdLabel, 'UNKNOWN');
+      }
+      const rotLabel = sanitizeLabelEnum('rot_state_label', getLabelSelectValue('rotStateSelect', labelState.rot_state_label), labelState.rot_state_label);
+      const useLabel = sanitizeLabelEnum('use_state_label', getLabelSelectValue('useStateSelect', labelState.use_state_label), labelState.use_state_label);
+      const vibLabel = sanitizeLabelEnum('vib_profile_label', getLabelSelectValue('vibProfileSelect', labelState.vib_profile_label), labelState.vib_profile_label);
+      const srcLabel = sanitizeLabelEnum('label_source', labelState.label_source, 'CONTROL');
+
+      labelState = {
+        ...labelState,
+        cmd_speed_label: cmdLabel,
+        rot_state_label: rotLabel,
+        use_state_label: useLabel,
+        vib_profile_label: vibLabel,
+        label_source: srcLabel,
+      };
+
+      previewEl.textContent =
+        `Rotulo ativo: ${cmdLabel} | ${rotLabel} | ${useLabel} | ${vibLabel} | ` +
+        `source=${srcLabel} | sync=${syncEnabled ? 'ON' : 'OFF'} | next_transition=${transitionNext}`;
+    }
+
+    function syncLabelStateFromPayload(payload, options = {}) {
+      const forceSync = options.force === true;
+      if (labelsDirty && !forceSync) {
+        updateLabelPreview();
+        return;
+      }
+      const src = payload && typeof payload === 'object' ? payload : {};
+      const modeRef = options.mode || src.mode || currentMode;
+
+      labelState = {
+        ...labelState,
+        cmd_speed_label: sanitizeLabelEnum('cmd_speed_label', src.cmd_speed_label ?? labelState.cmd_speed_label, labelState.cmd_speed_label),
+        rot_state_label: sanitizeLabelEnum('rot_state_label', src.rot_state_label ?? labelState.rot_state_label, labelState.rot_state_label),
+        use_state_label: sanitizeLabelEnum('use_state_label', src.use_state_label ?? labelState.use_state_label, labelState.use_state_label),
+        vib_profile_label: sanitizeLabelEnum('vib_profile_label', src.vib_profile_label ?? labelState.vib_profile_label, labelState.vib_profile_label),
+        label_source: sanitizeLabelEnum('label_source', src.label_source ?? labelState.label_source, labelState.label_source),
+        transition_marker: Number(src.transition_marker ?? labelState.transition_marker) ? 1 : 0,
+      };
+
+      const syncEnabled = document.getElementById('labelSyncMode')?.checked === true;
+      if (syncEnabled) {
+        labelState.cmd_speed_label = modeToCmdSpeedLabel(modeRef);
+      }
+
+      setLabelSelectValue('cmdSpeedSelect', labelState.cmd_speed_label, 'UNKNOWN');
+      setLabelSelectValue('rotStateSelect', labelState.rot_state_label, 'UNKNOWN');
+      setLabelSelectValue('useStateSelect', labelState.use_state_label, 'UNKNOWN');
+      setLabelSelectValue('vibProfileSelect', labelState.vib_profile_label, 'UNKNOWN');
+      updateLabelSourceChip(labelState.label_source);
+      labelsDirty = false;
+      updateLabelPreview();
+    }
+
+    function collectLabelPayload(modeForCommand = null, options = {}) {
+      const syncEnabled = options.forceSync === true || (document.getElementById('labelSyncMode')?.checked === true);
+      const modeRef = modeForCommand || currentMode;
+
+      let cmd = sanitizeLabelEnum('cmd_speed_label', getLabelSelectValue('cmdSpeedSelect', labelState.cmd_speed_label), labelState.cmd_speed_label);
+      if (syncEnabled) {
+        cmd = modeToCmdSpeedLabel(modeRef);
+        setLabelSelectValue('cmdSpeedSelect', cmd, 'UNKNOWN');
+      }
+      const rot = sanitizeLabelEnum('rot_state_label', getLabelSelectValue('rotStateSelect', labelState.rot_state_label), labelState.rot_state_label);
+      const use = sanitizeLabelEnum('use_state_label', getLabelSelectValue('useStateSelect', labelState.use_state_label), labelState.use_state_label);
+      const vib = sanitizeLabelEnum('vib_profile_label', getLabelSelectValue('vibProfileSelect', labelState.vib_profile_label), labelState.vib_profile_label);
+      const source = sanitizeLabelEnum('label_source', options.labelSource || labelState.label_source || 'CONTROL', 'CONTROL');
+
+      const transitionEl = document.getElementById('transitionNext');
+      let transitionMarker;
+      if (options.transitionMarker === 0 || options.transitionMarker === 1 || options.transitionMarker === true || options.transitionMarker === false) {
+        transitionMarker = Number(options.transitionMarker) ? 1 : 0;
+      } else {
+        transitionMarker = transitionEl && transitionEl.checked ? 1 : 0;
+      }
+      if (transitionEl && transitionMarker === 1 && options.consumeTransition !== false) {
+        transitionEl.checked = false;
+      }
+
+      const payload = {
+        cmd_speed_label: cmd,
+        rot_state_label: rot,
+        use_state_label: use,
+        vib_profile_label: vib,
+        label_source: source,
+        transition_marker: transitionMarker,
+      };
+      labelState = { ...labelState, ...payload };
+      updateLabelSourceChip(source);
+      updateLabelPreview();
+      return payload;
+    }
+
+    function onLabelFieldChange() {
+      labelsDirty = true;
+      activeTrainingClassKey = null;
+      updateLabelPreview();
+      updateTrainingClassPreview();
+    }
+
+    function onLabelSyncToggle() {
+      labelsDirty = true;
+      activeTrainingClassKey = null;
+      if (document.getElementById('labelSyncMode')?.checked === true) {
+        const mapped = modeToCmdSpeedLabel(currentMode);
+        setLabelSelectValue('cmdSpeedSelect', mapped, 'UNKNOWN');
+      }
+      updateLabelPreview();
+      updateTrainingClassPreview();
+    }
+
+    function applyLabelPreset(presetKey) {
+      const presets = {
+        RUN_NATURAL: {
+          cmd_speed_label: modeToCmdSpeedLabel(currentMode),
+          rot_state_label: 'ROTATING',
+          use_state_label: 'IN_USE',
+          vib_profile_label: 'NATURAL',
+          sync_mode: true,
+        },
+        RUN_NO_LOAD: {
+          cmd_speed_label: modeToCmdSpeedLabel(currentMode),
+          rot_state_label: 'ROTATING',
+          use_state_label: 'NO_LOAD',
+          vib_profile_label: 'NATURAL',
+          sync_mode: true,
+        },
+        STOPPED_OFF: {
+          cmd_speed_label: 'OFF',
+          rot_state_label: 'STOPPED',
+          use_state_label: 'NO_LOAD',
+          vib_profile_label: 'NATURAL',
+          sync_mode: false,
+        },
+        RUN_ABNORMAL: {
+          cmd_speed_label: modeToCmdSpeedLabel(currentMode),
+          rot_state_label: 'ROTATING',
+          use_state_label: 'IN_USE',
+          vib_profile_label: 'ABNORMAL',
+          sync_mode: true,
+        },
+      };
+      const preset = presets[presetKey];
+      if (!preset) return;
+
+      const syncEl = document.getElementById('labelSyncMode');
+      if (syncEl) syncEl.checked = preset.sync_mode !== false;
+
+      setLabelSelectValue('cmdSpeedSelect', preset.cmd_speed_label, 'UNKNOWN');
+      setLabelSelectValue('rotStateSelect', preset.rot_state_label, 'UNKNOWN');
+      setLabelSelectValue('useStateSelect', preset.use_state_label, 'UNKNOWN');
+      setLabelSelectValue('vibProfileSelect', preset.vib_profile_label, 'UNKNOWN');
+      labelState.label_source = 'MANUAL';
+      labelsDirty = true;
+      activeTrainingClassKey = null;
+      updateLabelSourceChip(labelState.label_source);
+      updateLabelPreview();
+      updateTrainingClassPreview();
+    }
+
+    async function applyLabelConfig() {
+      try {
+        const payload = collectLabelPayload(currentMode, {
+          forceSync: false,
+          labelSource: 'MANUAL',
+          consumeTransition: true,
+        });
+        activeTrainingClassKey = null;
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload(payload))
+        });
+        const data = await res.json();
+        if (data.mode) {
+          currentMode = data.mode;
+          updateModeBadge(currentMode);
+        }
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        }
+        if (data.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+        }
+        updateCollectionMeta(data);
+        syncLabelStateFromPayload(data, { mode: data.mode ?? currentMode, force: true });
+        updateTrainingClassPreview();
+      } catch (e) {
+        alert('Erro ao aplicar rotulos');
+      }
+    }
+
+    function updateTrainingClassPreview() {
+      const el = document.getElementById('trainClassPreview');
+      if (!el) return;
+      const preset = activeTrainingClassKey ? TRAINING_CLASS_PRESETS[activeTrainingClassKey] : null;
+      const title = preset?.title || '--';
+      el.textContent = `Classe ativa: ${title} | tempo=${selectedTrainMinutes} min`;
+    }
+
+    function setTrainingPresetIntoSelectors(preset) {
+      if (!preset) return;
+      const syncEl = document.getElementById('labelSyncMode');
+      if (syncEl) syncEl.checked = false;
+
+      setLabelSelectValue('cmdSpeedSelect', preset.cmd_speed_label, 'UNKNOWN');
+      setLabelSelectValue('rotStateSelect', preset.rot_state_label, 'UNKNOWN');
+      setLabelSelectValue('useStateSelect', preset.use_state_label, 'UNKNOWN');
+      setLabelSelectValue('vibProfileSelect', preset.vib_profile_label, 'UNKNOWN');
+      labelState.label_source = 'MANUAL';
+      labelsDirty = true;
+      updateLabelSourceChip(labelState.label_source);
+      updateLabelPreview();
+    }
+
+    async function applyTrainingClassPreset(presetKey) {
+      const preset = TRAINING_CLASS_PRESETS[presetKey];
+      if (!preset) return;
+
+      activeTrainingClassKey = presetKey;
+      setTrainingPresetIntoSelectors(preset);
+      updateTrainingClassPreview();
+
+      const autoTimer = document.getElementById('trainAutoTimer')?.checked === true;
+      await setMode(preset.mode, { labelSource: 'MANUAL' });
+
+      if (!autoTimer) {
+        stopTimer();
+      } else if (preset.mode === 'PAUSE' || preset.mode === 'RAW') {
+        resetTimer();
+        startTimer();
+      }
+    }
+
+    async function applyPauseRotatingControl() {
+      const pauseRotPreset = {
+        cmd_speed_label: 'OFF',
+        rot_state_label: 'ROTATING',
+        use_state_label: 'IN_USE',
+        vib_profile_label: 'NATURAL',
+      };
+      activeTrainingClassKey = null;
+      setTrainingPresetIntoSelectors(pauseRotPreset);
+      updateTrainingClassPreview();
+      await setMode('PAUSE', { labelSource: 'MANUAL' });
+    }
+
+    function updateIngestUI() {
+      const badge = document.getElementById('ingestBadge');
+      if (badge) {
+        badge.textContent = ingestEnabled ? 'DB: ON' : 'DB: OFF';
+        badge.className = 'ingest-badge ' + (ingestEnabled ? 'ingest-on' : 'ingest-off');
+      }
+      const pauseBtn = document.getElementById('btnIngestPause');
+      const resumeBtn = document.getElementById('btnIngestResume');
+      if (pauseBtn) pauseBtn.disabled = !ingestEnabled;
+      if (resumeBtn) resumeBtn.disabled = ingestEnabled;
+      const note = document.getElementById('ingestNote');
+      if (note) note.style.display = ingestEnabled ? 'none' : 'block';
+    }
+
+    function updateLastDbInfo() {
+      const el = document.getElementById('lastDbInfo');
+      if (!el) return;
+      if (!lastDbRecord || !Number.isFinite(lastDbRecord.ts)) {
+        el.innerText = 'Ultimo no DB: --';
+        return;
+      }
+      const ageS = (Date.now() / 1000) - lastDbRecord.ts;
+      const sr = lastDbRecord.sample_rate != null ? parseFloat(lastDbRecord.sample_rate) : null;
+      const srStr = Number.isFinite(sr) ? (Number.isInteger(sr) ? `${sr} Hz` : `${sr.toFixed(2)} Hz`) : '--';
+      const col = (lastDbRecord.collection_id || '--');
+      const pausedNote = ingestEnabled ? '' : ' | (PAUSADO)';
+      el.innerText = `Ultimo no DB: col=${col} | sr=${srStr} | ${ageS.toFixed(1)}s atras${pausedNote}`;
+    }
+
+    function formatRuntimeHz(hz) {
+      if (!Number.isFinite(hz)) return '--';
+      return Number.isInteger(hz) ? `${hz}Hz` : `${hz.toFixed(2)}Hz`;
+    }
+
+    function formatRuntimeAgeSeconds(ageRaw) {
+      const age = Number(ageRaw);
+      if (!Number.isFinite(age)) return '--';
+      return `${Math.max(0, Math.round(age))}s`;
+    }
+
+    function rtEsc(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function runtimePill(label, value, tone = '', extraClass = '') {
+      const cls = ['runtime-pill', tone || '', extraClass || ''].filter(Boolean).join(' ');
+      return `<span class="${cls}"><strong>${rtEsc(label)}</strong>: ${rtEsc(value)}</span>`;
+    }
+
+    function runtimeToneFromFreshness(freshnessRaw) {
+      const freshness = String(freshnessRaw || 'no_data').toLowerCase();
+      if (freshness === 'live') return 'good';
+      if (freshness === 'delay') return 'warn';
+      return 'bad';
+    }
+
+    function normalizeRuntimeStateClass(freshnessRaw) {
+      const freshness = String(freshnessRaw || 'no_data').toLowerCase();
+      return RUNTIME_STATE_CLASSES.includes(freshness) ? freshness : 'no_data';
+    }
+
+    function applyRuntimePanelRender(el, stateClass, html) {
+      const nextState = normalizeRuntimeStateClass(stateClass);
+      if (runtimeControlRenderState !== nextState) {
+        el.classList.remove(...RUNTIME_STATE_CLASSES);
+        el.classList.add(nextState);
+        runtimeControlRenderState = nextState;
+      }
+      if (runtimeControlRenderHtml !== html) {
+        el.innerHTML = html;
+        runtimeControlRenderHtml = html;
+      }
+    }
+
+    function runtimeShortEndpoint(endpointRaw) {
+      const raw = String(endpointRaw || '').trim();
+      if (!raw || raw === '--') return '--';
+      try {
+        const parsed = new URL(raw, window.location.href);
+        const compact = `${parsed.host}${parsed.pathname}`;
+        return compact.length > 46 ? `${compact.slice(0, 46)}...` : compact;
+      } catch (e) {
+        return raw.length > 46 ? `${raw.slice(0, 46)}...` : raw;
+      }
+    }
+
+    function runtimeLabelCombo(source) {
+      const src = source && typeof source === 'object' ? source : {};
+      const cmd = sanitizeLabelEnum('cmd_speed_label', src.cmd_speed_label ?? '--', '--');
+      const rot = sanitizeLabelEnum('rot_state_label', src.rot_state_label ?? '--', '--');
+      const use = sanitizeLabelEnum('use_state_label', src.use_state_label ?? '--', '--');
+      const vib = sanitizeLabelEnum('vib_profile_label', src.vib_profile_label ?? '--', '--');
+      return `${cmd}/${rot}/${use}/${vib}`;
+    }
+
+    function runtimeNetworkParts(deviceStatus) {
+      const status = deviceStatus && typeof deviceStatus === 'object' ? deviceStatus : {};
+      const link = status.connected === true ? 'UP' : (status.connected === false ? 'DOWN' : '--');
+      const ssid = String(status.ssid || '--');
+      const ip = String(status.ip || '--');
+      const rssiNum = Number(status.rssi);
+      const rssi = Number.isFinite(rssiNum) ? `${Math.round(rssiNum)}dBm` : '--';
+      const ageNum = Number(status.age_s);
+      const age = formatRuntimeAgeSeconds(ageNum);
+      const netFail = Number.isFinite(Number(status.network_fail_streak)) ? Number(status.network_fail_streak) : 0;
+      const sendFail = Number.isFinite(Number(status.send_fail_streak)) ? Number(status.send_fail_streak) : 0;
+      const flashQueue = Number.isFinite(Number(status.flash_queue_len)) ? Number(status.flash_queue_len) : 0;
+      const buf = Number.isFinite(Number(status.buffer_len)) ? Number(status.buffer_len) : 0;
+      const pend = Number.isFinite(Number(status.samples_pending)) ? Number(status.samples_pending) : 0;
+      const dropped = Number.isFinite(Number(status.dropped_samples)) ? Number(status.dropped_samples) : 0;
+      const lastErr = String(status.last_send_error || '--');
+      const endpoint = runtimeShortEndpoint(status.last_endpoint || '--');
+      const learned = String(status.learned_server_ip || '--');
+      return { link, ssid, ip, rssi, age, netFail, sendFail, flashQueue, buf, pend, dropped, lastErr, endpoint, learned };
+    }
+
+    function updateRuntimeInfoControl(runtime, deviceStatus = null) {
+      const el = document.getElementById('runtimeInfoControl');
+      if (!el) return;
+
+      if (deviceStatus && typeof deviceStatus === 'object') {
+        lastDeviceStatus = deviceStatus;
+      } else if (lastDeviceStatus) {
+        deviceStatus = lastDeviceStatus;
+      }
+
+      const net = runtimeNetworkParts(deviceStatus);
+
+      if (!runtime || typeof runtime !== 'object') {
+        const html = `
+          <div class="runtime-row runtime-row-main">
+            ${runtimePill('Runtime', '--', 'bad')}
+            ${runtimePill('NET', net.link, net.link === 'UP' ? 'good' : (net.link === 'DOWN' ? 'bad' : 'warn'))}
+            ${runtimePill('DB', ingestEnabled ? 'ON' : 'OFF', ingestEnabled ? 'good' : 'warn')}
+          </div>
+          <div class="runtime-row runtime-row-network">
+            ${runtimePill('SSID', net.ssid, 'info')}
+            ${runtimePill('IP', net.ip, 'info')}
+            ${runtimePill('RSSI', net.rssi, 'info')}
+            ${runtimePill('Endpoint', net.endpoint, 'warn', 'wide')}
+            ${runtimePill('Erro', net.lastErr, net.lastErr === 'ok' ? 'good' : 'warn', 'wide')}
+          </div>
+        `;
+        applyRuntimePanelRender(el, 'no_data', html);
+        return;
+      }
+
+      const activeDeviceId = normalizeDeviceId(runtime.active_device_id || DEVICE_ID || '');
+      const activeDevice = activeDeviceId ? `${getDeviceLabel(activeDeviceId)} [${activeDeviceId}]` : '--';
+      const cfg = runtime.configured || {};
+      const latest = runtime.latest || {};
+      const cfgHz = formatRuntimeHz(Number(cfg.sample_rate_hz));
+      const dbHz = formatRuntimeHz(Number(latest.sample_rate_hz));
+      const mode = String(cfg.mode || '--');
+      const col = String(latest.collection_id || cfg.collection_id || '--');
+      const cfgLabels = runtimeLabelCombo(cfg);
+      const dbLabels = runtimeLabelCombo(latest);
+      const age = formatRuntimeAgeSeconds(latest.age_s);
+      const freshness = normalizeRuntimeStateClass(latest.freshness || 'no_data');
+      const dbState = cfg.ingest_enabled === false ? 'DB:OFF' : 'DB:ON';
+      const queueWarn = net.flashQueue > 0 || net.pend > 0 || net.dropped > 0;
+      const netErrWarn = net.netFail > 0 || net.sendFail > 0;
+
+      const networkPills = [
+        runtimePill('SSID', net.ssid, 'info'),
+        runtimePill('IP', net.ip, 'info'),
+        runtimePill('RSSI', net.rssi, 'info'),
+        runtimePill('NET Age', net.age, 'info'),
+        runtimePill('Erros', `net:${net.netFail}/tx:${net.sendFail}`, netErrWarn ? 'warn' : 'good'),
+        runtimePill('Fila', `FQ:${net.flashQueue} BUF:${net.buf} P:${net.pend} D:${net.dropped}`, queueWarn ? 'warn' : 'good'),
+      ];
+      if (net.learned !== '--') {
+        networkPills.push(runtimePill('Learned', net.learned, 'good'));
+      }
+      networkPills.push(runtimePill('Endpoint', net.endpoint, 'warn', 'wide'));
+      networkPills.push(runtimePill('Erro', net.lastErr, net.lastErr === 'ok' ? 'good' : 'warn', 'wide'));
+
+      const html = `
+        <div class="runtime-row runtime-row-main">
+          ${runtimePill('Device', activeDevice, 'info', 'wide')}
+          ${runtimePill('Age', `${age} (${freshness.toUpperCase()})`, runtimeToneFromFreshness(freshness))}
+          ${runtimePill('NET', net.link, net.link === 'UP' ? 'good' : (net.link === 'DOWN' ? 'bad' : 'warn'))}
+          ${runtimePill('DB', dbState, dbState === 'DB:ON' ? 'good' : 'warn')}
+        </div>
+        <div class="runtime-row runtime-row-config">
+          ${runtimePill('Cfg', cfgHz, 'info')}
+          ${runtimePill('Mode', mode, mode === 'PAUSE' ? 'warn' : 'info')}
+          ${runtimePill('DB Rate', dbHz, 'info')}
+          ${runtimePill('LblCfg', cfgLabels, 'info', 'wide')}
+          ${runtimePill('LblDB', dbLabels, 'info', 'wide')}
+          ${runtimePill('Sessao', col, 'info', 'wide')}
+        </div>
+        <div class="runtime-row runtime-row-network">
+          ${networkPills.join('')}
+        </div>
+      `;
+      applyRuntimePanelRender(el, freshness, html);
+    }
+
+    function updateCollectionMeta(state) {
+      const cid = String(state?.collection_id || '').trim();
+      const rate = state?.sample_rate != null ? parseInt(state.sample_rate, 10) : null;
+      const cidHz = parseHzFromCollectionId(cid);
+
+      const cidEl = document.getElementById('currentCollectionId');
+      if (cidEl && cid) cidEl.innerText = cid;
+
+      const hzTag = document.getElementById('collectionHzTag');
+      if (hzTag) {
+        if (cidHz != null) {
+          hzTag.textContent = `nome: ${cidHz} Hz`;
+          hzTag.style.display = 'inline-flex';
+          hzTag.className = 'meta-chip' + ((cidHz != null && rate != null && cidHz !== rate) ? ' warn' : '');
+        } else {
+          hzTag.textContent = '';
+          hzTag.style.display = 'none';
+          hzTag.className = 'meta-chip';
+        }
+      }
+
+      const cfgEl = document.getElementById('collectionConfigInfo');
+      if (cfgEl) {
+        const parts = [];
+        if (rate != null && !Number.isNaN(rate)) parts.push(`config: ${rate} Hz`);
+        parts.push(ingestEnabled ? 'ingest: on' : 'ingest: off');
+        cfgEl.textContent = parts.join(' | ');
+      }
+
+      const warnBox = document.getElementById('collectionWarningBox');
+      const warnText = document.getElementById('collectionWarningText');
+      const fixBtn = document.getElementById('btnFixCollection');
+      const warningRaw = state?.collection_id_warning || null;
+      const mismatch = !!warningRaw || (cidHz != null && rate != null && cidHz !== rate);
+      if (warnBox && warnText && fixBtn) {
+        if (mismatch) {
+          const cidHzStr = (cidHz != null) ? `${cidHz} Hz` : 'desconhecida';
+          const rateStr = (rate != null && !Number.isNaN(rate)) ? `${rate} Hz` : '--';
+          warnText.innerHTML =
+            `<strong>Alerta</strong>: o nome da sessao indica <strong>${cidHzStr}</strong>, ` +
+            `mas a taxa configurada esta em <strong>${rateStr}</strong>. ` +
+            `Recomendado criar uma nova sessao para evitar mistura de taxas.`;
+          fixBtn.textContent = (rate != null && !Number.isNaN(rate)) ? `Nova sessao (${rate}Hz)` : 'Nova sessao';
+          warnBox.style.display = 'flex';
+        } else {
+          warnBox.style.display = 'none';
+          warnText.textContent = '';
+        }
+      }
+    }
+
+    // --- Mode ---
+    async function syncControlState() {
+      try {
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), { headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` } });
+        const data = await res.json();
+        if (data.mode) { currentMode = data.mode; updateModeBadge(currentMode); }
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        }
+        if (data.sample_rate != null) {
+          const hz = parseInt(data.sample_rate, 10);
+          if (!Number.isNaN(hz)) {
+            document.getElementById('hzSlider').value = hz;
+            updateHzDisplay(hz);
+          }
+        }
+        if (data.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+        }
+        updateCollectionMeta(data);
+        syncNetworkManagerFromState(data);
+        syncLabelStateFromPayload(data, { mode: data.mode ?? currentMode });
+
+        const syntheticRuntime = {
+          active_device_id: DEVICE_ID || (lastRuntime?.active_device_id || null),
+          configured: {
+            mode: data.mode ?? currentMode,
+            sample_rate_hz: data.sample_rate != null ? Number(data.sample_rate) : Number(document.getElementById('hzSlider')?.value),
+            collection_id: data.collection_id ?? document.getElementById('currentCollectionId')?.innerText ?? null,
+            ingest_enabled: typeof data.ingest_enabled === 'boolean' ? data.ingest_enabled : ingestEnabled,
+            cmd_speed_label: data.cmd_speed_label ?? labelState.cmd_speed_label ?? null,
+            rot_state_label: data.rot_state_label ?? labelState.rot_state_label ?? null,
+            use_state_label: data.use_state_label ?? labelState.use_state_label ?? null,
+            vib_profile_label: data.vib_profile_label ?? labelState.vib_profile_label ?? null,
+            label_source: data.label_source ?? labelState.label_source ?? null,
+            transition_marker: data.transition_marker != null ? Number(data.transition_marker) : (labelState.transition_marker ?? 0),
+          },
+          latest: {
+            sample_rate_hz: lastDbRecord?.sample_rate != null ? Number(lastDbRecord.sample_rate) : null,
+            collection_id: lastDbRecord?.collection_id ?? null,
+            cmd_speed_label: lastDbRecord?.cmd_speed_label ?? null,
+            rot_state_label: lastDbRecord?.rot_state_label ?? null,
+            use_state_label: lastDbRecord?.use_state_label ?? null,
+            vib_profile_label: lastDbRecord?.vib_profile_label ?? null,
+            label_source: lastDbRecord?.label_source ?? null,
+            transition_marker: lastDbRecord?.transition_marker ?? 0,
+            age_s: Number.isFinite(lastDbRecord?.ts) ? ((Date.now() / 1000) - lastDbRecord.ts) : null,
+            freshness: Number.isFinite(lastDbRecord?.ts)
+              ? (((Date.now() / 1000) - lastDbRecord.ts) <= 3 ? 'live' : (((Date.now() / 1000) - lastDbRecord.ts) <= 10 ? 'delay' : 'stale'))
+              : 'no_data',
+          },
+        };
+        lastRuntime = syntheticRuntime;
+        updateRuntimeInfoControl(syntheticRuntime);
+      } catch (e) { /* silent */ }
+    }
+
+    async function setMode(mode, labelOptions = null) {
+      updateModeBadge('...');
+      if (mode === 'RAW' || mode === 'PAUSE') { stopTimer(); }
+      else { resetTimer(); startTimer(); }
+
+      try {
+        const labelPayload = collectLabelPayload(mode, {
+          labelSource: labelOptions?.labelSource || 'CONTROL',
+          transitionMarker: labelOptions?.transitionMarker,
+          consumeTransition: labelOptions?.consumeTransition !== false,
+        });
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ mode, ...labelPayload }))
+        });
+        const data = await res.json();
+        currentMode = data.mode || mode;
+        updateModeBadge(currentMode);
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        }
+        updateCollectionMeta(data);
+        syncLabelStateFromPayload(data, { mode: currentMode, force: true });
+        rememberLastNonPauseMode(currentMode);
+        if (data.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+          controlChannel.postMessage({ type: 'COLLECTION_CHANGE', collection_id: data.collection_id });
+        }
+        controlChannel.postMessage({ type: 'MODE_CHANGE', newMode: currentMode });
+      } catch (e) {
+        alert('Erro ao comunicar com servidor');
+        updateModeBadge('ERRO');
+      }
+    }
+
+    function updateModeBadge(mode) {
+      const badge = document.getElementById('currentModeBadge');
+      badge.textContent = mode;
+      badge.className = 'mode-badge mode-' + mode;
+    }
+
+    // --- Hz ---
+    function updateHzDisplay(val) {
+      document.getElementById('hzDisplay').innerText = val + " Hz";
+      document.getElementById('hzExpected').innerText = parseFloat(val).toFixed(2) + " Hz";
+    }
+
+    async function setSampleRate(hz) {
+      try {
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ sample_rate: parseInt(hz, 10) }))
+        });
+        const data = await res.json();
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        }
+        updateCollectionMeta(data);
+        if (data?.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+          controlChannel.postMessage({ type: 'COLLECTION_CHANGE', collection_id: data.collection_id });
+        }
+        resetValidation();
+      } catch (e) { alert('Erro ao ajustar taxa'); }
+    }
+
+    // --- Collection ---
+    async function newCollection() {
+      const desc = prompt('Descricao opcional da coleta (ou deixe vazio):', '');
+
+      try {
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ new_collection: true }))
+        });
+        const data = await res.json();
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        }
+        let collectionId = data.collection_id || 'v5_stream';
+
+        // Adicionar descricao se fornecida
+        if (desc && desc.trim()) {
+          collectionId = `${collectionId}_${desc.replace(/\s+/g, '_').substring(0, 40)}`;
+          await fetch(buildApiUrl(CONTROL_API_BASE), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+            body: JSON.stringify(withDevicePayload({ collection_id: collectionId }))
+          });
+        }
+
+        document.getElementById('currentCollectionId').innerText = collectionId;
+        updateCollectionMeta({ ...data, collection_id: collectionId });
+        controlChannel.postMessage({ type: 'COLLECTION_CHANGE', collection_id: collectionId });
+        resetValidation();
+      } catch (e) { alert('Erro ao definir nova coleta'); }
+    }
+
+    async function resetDatabase() {
+      if (!confirm("Tem certeza? Isso apagara TODOS os dados!")) return;
+      try {
+        const res = await fetch(buildApiUrl('../api/reset_db'), { method: 'POST', headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` } });
+        const data = await res.json();
+        alert(data.message);
+        resetValidation();
+      } catch (e) { alert('Erro ao resetar banco'); }
+    }
+
+    async function fixCollectionForRate() {
+      try {
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ new_collection: true }))
+        });
+        const data = await res.json();
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        }
+        if (data.sample_rate != null) {
+          const hz = parseInt(data.sample_rate, 10);
+          if (!Number.isNaN(hz)) {
+            document.getElementById('hzSlider').value = hz;
+            updateHzDisplay(hz);
+          }
+        }
+        if (data.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+          controlChannel.postMessage({ type: 'COLLECTION_CHANGE', collection_id: data.collection_id });
+        }
+        updateCollectionMeta(data);
+        resetValidation();
+      } catch (e) {
+        alert('Erro ao criar nova sessao');
+      }
+    }
+
+    async function pauseIngest() {
+      rememberLastNonPauseMode(currentMode);
+      stopTimer();
+      resetValidation();
+      updateModeBadge('...');
+
+      try {
+        const labelPayload = collectLabelPayload('PAUSE', {
+          labelSource: 'CONTROL',
+          transitionMarker: 0,
+          consumeTransition: true,
+        });
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ ingest_enabled: false, mode: 'PAUSE', ...labelPayload }))
+        });
+        const data = await res.json();
+        currentMode = data.mode || 'PAUSE';
+        updateModeBadge(currentMode);
+
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        } else {
+          ingestEnabled = false;
+          updateIngestUI();
+        }
+
+        if (data.sample_rate != null) {
+          const hz = parseInt(data.sample_rate, 10);
+          if (!Number.isNaN(hz)) {
+            document.getElementById('hzSlider').value = hz;
+            updateHzDisplay(hz);
+          }
+        }
+        if (data.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+          controlChannel.postMessage({ type: 'COLLECTION_CHANGE', collection_id: data.collection_id });
+        }
+        updateCollectionMeta(data);
+        syncLabelStateFromPayload(data, { mode: currentMode, force: true });
+
+        controlChannel.postMessage({ type: 'MODE_CHANGE', newMode: currentMode });
+        controlChannel.postMessage({ type: 'INGEST_CHANGE', ingest_enabled: ingestEnabled });
+      } catch (e) {
+        alert('Erro ao pausar gravacao');
+        updateModeBadge('ERRO');
+      }
+    }
+
+    async function resumeIngest() {
+      let modeToRestore = (lastModeBeforePause || localStorage.getItem(LAST_MODE_KEY) || 'RAW');
+      modeToRestore = String(modeToRestore || 'RAW').trim().toUpperCase();
+      const allowed = new Set(['RAW', 'LOW', 'MEDIUM', 'HIGH']);
+      if (!allowed.has(modeToRestore)) modeToRestore = 'RAW';
+
+      updateModeBadge('...');
+      if (modeToRestore === 'RAW' || modeToRestore === 'PAUSE') { stopTimer(); }
+      else { resetTimer(); startTimer(); }
+
+      try {
+        const labelPayload = collectLabelPayload(modeToRestore, {
+          labelSource: 'CONTROL',
+          transitionMarker: 0,
+          consumeTransition: true,
+        });
+        const res = await fetch(buildApiUrl(CONTROL_API_BASE), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ ingest_enabled: true, mode: modeToRestore, ...labelPayload }))
+        });
+        const data = await res.json();
+        currentMode = data.mode || modeToRestore;
+        updateModeBadge(currentMode);
+        rememberLastNonPauseMode(currentMode);
+
+        if (typeof data.ingest_enabled === 'boolean') {
+          ingestEnabled = data.ingest_enabled;
+          updateIngestUI();
+        } else {
+          ingestEnabled = true;
+          updateIngestUI();
+        }
+
+        if (data.sample_rate != null) {
+          const hz = parseInt(data.sample_rate, 10);
+          if (!Number.isNaN(hz)) {
+            document.getElementById('hzSlider').value = hz;
+            updateHzDisplay(hz);
+          }
+        }
+        if (data.collection_id) {
+          document.getElementById('currentCollectionId').innerText = data.collection_id;
+          controlChannel.postMessage({ type: 'COLLECTION_CHANGE', collection_id: data.collection_id });
+        }
+        updateCollectionMeta(data);
+        syncLabelStateFromPayload(data, { mode: currentMode, force: true });
+
+        controlChannel.postMessage({ type: 'MODE_CHANGE', newMode: currentMode });
+        controlChannel.postMessage({ type: 'INGEST_CHANGE', ingest_enabled: ingestEnabled });
+      } catch (e) {
+        alert('Erro ao retomar gravacao');
+        updateModeBadge('ERRO');
+      }
+    }
+
+    // --- Validation ---
+    function startValidation() {
+      validationStartTime = Date.now();
+      resetValidationUI();
+    }
+
+    function resetValidation() {
+      validationStartTime = null;
+      lastSampleTimestamp = null;
+      resetValidationUI();
+    }
+
+    function resetValidationUI() {
+      document.getElementById('hzReal').innerText = '-- Hz';
+      document.getElementById('hzReal').className = 'rate-block-value';
+      document.getElementById('hzEfficiency').innerText = '--%';
+      document.getElementById('hzEfficiency').className = 'rate-efficiency';
+      document.getElementById('hzTotalSamples').innerText = '0';
+      document.getElementById('hzIntervalMean').innerText = '-- ms';
+      document.getElementById('hzIntervalMin').innerText = '-- ms';
+      document.getElementById('hzIntervalMax').innerText = '-- ms';
+      document.getElementById('hzCV').innerText = '--%';
+      document.getElementById('hzStatus').innerText = '--';
+      document.getElementById('hzStatus').className = 'hz-stat-value';
+      document.getElementById('obsTimeDisplay').innerText = '00:00 / 02:00';
+      document.getElementById('obsProgressFill').style.width = '0%';
+      document.getElementById('obsProgressFill').className = 'obs-progress-fill';
+      document.getElementById('obsHint').innerText = 'Aguarde pelo menos 2 minutos para validacao estatistica confiavel';
+      updateHeartbeat(null);
+    }
+
+    function updateHeartbeat(lastSeenS) {
+      const dot = document.getElementById('heartbeatDot');
+      const text = document.getElementById('heartbeatText');
+      if (lastSeenS === 'paused') {
+        dot.className = 'heartbeat-dot stale';
+        text.innerText = 'Pausado';
+        return;
+      }
+      if (lastSeenS === null) {
+        dot.className = 'heartbeat-dot dead';
+        text.innerText = 'Aguardando...';
+      } else if (lastSeenS < 3) {
+        dot.className = 'heartbeat-dot';
+        text.innerText = `${lastSeenS.toFixed(1)}s atras`;
+      } else if (lastSeenS < 10) {
+        dot.className = 'heartbeat-dot stale';
+        text.innerText = `${lastSeenS.toFixed(1)}s atras`;
+      } else {
+        dot.className = 'heartbeat-dot dead';
+        text.innerText = `${lastSeenS.toFixed(0)}s atras`;
+      }
+    }
+
+    async function updateHzMonitor() {
+      try {
+        if (!ingestEnabled) {
+          updateHeartbeat('paused');
+          document.getElementById('hzReal').innerText = '-- Hz';
+          document.getElementById('hzReal').className = 'rate-block-value';
+          document.getElementById('hzEfficiency').innerText = '--%';
+          document.getElementById('hzEfficiency').className = 'rate-efficiency';
+          document.getElementById('hzStatus').innerText = 'PAUSADO';
+          document.getElementById('hzStatus').className = 'hz-stat-value hz-warn';
+          document.getElementById('obsHint').innerText = 'Gravacao no DB esta pausada. Retome para validar taxa.';
+          updateLastDbInfo();
+          const pausedRuntime = {
+            active_device_id: DEVICE_ID || (lastRuntime?.active_device_id || null),
+            configured: {
+              mode: currentMode,
+              sample_rate_hz: Number(document.getElementById('hzSlider')?.value),
+              collection_id: document.getElementById('currentCollectionId')?.innerText ?? null,
+              ingest_enabled: false,
+            },
+            latest: lastRuntime?.latest || {},
+          };
+          updateRuntimeInfoControl(pausedRuntime);
+          return;
+        }
+
+        const expectedHz = parseFloat(document.getElementById('hzSlider').value);
+        const expectedIntervalMs = 1000 / expectedHz;
+
+        // Busca ultimos 60s de dados SEM filtro de collection_id para validacao
+        const params = new URLSearchParams({ mode: 'history', seconds: '60' });
+        if (DEVICE_ID) params.set('device_id', DEVICE_ID);
+
+        const res = await fetch(`${DATA_API_BASE}?${params.toString()}`);
+        const json = await res.json();
+        const items = Array.isArray(json) ? json : (json.data || []);
+        if (json && json.device_status && typeof json.device_status === 'object') {
+          lastDeviceStatus = json.device_status;
+        }
+        if (json && json.runtime) {
+          lastRuntime = json.runtime;
+          if (json.runtime.active_device_id) setActiveDeviceId(json.runtime.active_device_id);
+          updateRuntimeInfoControl(lastRuntime, lastDeviceStatus);
+        }
+        const totalSamples = items.length;
+
+        // Update heartbeat
+        if (totalSamples > 0) {
+          const lastItem = items[items.length - 1];
+          if (lastItem?.device_id) setActiveDeviceId(lastItem.device_id);
+          const lastTs = parseFloat(lastItem.timestamp);
+          const lastSeenS = Date.now() / 1000 - lastTs;
+          lastSampleTimestamp = lastTs;
+          updateHeartbeat(lastSeenS);
+
+          // Last record meta (for step 1 visibility)
+          lastDbRecord = {
+            ts: lastTs,
+            sample_rate: lastItem.sample_rate ?? null,
+            collection_id: lastItem.collection_id ?? null,
+            cmd_speed_label: lastItem.cmd_speed_label ?? null,
+            rot_state_label: lastItem.rot_state_label ?? null,
+            use_state_label: lastItem.use_state_label ?? null,
+            vib_profile_label: lastItem.vib_profile_label ?? null,
+            label_source: lastItem.label_source ?? null,
+            transition_marker: lastItem.transition_marker != null ? Number(lastItem.transition_marker) : 0,
+          };
+          updateLastDbInfo();
+        } else {
+          updateHeartbeat(null);
+          updateLastDbInfo();
+          if (!json?.runtime) {
+            updateRuntimeInfoControl({
+              active_device_id: DEVICE_ID || (lastRuntime?.active_device_id || null),
+              configured: {
+                mode: currentMode,
+                sample_rate_hz: Number(expectedHz),
+                collection_id: document.getElementById('currentCollectionId')?.innerText ?? null,
+                ingest_enabled: ingestEnabled,
+              },
+              latest: {
+                sample_rate_hz: null,
+                collection_id: null,
+                age_s: null,
+                freshness: 'no_data',
+              },
+            });
+          }
+        }
+
+        document.getElementById('hzTotalSamples').innerText = totalSamples;
+
+        if (totalSamples < 2) {
+          document.getElementById('hzStatus').innerText = 'Sem dados';
+          document.getElementById('hzStatus').className = 'hz-stat-value hz-warn';
+          return;
+        }
+
+        // Extract and sort timestamps
+        const timestamps = items.map(d => parseFloat(d.timestamp)).filter(t => Number.isFinite(t)).sort((a, b) => a - b);
+        if (timestamps.length < 2) return;
+
+        // Compute intervals (filter gaps > 5s)
+        const intervals = [];
+        for (let i = 1; i < timestamps.length; i++) {
+          const dt = (timestamps[i] - timestamps[i - 1]) * 1000; // Convert to ms
+          if (dt > 0 && dt < 5000) intervals.push(dt);
+        }
+
+        const duration = timestamps[timestamps.length - 1] - timestamps[0];
+
+        let realHz = 0, intervalMean = 0, intervalStd = 0, intervalMin = 0, intervalMax = 0;
+
+        if (intervals.length > 0) {
+          intervalMean = intervals.reduce((s, v) => s + v, 0) / intervals.length;
+          const variance = intervals.reduce((s, v) => s + (v - intervalMean) ** 2, 0) / intervals.length;
+          intervalStd = Math.sqrt(variance);
+          intervalMin = Math.min(...intervals);
+          intervalMax = Math.max(...intervals);
+          realHz = intervalMean > 0 ? 1000 / intervalMean : 0;
+        } else if (duration > 0) {
+          realHz = (timestamps.length - 1) / duration;
+          intervalMean = duration * 1000 / (timestamps.length - 1);
+        }
+
+        const efficiency = expectedHz > 0 ? (realHz / expectedHz) * 100 : 0;
+        const cv = intervalMean > 0 ? (intervalStd / intervalMean) * 100 : 0;
+
+        // Update UI
+        const realEl = document.getElementById('hzReal');
+        const effEl = document.getElementById('hzEfficiency');
+        const statusEl = document.getElementById('hzStatus');
+        const cvEl = document.getElementById('hzCV');
+
+        realEl.innerText = realHz.toFixed(2) + ' Hz';
+        effEl.innerText = efficiency.toFixed(1) + '%';
+        document.getElementById('hzIntervalMean').innerText = intervalMean.toFixed(1) + ' ms';
+        document.getElementById('hzIntervalMin').innerText = intervalMin.toFixed(1) + ' ms';
+        document.getElementById('hzIntervalMax').innerText = intervalMax.toFixed(1) + ' ms';
+        cvEl.innerText = cv.toFixed(1) + '%';
+
+        // Color coding
+        const deviation = Math.abs(100 - efficiency);
+        if (deviation < 15) {
+          realEl.className = 'rate-block-value hz-ok';
+          effEl.className = 'rate-efficiency';
+          statusEl.innerText = 'OK';
+          statusEl.className = 'hz-stat-value hz-ok';
+        } else if (deviation < 30) {
+          realEl.className = 'rate-block-value hz-warn';
+          effEl.className = 'rate-efficiency warn';
+          statusEl.innerText = 'ALERTA';
+          statusEl.className = 'hz-stat-value hz-warn';
+        } else {
+          realEl.className = 'rate-block-value hz-bad';
+          effEl.className = 'rate-efficiency bad';
+          statusEl.innerText = 'CRITICO';
+          statusEl.className = 'hz-stat-value hz-bad';
+        }
+
+        // CV color (jitter)
+        cvEl.className = 'hz-stat-value ' + (cv < 20 ? 'hz-ok' : cv < 40 ? 'hz-warn' : 'hz-bad');
+
+        // Observation progress
+        if (validationStartTime) {
+          const obsElapsed = (Date.now() - validationStartTime) / 1000;
+          const obsProgress = Math.min(100, (obsElapsed / OBS_TARGET_SECONDS) * 100);
+          const obsMins = Math.floor(obsElapsed / 60).toString().padStart(2, '0');
+          const obsSecs = Math.floor(obsElapsed % 60).toString().padStart(2, '0');
+
+          document.getElementById('obsTimeDisplay').innerText = `${obsMins}:${obsSecs} / 02:00`;
+          document.getElementById('obsProgressFill').style.width = obsProgress + '%';
+
+          if (obsElapsed >= OBS_TARGET_SECONDS) {
+            document.getElementById('obsProgressFill').className = 'obs-progress-fill complete';
+            document.getElementById('obsHint').innerText = deviation < 15
+              ? 'Validacao concluida com sucesso! Taxa estavel.'
+              : 'Validacao concluida. Verifique desvios acima.';
+          }
+        }
+
+      } catch (e) { /* silent */ }
+    }
+
+    // --- Training Stats ---
+    async function updateTrainingStats() {
+      try {
+        if (!ingestEnabled) {
+          const lastSeenEl = document.getElementById('trainLastSeen');
+          if (lastSeenEl) lastSeenEl.innerText = 'PAUSADO';
+          updateLastDbInfo();
+          return;
+        }
+
+        const expectedHz = parseFloat(document.getElementById('hzSlider').value);
+        const currentCollectionId = (document.getElementById('currentCollectionId')?.innerText || '').trim();
+        const params = new URLSearchParams({ mode: 'stats' });
+        if (DEVICE_ID) params.set('device_id', DEVICE_ID);
+        if (currentCollectionId) params.append('collection_id', currentCollectionId);
+
+        const res = await fetch(`${DATA_API_BASE}?${params.toString()}`);
+        const json = await res.json();
+        if (json && json.device_status && typeof json.device_status === 'object') {
+          lastDeviceStatus = json.device_status;
+        }
+        const overall = json.overall || {};
+        const byFan = json.by_fan_state || {};
+        const byLabel = json.by_label || {};
+
+        const total = overall.count || 0;
+        const durationS = overall.duration_s || 0;
+        const avgRate = overall.avg_rate_hz;
+        const lastTs = overall.ts_max;
+        const lastSeenS = lastTs ? (Date.now() / 1000 - lastTs) : null;
+
+        document.getElementById('trainTotalSamples').innerText = total;
+        document.getElementById('trainDuration').innerText = durationS > 0 ? (durationS / 60).toFixed(2) + ' min' : '-- min';
+        document.getElementById('trainAvgRate').innerText = avgRate != null ? avgRate.toFixed(2) + ' Hz' : '-- Hz';
+        document.getElementById('trainLastSeen').innerText = lastSeenS != null ? lastSeenS.toFixed(1) + ' s' : '-- s';
+
+        const TARGET_SAMPLES = 500;
+        const CLASS_ORDER = ['FAN_OFF', 'LOW_ROT_ON', 'MEDIUM_ROT_ON', 'HIGH_ROT_ON', 'LOW_ROT_OFF', 'MEDIUM_ROT_OFF', 'HIGH_ROT_OFF'];
+        const byComposite = json.by_composite || {};
+        const compositeParts = [];
+        const seenCls = new Set();
+        CLASS_ORDER.forEach(cls => {
+          if (byComposite[cls]) {
+            compositeParts.push({ cls, valid: byComposite[cls].valid, total: byComposite[cls].total });
+            seenCls.add(cls);
+          }
+        });
+        Object.entries(byComposite).forEach(([cls, data]) => {
+          if (!seenCls.has(cls)) compositeParts.push({ cls, valid: data.valid, total: data.total });
+        });
+
+        let breakdownHtml = '';
+        if (compositeParts.length > 0) {
+          breakdownHtml = compositeParts.map(({ cls, valid }) => {
+            const ok = valid >= TARGET_SAMPLES;
+            const color = ok ? '#00c896' : (valid > 0 ? '#f59e0b' : '#ef4444');
+            const status = ok ? '\u2713' : (valid > 0 ? `faltam ${TARGET_SAMPLES - valid}` : 'coletar');
+            return `<span style="color:${color}">${cls}: ${valid} &mdash; ${status}</span>`;
+          }).join('<br>');
+        } else {
+          breakdownHtml = 'Sem dados por classe/rotulo';
+        }
+        document.getElementById('trainBreakdown').innerHTML = breakdownHtml;
+      } catch (e) { /* silent */ }
+    }
+
+    // --- Automation ---
+    const AUTO_TRANSIENT_SECONDS = 30;
+    let autoInterval = null, autoStartTime = null, autoPhases = [], autoPhaseIndex = 0, autoBeepCtx = null, selectedAutoMinutes = 8;
+
+    function getSelectedAutoClassKeys() {
+      return Array.from(document.querySelectorAll('.auto-class-check'))
+        .filter(el => el.checked)
+        .map(el => String(el.dataset.classKey || '').trim())
+        .filter(key => TRAINING_CLASS_PRESETS[key] != null);
+    }
+
+    function setAllAutoClasses(checked) {
+      Array.from(document.querySelectorAll('.auto-class-check')).forEach(el => { el.checked = !!checked; });
+      updateAutoPlanInfo();
+    }
+
+    function updateAutoPlanInfo() {
+      const keys = getSelectedAutoClassKeys();
+      const seqEl = document.getElementById('autoClassSeqInfo');
+      const infoEl = document.getElementById('autoTimeInfo');
+      const n = keys.length;
+
+      if (seqEl) {
+        if (n === 0) {
+          seqEl.textContent = 'Sequencia: (nenhuma classe selecionada)';
+        } else {
+          const seq = keys.map(k => TRAINING_CLASS_PRESETS[k].title).join(' -> ');
+          seqEl.textContent = `Sequencia: ${seq}`;
+        }
+      }
+
+      if (!infoEl) return;
+      if (n === 0) {
+        infoEl.textContent = 'Selecione pelo menos 1 classe para automacao.';
+        return;
+      }
+      const transientCount = Math.max(0, n - 1);
+      const totalMinutes = (n * selectedAutoMinutes) + ((transientCount * AUTO_TRANSIENT_SECONDS) / 60);
+      infoEl.textContent =
+        `Total estimado: ${totalMinutes.toFixed(1)} min ` +
+        `(${n} x ${selectedAutoMinutes} min + ${transientCount} transientes de ${AUTO_TRANSIENT_SECONDS}s)`;
+    }
+
+    function selectAutoTime(minutes) {
+      selectedAutoMinutes = Math.max(1, parseInt(minutes, 10) || 8);
+      document.querySelectorAll('.auto-time-btn').forEach(btn => {
+        btn.classList.toggle('auto-time-active', parseInt(btn.dataset.minutes, 10) === selectedAutoMinutes);
+      });
+      updateAutoPlanInfo();
+    }
+
+    function toggleAutoMode() {
+      const open = document.getElementById('autoMode').checked;
+      document.getElementById('autoControls').style.display = open ? 'block' : 'none';
+      if (open) updateAutoPlanInfo();
+    }
+
+    function buildAutoPhases(minutes) {
+      const secs = Math.max(1, parseInt(minutes, 10) || selectedAutoMinutes) * 60;
+      const keys = getSelectedAutoClassKeys();
+      const phases = [];
+
+      keys.forEach((key, index) => {
+        const preset = TRAINING_CLASS_PRESETS[key];
+        if (!preset) return;
+        if (index > 0) {
+          phases.push({
+            label: `Transiente -> ${preset.title}`,
+            mode: 'PAUSE',
+            duration: AUTO_TRANSIENT_SECONDS,
+            transition: 1,
+            classKey: null,
+          });
+        }
+        phases.push({
+          label: preset.title,
+          mode: preset.mode,
+          duration: secs,
+          transition: 0,
+          classKey: key,
+        });
+      });
+
+      return phases;
+    }
+
+    function beep() {
+      try {
+        if (!autoBeepCtx) autoBeepCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = autoBeepCtx.createOscillator();
+        const gain = autoBeepCtx.createGain();
+        osc.connect(gain); gain.connect(autoBeepCtx.destination);
+        osc.frequency.value = 880; gain.gain.value = 0.3;
+        osc.start(); osc.stop(autoBeepCtx.currentTime + 0.3);
+      } catch (e) { /* silent */ }
+    }
+
+    async function applyAutoPhase(phase) {
+      if (!phase || typeof phase !== 'object') return;
+      if (phase.classKey && TRAINING_CLASS_PRESETS[phase.classKey]) {
+        activeTrainingClassKey = phase.classKey;
+        setTrainingPresetIntoSelectors(TRAINING_CLASS_PRESETS[phase.classKey]);
+        updateTrainingClassPreview();
+      } else {
+        activeTrainingClassKey = null;
+        updateTrainingClassPreview();
+      }
+
+      await setMode(phase.mode, {
+        labelSource: 'AUTO',
+        transitionMarker: phase.transition,
+      });
+    }
+
+    async function startAutomation() {
+      autoPhases = buildAutoPhases(selectedAutoMinutes);
+      if (!autoPhases.length) {
+        alert('Selecione pelo menos uma classe para iniciar a automacao.');
+        return;
+      }
+      if (autoInterval) {
+        clearInterval(autoInterval);
+        autoInterval = null;
+      }
+      autoPhaseIndex = 0;
+      autoStartTime = Date.now();
+      document.getElementById('btnStopAuto').disabled = false;
+      document.getElementById('autoStatus').innerText = 'Inicializando automacao...';
+      await applyAutoPhase(autoPhases[0]);
+      beep();
+      autoInterval = setInterval(autoTick, 1000);
+      updateAutoPlanInfo();
+    }
+
+    function stopAutomation() {
+      clearInterval(autoInterval);
+      autoInterval = null;
+      autoPhases = [];
+      document.getElementById('btnStopAuto').disabled = true;
+      document.getElementById('autoStatus').innerText = 'Automacao parada';
+      document.getElementById('autoProgressBar').style.width = '0%';
+    }
+
+    async function autoTick() {
+      if (!autoPhases.length) return;
+      const totalDuration = autoPhases.reduce((s, p) => s + p.duration, 0);
+      const elapsed = (Date.now() - autoStartTime) / 1000;
+
+      let cumulative = 0, phaseIdx = 0;
+      for (let i = 0; i < autoPhases.length; i++) {
+        if (elapsed < cumulative + autoPhases[i].duration) { phaseIdx = i; break; }
+        cumulative += autoPhases[i].duration;
+        if (i === autoPhases.length - 1) {
+          stopAutomation(); beep();
+          document.getElementById('autoStatus').innerText = 'Automacao concluida!';
+          document.getElementById('autoProgressBar').style.width = '100%';
+          activeTrainingClassKey = null;
+          updateTrainingClassPreview();
+          await setMode('PAUSE', { labelSource: 'AUTO', transitionMarker: 0 });
+          return;
+        }
+      }
+
+      if (phaseIdx !== autoPhaseIndex) {
+        autoPhaseIndex = phaseIdx;
+        await applyAutoPhase(autoPhases[phaseIdx]);
+        beep();
+      }
+
+      const phase = autoPhases[phaseIdx];
+      const phaseRemaining = Math.max(0, phase.duration - (elapsed - cumulative));
+      const mins = Math.floor(phaseRemaining / 60).toString().padStart(2, '0');
+      const secs = Math.floor(phaseRemaining % 60).toString().padStart(2, '0');
+      document.getElementById('autoStatus').innerText = `${phase.label} - Restam ${mins}:${secs} | Fase ${phaseIdx + 1}/${autoPhases.length}`;
+      document.getElementById('autoProgressBar').style.width = Math.min(100, (elapsed / totalDuration) * 100) + '%';
+    }
+
+    // --- Init ---
+    setActiveDeviceId(DEVICE_ID);
+    initNetworkManager();
+    selectTrainTime(selectedTrainMinutes);
+    syncLabelStateFromPayload({}, { mode: currentMode });
+    syncControlState();
+    setInterval(syncControlState, 4000);
+    setInterval(updateHzMonitor, 2000);
+    setInterval(updateTrainingStats, 5000);
+    updateHzMonitor();
+    updateTrainingStats();
+    updateIngestUI();
+  </script>
+</body>
+
+</html>
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+[
+  {
+    "ssid": "SEU_WIFI_PRINCIPAL",
+    "password": "SUA_SENHA_WIFI"
+  },
+  {
+    "ssid": "SEU_HOTSPOT",
+    "password": "SUA_SENHA_HOTSPOT"
+  }
+]

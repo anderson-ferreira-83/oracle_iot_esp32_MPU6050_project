@@ -1,0 +1,411 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Documentacao detalhada da Gestao de Rede do Painel de Controle IoT Fan Monitor." />
+  <meta name="author" content="Anderson Ferreira" />
+  <title>Gestao de Rede | IoT Fan Monitor</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .doc-hero{background:linear-gradient(135deg,#0f172a 0%,#111827 45%,#0ea5e9 120%);color:#fff;position:relative;overflow:hidden;border:1px solid rgba(14,165,233,0.25)}
+    .doc-hero::after{content:'';position:absolute;right:-140px;top:-140px;width:320px;height:320px;background:radial-gradient(circle,rgba(14,165,233,0.35),transparent 70%);opacity:0.9}
+    .doc-hero-grid{display:grid;grid-template-columns:1.3fr 0.7fr;gap:20px;position:relative;z-index:1}
+    .doc-hero h1{font-family:"Space Grotesk",sans-serif;font-size:2.0rem;letter-spacing:0.4px;margin-bottom:10px}
+    .doc-subtitle{font-size:1rem;color:rgba(255,255,255,0.92);line-height:1.7}
+    .doc-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .doc-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:0.7rem;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.20);color:#fff}
+    .doc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-actions .btn{background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.25)}
+    .doc-actions .btn:hover{background:rgba(255,255,255,0.26)}
+    .doc-kpis{display:flex;flex-direction:column;gap:10px}
+    .doc-kpi{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:12px}
+    .doc-kpi strong{display:block;font-size:0.85rem;letter-spacing:0.4px;text-transform:uppercase}
+    .doc-kpi span{display:block;margin-top:4px;font-size:0.9rem;color:rgba(255,255,255,0.85);line-height:1.5}
+    .doc-toc{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .doc-toc a{text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(148,163,184,0.35);background:rgba(148,163,184,0.12);color:var(--ink-2);font-size:0.8rem;font-weight:700}
+    .doc-toc a:hover{border-color:rgba(14,165,233,0.45);background:rgba(14,165,233,0.10)}
+    .doc-hero .doc-toc a{color:rgba(255,255,255,0.92);border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.10)}
+    .doc-hero .doc-toc a:hover{border-color:rgba(255,255,255,0.40);background:rgba(255,255,255,0.16)}
+    .doc-hero .doc-inline-code{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.95)}
+    .doc-section p{color:var(--muted);line-height:1.75;font-size:0.92rem}
+    .doc-list{margin:10px 0 0;padding-left:18px;color:var(--muted);line-height:1.7;font-size:0.92rem}
+    .doc-inline-code{font-family:"JetBrains Mono",monospace;background:rgba(15,23,42,0.06);border:1px solid rgba(148,163,184,0.22);padding:2px 8px;border-radius:999px;font-size:0.8rem;color:var(--ink-2);white-space:nowrap}
+    .doc-callout{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid rgba(148,163,184,0.25);border-left:4px solid rgba(14,165,233,0.65);color:var(--ink-2);font-size:0.92rem;line-height:1.65}
+    .doc-callout strong{color:var(--ink-2)}
+    .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+    .doc-mini{background:rgba(148,163,184,0.10);border:1px solid rgba(148,163,184,0.22);border-radius:12px;padding:12px}
+    .doc-mini-title{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:0.2px;margin-bottom:8px;color:var(--ink-2)}
+    .doc-mini ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.65;font-size:0.9rem}
+    .doc-btn-ref{display:flex;align-items:flex-start;gap:14px;padding:12px;border-radius:10px;background:rgba(148,163,184,0.06);border:1px solid rgba(148,163,184,0.18);margin-bottom:10px}
+    .doc-btn-sample{flex-shrink:0;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.82rem;font-family:'Manrope',sans-serif;pointer-events:none}
+    .doc-btn-desc{font-size:0.88rem;color:var(--muted);line-height:1.65}
+    .doc-btn-desc strong{color:var(--ink-2)}
+    .doc-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.88rem}
+    .doc-table th,.doc-table td{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(148,163,184,0.18)}
+    .doc-table th{font-weight:700;color:var(--ink-2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.3px}
+    .doc-table td{color:var(--muted)}
+    @media(max-width:980px){.doc-hero-grid{grid-template-columns:1fr}.doc-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor (Oracle XE + FastAPI)</h1>
+          <div class="brand-subtitle">Gestao de Rede</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="tech-stack">
+          <span class="tech-badge">Wi-Fi</span>
+          <span class="tech-badge">Rede</span>
+        </div>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+          <a class="nav-link" href="control.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Controle
+          </a>
+          <a class="nav-link" href="apresent.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Apresentacao
+          </a>
+          <a class="nav-link" href="documentacao.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg>
+            Documentacao
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="card doc-hero doc-section" id="topo">
+      <div class="doc-hero-grid">
+        <div>
+          <h1>Gestao de Rede</h1>
+          <p class="doc-subtitle">
+            Gerencie as conexoes Wi-Fi do ESP32: perfis de rede, servidor por perfil,
+            portal de configuracao e diagnostico de conectividade.
+          </p>
+          <div class="doc-tags">
+            <span class="doc-tag">Wi-Fi</span>
+            <span class="doc-tag">Hotspot</span>
+            <span class="doc-tag">OTA</span>
+            <span class="doc-tag">Multi-Rede</span>
+          </div>
+          <div class="doc-actions">
+            <a class="btn" href="control.html" target="_blank" rel="noopener">Abrir Controle</a>
+            <a class="btn" href="documentacao.html#controle" target="_blank" rel="noopener">Visao Geral</a>
+          </div>
+        </div>
+        <div class="doc-kpis">
+          <div class="doc-kpi">
+            <strong>Multi-rede</strong>
+            <span>Varios perfis Wi-Fi com prioridade e IP do servidor por perfil.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>OTA</strong>
+            <span>Configuracao e enviada ao ESP32 via resposta HTTP — sem conexao serial.</span>
+          </div>
+          <div class="doc-kpi">
+            <strong>Portal</strong>
+            <span>Abra o portal de configuracao Wi-Fi remotamente pelo Controle.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-toc">
+        <a href="#status-esp">Status ESP32</a>
+        <a href="#perfis">Perfis de Rede</a>
+        <a href="#servidor">Servidor &amp; API</a>
+        <a href="#aplicar">Aplicar / Portal</a>
+        <a href="#diagnostico-rede">Diagnostico</a>
+        <a href="#fluxo">Fluxo Tipico</a>
+      </div>
+    </section>
+
+    <!-- Status ESP32 -->
+    <section class="card doc-section" id="status-esp">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M5 12.55a11 11 0 0 1 14 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+        Banner de Status do ESP32
+      </div>
+      <p>
+        No topo da secao de rede, um banner mostra o estado atual do dispositivo, atualizado a cada 10 segundos
+        via <span class="doc-inline-code">fetchDeviceStatus()</span>.
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Estado</th><th>Cor</th><th>Significado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Online</td><td style="color:#10b981;font-weight:700;">Verde</td><td>ESP32 enviou dados nos ultimos 30s. Exibe IP e SSID.</td></tr>
+          <tr><td>Stale</td><td style="color:#f59e0b;font-weight:700;">Amarelo</td><td>Ultimo dado entre 30s-120s atras. Pode ser reinicializacao.</td></tr>
+          <tr><td>Offline</td><td style="color:#ef4444;font-weight:700;">Vermelho</td><td>Sem dados ha mais de 120s. Verifique conexao.</td></tr>
+        </tbody>
+      </table>
+
+      <ul class="doc-list">
+        <li><strong>IP:</strong> endereco IP do ESP32 na rede atual.</li>
+        <li><strong>SSID:</strong> nome da rede Wi-Fi a qual o ESP32 esta conectado.</li>
+        <li>Esses dados sao enviados pelo ESP32 junto com os payloads de sensor (diagnostico de rede).</li>
+      </ul>
+    </section>
+
+    <!-- Perfis de Rede -->
+    <section class="card doc-section" id="perfis">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        Cards de Perfis Wi-Fi
+      </div>
+      <p>
+        Cada perfil de rede e exibido como um card editavel. O sistema suporta multiplos perfis com prioridade
+        definida pela ordem (drag-and-drop para reordenar).
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">Campos por Perfil</div>
+          <ul>
+            <li><strong>SSID:</strong> nome da rede Wi-Fi</li>
+            <li><strong>Senha:</strong> senha da rede (oculta por padrao)</li>
+            <li><strong>Alias:</strong> nome amigavel para identificacao</li>
+            <li><strong>Server IP:</strong> IP do servidor para esta rede (opcional)</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Prioridade e Reordenacao</div>
+          <ul>
+            <li>O perfil no topo tem prioridade mais alta</li>
+            <li>Arraste os cards para reordenar</li>
+            <li>O ESP32 tenta conectar na ordem definida</li>
+            <li>Se a rede #1 falhar, tenta #2, #3...</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="doc-callout">
+        <strong>Server IP por perfil:</strong> cada rede pode ter um IP de servidor diferente. Util quando o
+        servidor FastAPI tem IPs distintos em redes diferentes (ex.: <span class="doc-inline-code">192.168.1.100</span> em casa,
+        <span class="doc-inline-code">192.168.4.1</span> no hotspot). Se nao informado, usa o IP global.
+      </div>
+
+      <ul class="doc-list">
+        <li>Clique no icone de lixeira para remover um perfil.</li>
+        <li>Use o botao "Adicionar Perfil" para criar um novo.</li>
+        <li>Perfis sao salvos no servidor como <span class="doc-inline-code">wifi_profiles.json</span>.</li>
+        <li>O ESP32 recebe os perfis via OTA na proxima comunicacao.</li>
+      </ul>
+    </section>
+
+    <!-- Servidor & API -->
+    <section class="card doc-section" id="servidor">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+        </svg>
+        Servidor &amp; API Path
+      </div>
+      <p>
+        Configuracao do hostname e caminho da API usados pelo ESP32 para enviar dados.
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">Server Host</div>
+          <ul>
+            <li>Hostname ou IP do servidor FastAPI</li>
+            <li>Suporta <span class="doc-inline-code">.local</span> (mDNS) ou IP direto</li>
+            <li>Ex.: <span class="doc-inline-code">meupc.local</span> ou <span class="doc-inline-code">192.168.1.100</span></li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">API Path</div>
+          <ul>
+            <li>Caminho relativo da API no servidor</li>
+            <li>Padrao: <span class="doc-inline-code">/api</span></li>
+            <li>O ESP32 concatena host + path para montar a URL</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="doc-callout">
+        <strong>Resolucao de IP:</strong> o ESP32 tenta, em ordem: (1) <span class="doc-inline-code">server_ip</span>
+        do perfil Wi-Fi conectado, (2) IP global configurado, (3) hostname <span class="doc-inline-code">.local</span> via mDNS.
+        Se nenhum funcionar, o dado nao e enviado.
+      </div>
+    </section>
+
+    <!-- Aplicar / Portal -->
+    <section class="card doc-section" id="aplicar">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+        </svg>
+        Botoes de Acao
+      </div>
+      <p>
+        Tres botoes controlam a aplicacao de configuracao de rede no ESP32.
+      </p>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#0ea5e9;color:#fff;">Aplicar no ESP32</span>
+        <div class="doc-btn-desc">
+          <strong>Aplicar no ESP32:</strong> salva os perfis de rede e configuracao do servidor no estado pendente.
+          Na proxima comunicacao HTTP do ESP32, ele recebe a nova configuracao, salva em flash
+          (<span class="doc-inline-code">wifi_profiles.json</span> + <span class="doc-inline-code">device_config.json</span>)
+          e reinicia automaticamente.
+        </div>
+      </div>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#6b7280;color:#fff;">Cancelar Pendencia</span>
+        <div class="doc-btn-desc">
+          <strong>Cancelar Pendencia:</strong> remove a configuracao pendente antes que o ESP32 a receba.
+          Util se voce mudou de ideia apos clicar "Aplicar" mas antes do dispositivo comunicar.
+        </div>
+      </div>
+
+      <div class="doc-btn-ref">
+        <span class="doc-btn-sample" style="background:#8b5cf6;color:#fff;">Abrir Portal no ESP32</span>
+        <div class="doc-btn-desc">
+          <strong>Abrir Portal:</strong> envia um comando remoto para o ESP32 abrir o portal de configuracao Wi-Fi
+          (hotspot + pagina web). O ESP32 inicia o <span class="doc-inline-code">boot_portal.py</span> e reinicia
+          apos o usuario configurar. Pede confirmacao antes de enviar.
+        </div>
+      </div>
+
+      <div class="doc-callout">
+        <strong>Fluxo OTA:</strong> Controle salva config no servidor &rarr; ESP32 faz POST &rarr; resposta inclui
+        <span class="doc-inline-code">target_network_config</span> &rarr; ESP32 processa, salva em flash e reinicia.
+        O flag e auto-limpo no servidor apos o envio, garantindo que nao seja reenviado.
+      </div>
+    </section>
+
+    <!-- Diagnostico de Rede -->
+    <section class="card doc-section" id="diagnostico-rede">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+        3 Indicadores de Diagnostico
+      </div>
+      <p>
+        Tres indicadores visuais resumem a saude da cadeia de comunicacao entre ESP32, rede e servidor.
+      </p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Indicador</th><th>OK</th><th>Warning</th><th>Falha</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Wi-Fi</strong></td>
+            <td>ESP32 conectado a uma rede</td>
+            <td>Conectado mas com sinal fraco</td>
+            <td>Desconectado</td>
+          </tr>
+          <tr>
+            <td><strong>Servidor</strong></td>
+            <td>Servidor respondendo (HTTP 200)</td>
+            <td>Resposta lenta</td>
+            <td>Sem resposta</td>
+          </tr>
+          <tr>
+            <td><strong>Dados</strong></td>
+            <td>Dados chegando no intervalo esperado</td>
+            <td>Dados com atraso</td>
+            <td>Sem dados recentes</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="doc-callout">
+        <strong>Dica:</strong> se Wi-Fi esta OK mas Servidor esta em falha, verifique se o backend FastAPI esta rodando
+        e se o IP/hostname esta correto na configuracao.
+      </div>
+    </section>
+
+    <!-- Fluxo Tipico -->
+    <section class="card doc-section" id="fluxo">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+        Fluxos Tipicos
+      </div>
+
+      <div class="doc-grid">
+        <div class="doc-mini">
+          <div class="doc-mini-title">Primeira vez (rede nova)</div>
+          <ul>
+            <li>Adicione um perfil com SSID + senha</li>
+            <li>Configure o Server IP para esta rede</li>
+            <li>Clique "Aplicar no ESP32"</li>
+            <li>Aguarde o ESP32 reiniciar e conectar</li>
+            <li>Confira o banner: Online + IP correto</li>
+          </ul>
+        </div>
+        <div class="doc-mini">
+          <div class="doc-mini-title">Mudanca de rede (ex.: casa &rarr; lab)</div>
+          <ul>
+            <li>Reordene os perfis (rede desejada no topo)</li>
+            <li>Verifique o Server IP do perfil de destino</li>
+            <li>Clique "Aplicar no ESP32"</li>
+            <li>O ESP32 reinicia e tenta a nova rede</li>
+            <li>Se falhar, tenta as redes seguintes na lista</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="doc-callout">
+        <strong>Portal de emergencia:</strong> se o ESP32 nao conseguir conectar a nenhuma rede, ele abre
+        automaticamente o portal Wi-Fi (hotspot). Voce pode forcar isso pelo botao "Abrir Portal no ESP32".
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <strong>IoT Fan Monitor</strong> v1.0
+          <span class="footer-separator">|</span>
+          Desenvolvido por <strong>Anderson Ferreira</strong>
+        </div>
+        <div class="footer-tech">
+          <span>Stack:</span>
+          ESP32 &bull; MPU6050 &bull; FastAPI &bull; Python &bull; Oracle XE &bull; Gaussian Naive Bayes
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>
+
+

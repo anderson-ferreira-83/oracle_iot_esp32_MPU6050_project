@@ -1,0 +1,556 @@
+{
+    "type": "gaussian_nb",
+    "version": "py_20260203",
+    "generated_at": "2026-02-03 22:20:29",
+    "generated_by": "02_Model_Training_Evaluation.ipynb",
+    "features": [
+        "accel_z_g_std",
+        "accel_x_g_std",
+        "gyro_z_dps_peak",
+        "gyro_x_dps_std",
+        "accel_x_g_peak",
+        "accel_x_g_clearance_factor",
+        "gyro_x_dps_peak",
+        "gyro_x_dps_rms",
+        "accel_z_g_clearance_factor",
+        "gyro_z_dps_rms"
+    ],
+    "labels": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+    ],
+    "priors": {
+        "HIGH": 0.2929342546444501,
+        "LOW": 0.35638621190754705,
+        "MEDIUM": 0.3506795334480029
+    },
+    "stats": {
+        "HIGH": {
+            "accel_z_g_std": {
+                "mean": 0.07203258810434587,
+                "var": 0.0002097270501188941,
+                "count": 424
+            },
+            "accel_x_g_std": {
+                "mean": 0.28790216927764883,
+                "var": 0.005303170446597241,
+                "count": 424
+            },
+            "gyro_z_dps_peak": {
+                "mean": 47.90734180260909,
+                "var": 24.3156796717617,
+                "count": 424
+            },
+            "gyro_x_dps_std": {
+                "mean": 7.416599159600925,
+                "var": 1.0504881004009405,
+                "count": 424
+            },
+            "accel_x_g_peak": {
+                "mean": 0.9417096251678616,
+                "var": 0.03181620536296159,
+                "count": 424
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 2.998997711101629,
+                "var": 0.5743056554342267,
+                "count": 424
+            },
+            "gyro_x_dps_peak": {
+                "mean": 20.11140247672682,
+                "var": 13.757902699750446,
+                "count": 424
+            },
+            "gyro_x_dps_rms": {
+                "mean": 7.831232635705225,
+                "var": 1.341475487318803,
+                "count": 424
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.1753027147490847,
+                "var": 0.0019162131336025734,
+                "count": 424
+            },
+            "gyro_z_dps_rms": {
+                "mean": 21.297637050292984,
+                "var": 9.510051134316939,
+                "count": 424
+            }
+        },
+        "LOW": {
+            "accel_z_g_std": {
+                "mean": 0.027489552055107648,
+                "var": 0.00034898279613943515,
+                "count": 558
+            },
+            "accel_x_g_std": {
+                "mean": 0.083925510464942,
+                "var": 0.00016937967936831062,
+                "count": 558
+            },
+            "gyro_z_dps_peak": {
+                "mean": 25.611085688386538,
+                "var": 4.2204312605389305,
+                "count": 558
+            },
+            "gyro_x_dps_std": {
+                "mean": 2.0064294767114412,
+                "var": 0.10328497012558113,
+                "count": 558
+            },
+            "accel_x_g_peak": {
+                "mean": 0.46889638369726816,
+                "var": 0.00029921943063962453,
+                "count": 558
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 1.4279924383127043,
+                "var": 0.006031841688544759,
+                "count": 558
+            },
+            "gyro_x_dps_peak": {
+                "mean": 5.870006048098182,
+                "var": 0.9784040342042317,
+                "count": 558
+            },
+            "gyro_x_dps_rms": {
+                "mean": 2.4212339687056397,
+                "var": 0.2875545384810847,
+                "count": 558
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.0537389908973966,
+                "var": 0.00020692689909851403,
+                "count": 558
+            },
+            "gyro_z_dps_rms": {
+                "mean": 13.26634663220641,
+                "var": 3.6159056447050375,
+                "count": 558
+            }
+        },
+        "MEDIUM": {
+            "accel_z_g_std": {
+                "mean": 0.026709469782665793,
+                "var": 1.8887365774324007e-5,
+                "count": 563
+            },
+            "accel_x_g_std": {
+                "mean": 0.07399849311423,
+                "var": 0.00011034906356589651,
+                "count": 563
+            },
+            "gyro_z_dps_peak": {
+                "mean": 30.99950481113213,
+                "var": 12.428036126461393,
+                "count": 563
+            },
+            "gyro_x_dps_std": {
+                "mean": 2.877974799214026,
+                "var": 0.37115857796997,
+                "count": 563
+            },
+            "accel_x_g_peak": {
+                "mean": 0.46670932978592267,
+                "var": 0.0006085440225283012,
+                "count": 563
+            },
+            "accel_x_g_clearance_factor": {
+                "mean": 1.4021753278167044,
+                "var": 0.00523711428891338,
+                "count": 563
+            },
+            "gyro_x_dps_peak": {
+                "mean": 8.117144870913544,
+                "var": 3.742112493951268,
+                "count": 563
+            },
+            "gyro_x_dps_rms": {
+                "mean": 3.2142964164109475,
+                "var": 0.4460620789099945,
+                "count": 563
+            },
+            "accel_z_g_clearance_factor": {
+                "mean": 1.057393401607723,
+                "var": 0.00018560987696503162,
+                "count": 563
+            },
+            "gyro_z_dps_rms": {
+                "mean": 15.580426937092662,
+                "var": 4.966246392645019,
+                "count": 563
+            }
+        }
+    },
+    "metrics": {
+        "train_accuracy": 1,
+        "cv_accuracy_mean": 0.9991266375545852
+    },
+    "training_info": {
+        "total_samples": 1144,
+        "window_size": 100
+    },
+    "eda_traceability": {
+        "feature_config_version": "5.8",
+        "eda_id": "eda_20260203_221724",
+        "eda_generated_at": "20260203_221724",
+        "sample_rate_hz": 20,
+        "selection_method": "anova_f_test_with_classwise_correlation_pairwise_2of3_score_topk",
+        "features_count": 10,
+        "collection_ids": [
+            "col_20260202_175920_20hz"
+        ],
+        "sampling_validation": {
+            "status": "skipped",
+            "reason": "Fonte CSV selecionada",
+            "expected_hz": 20,
+            "actual_hz": null,
+            "deviation_pct": null,
+            "samples": 0,
+            "duration_min": null
+        }
+    },
+    "_adapted": true,
+    "_base_version": "py_20260203",
+    "_adaptation_history": [
+        {
+            "timestamp": "2026-02-09T18:17:19.482Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260209_151719_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-09T18:31:02.807Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260209_153102_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260209_153102_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T14:54:24.123Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_115424_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_115424_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T15:13:13.237Z",
+            "lambda": 0.9,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "ok",
+                "file": "adapted_20260210_121313_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "relative_path": "models/adapted/adapted_20260210_121313_f20hz_lambda0p90_col_20260209_181623_20hz_base_py_20260203_m_py_20260203.json",
+                "latest": "models/adapted/latest.json"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        },
+        {
+            "timestamp": "2026-02-10T19:36:30.656Z",
+            "lambda": 0.85,
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ],
+            "featureCount": 10,
+            "tag": null,
+            "server_export": {
+                "status": "pending"
+            },
+            "axis_ref": {
+                "status": "ok",
+                "source": "soak_test",
+                "classes": [
+                    "LOW",
+                    "MEDIUM",
+                    "HIGH"
+                ]
+            }
+        }
+    ],
+    "_ol_last_absorb": {
+        "timestamp": "2026-02-10T19:36:30.656Z",
+        "lambda": 0.85,
+        "tag": null,
+        "configured_sample_rate_hz": 20,
+        "collection_id": "col_20260209_181623_20hz"
+    },
+    "_ol_reference_baselines": {
+        "version": 1,
+        "generated_at": "2026-02-10T19:36:30.656Z",
+        "source": "soak_test",
+        "tag": null,
+        "configured_sample_rate_hz": 20,
+        "collection_id": "col_20260209_181623_20hz",
+        "classes": {
+            "LOW": {
+                "n": 415,
+                "accel_x_g": {
+                    "n": 415,
+                    "mean": 0.378070361445783,
+                    "std": 0.08017003466132795,
+                    "rms": 0.3864769497154306,
+                    "min": 0.1677,
+                    "max": 0.4846
+                },
+                "accel_y_g": {
+                    "n": 415,
+                    "mean": -0.014825542168674669,
+                    "std": 0.12465770940902075,
+                    "rms": 0.1255362147577304,
+                    "min": -0.2661,
+                    "max": 0.2485
+                },
+                "accel_z_g": {
+                    "n": 415,
+                    "mean": -1.0643361445783175,
+                    "std": 0.025787521690827358,
+                    "rms": 1.0646484982992237,
+                    "min": -1.1138,
+                    "max": -1.0156
+                },
+                "gyro_x_dps": {
+                    "n": 415,
+                    "mean": -1.6172048192771142,
+                    "std": 2.558818868900543,
+                    "rms": 3.027029142795718,
+                    "min": -7.36,
+                    "max": 3.13
+                },
+                "gyro_y_dps": {
+                    "n": 415,
+                    "mean": 1.2393975903614465,
+                    "std": 2.547265252039013,
+                    "rms": 2.8327842577999367,
+                    "min": -3.8,
+                    "max": 6.84
+                },
+                "gyro_z_dps": {
+                    "n": 415,
+                    "mean": -1.2917108433734943,
+                    "std": 14.01690270918289,
+                    "rms": 14.076294912425901,
+                    "min": -26.1,
+                    "max": 22.1
+                },
+                "vibration_dps": {
+                    "n": 415,
+                    "mean": 13.608045421686793,
+                    "std": 5.451428139402341,
+                    "rms": 14.659364548225088,
+                    "min": 2.159,
+                    "max": 26.1313
+                }
+            },
+            "MEDIUM": {
+                "n": 292,
+                "accel_x_g": {
+                    "n": 292,
+                    "mean": 0.34023390410958887,
+                    "std": 0.0636151096823274,
+                    "rms": 0.34613002135837256,
+                    "min": 0.1902,
+                    "max": 0.4536
+                },
+                "accel_y_g": {
+                    "n": 292,
+                    "mean": -0.028781164383561705,
+                    "std": 0.13739827385286207,
+                    "rms": 0.14038034435425667,
+                    "min": -0.2986,
+                    "max": 0.2483
+                },
+                "accel_z_g": {
+                    "n": 292,
+                    "mean": -1.0619520547945183,
+                    "std": 0.020559519560548127,
+                    "rms": 1.0621510535356353,
+                    "min": -1.1223,
+                    "max": -1.0054
+                },
+                "gyro_x_dps": {
+                    "n": 292,
+                    "mean": -0.10941780821917849,
+                    "std": 2.5415966252716875,
+                    "rms": 2.5439507979416427,
+                    "min": -6.57,
+                    "max": 8.39
+                },
+                "gyro_y_dps": {
+                    "n": 292,
+                    "mean": 1.0034931506849314,
+                    "std": 1.3147900894570084,
+                    "rms": 1.6539865425105302,
+                    "min": -2.13,
+                    "max": 3.31
+                },
+                "gyro_z_dps": {
+                    "n": 292,
+                    "mean": 5.108938356164388,
+                    "std": 16.486564765571476,
+                    "rms": 17.260013583322305,
+                    "min": -31.21,
+                    "max": 30.15
+                },
+                "vibration_dps": {
+                    "n": 292,
+                    "mean": 14.811188047945222,
+                    "std": 9.331864961045186,
+                    "rms": 17.50585602142261,
+                    "min": 1.85572,
+                    "max": 31.3747
+                }
+            },
+            "HIGH": {
+                "n": 62,
+                "accel_x_g": {
+                    "n": 62,
+                    "mean": 0.4395419354838709,
+                    "std": 0.3240543045709262,
+                    "rms": 0.546084522175692,
+                    "min": -0.103,
+                    "max": 0.9578
+                },
+                "accel_y_g": {
+                    "n": 62,
+                    "mean": -0.014809677419354812,
+                    "std": 0.2347532256519441,
+                    "rms": 0.23521990455583883,
+                    "min": -0.386,
+                    "max": 0.3977
+                },
+                "accel_z_g": {
+                    "n": 62,
+                    "mean": -1.05955,
+                    "std": 0.07640420070418841,
+                    "rms": 1.062301183462226,
+                    "min": -1.2593,
+                    "max": -0.9214
+                },
+                "gyro_x_dps": {
+                    "n": 62,
+                    "mean": -2.241451612903227,
+                    "std": 6.852856015063653,
+                    "rms": 7.210113792179744,
+                    "min": -13.32,
+                    "max": 16.28
+                },
+                "gyro_y_dps": {
+                    "n": 62,
+                    "mean": -0.05354838709677405,
+                    "std": 4.402694442052425,
+                    "rms": 4.403020074884963,
+                    "min": -7.31,
+                    "max": 11.79
+                },
+                "gyro_z_dps": {
+                    "n": 62,
+                    "mean": -0.6746774193548383,
+                    "std": 26.435542376011657,
+                    "rms": 26.44415039917326,
+                    "min": -51.15,
+                    "max": 42.86
+                },
+                "vibration_dps": {
+                    "n": 62,
+                    "mean": 24.669015048387102,
+                    "std": 12.337687565241868,
+                    "rms": 27.58221959732525,
+                    "min": 0.607783,
+                    "max": 51.4557
+                }
+            }
+        }
+    },
+    "_server_saved_at": "2026-02-10T16:36:30-03:00",
+    "_server_export": {
+        "received_at": "2026-02-10T16:36:30-03:00",
+        "meta": {
+            "lambda": 0.85,
+            "tag": null,
+            "configured_sample_rate_hz": 20,
+            "collection_id": "col_20260209_181623_20hz",
+            "base_model_version": "py_20260203",
+            "model_version": "py_20260203",
+            "classes": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+            ]
+        }
+    }
+}

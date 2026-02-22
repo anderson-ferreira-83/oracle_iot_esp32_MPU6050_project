@@ -1,0 +1,59 @@
+﻿{
+  "ssid": "SEU_WIFI_PADRAO",
+  "password": "SUA_SENHA_WIFI",
+  "wifi_profile_file": "/wifi_profiles.json",
+  "network_revision_file": "/last_network_revision.txt",
+  "server_hostname": "SEU-PC.local",
+  "server_fallback_ip": "192.168.0.108",
+  "server_fallback_ips": [
+    "192.168.0.105",
+    "192.168.137.10"
+  ],
+  "api_path": "/api/ingest",
+  "mdns_retry_interval_s": 30,
+  "learn_server_ip": true,
+  "learned_server_ip_file": "/last_server_ip.txt",
+  "auto_neighbor_fallback": false,
+  "neighbor_fallback_span": 1,
+  "auth_token": "SEU_TOKEN_BEARER",
+  "device_id": "ESP32_MPU6050_ORACLE",
+  "force_main_lite": true,
+  "target_sample_rate": 10,
+  "min_sample_rate": 1,
+  "max_sample_rate": 25,
+  "collection_id": "v5_stream",
+  "current_fan_state": "RAW",
+  "http_timeout": 2,
+  "http_max_resp_body": 2048,
+  "send_backoff_base_ms": 500,
+  "send_backoff_max_ms": 8000,
+  "send_backoff_jitter_ms": 250,
+  "low_mem_threshold": 14000,
+  "low_mem_recover_threshold": 22000,
+  "low_mem_queue_limit": 160,
+  "net_mem_recover_streak": 3,
+  "net_mem_reboot_fail_streak": 30,
+  "persist_queue_enabled": true,
+  "persist_queue_file": "/offline_queue.json",
+  "persist_queue_max_samples": 160,
+  "hard_queue_cap": 180,
+  "persist_queue_flush_interval_s": 20,
+  "portal_ssid": "Config-ESP32",
+  "portal_password": "senha123",
+  "portal_timeout_s": 180,
+  "server_probe_timeout_s": 1,
+  "default_wifi_profiles": [
+    {
+      "ssid": "SEU_HOTSPOT_CELULAR",
+      "password": "SENHA_HOTSPOT",
+      "server_ip": "192.168.43.100"
+    },
+    {
+      "ssid": "SEU_WIFI_PADRAO",
+      "password": "SUA_SENHA_WIFI",
+      "server_ip": "192.168.0.108"
+    }
+  ],
+  "debug": true
+}
+

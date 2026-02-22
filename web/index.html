@@ -1,0 +1,1629 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Sistema IoT de monitoramento de vibração de ventilador com Machine Learning em tempo real" />
+  <meta name="author" content="Anderson Ferreira" />
+  <title>Dashboard | IoT Fan Monitor (Oracle XE + FastAPI)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2-family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <style>
+    /* ML Classification Styles */
+    .ml-card {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border: 2px solid #0f3460;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ml-card .card-title {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .ml-card .card-unit {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .ml-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #00d9ff, #00ff88, #00d9ff);
+      background-size: 200% 100%;
+      animation: mlGradient 3s ease infinite;
+    }
+
+    @keyframes mlGradient {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .ml-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .ml-badge-active {
+      background: rgba(0, 255, 136, 0.2);
+      color: #00ff88;
+      border: 1px solid #00ff88;
+    }
+
+    .ml-badge-loading {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+      border: 1px solid #ffc107;
+    }
+
+    .ml-badge-error {
+      background: rgba(255, 82, 82, 0.2);
+      color: #ff5252;
+      border: 1px solid #ff5252;
+    }
+
+    .ml-badge-offline {
+      background: rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      border: 1px solid #94a3b8;
+    }
+
+    .ml-prediction {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Per-class colors now applied inline by JS via _classColor() */
+
+    .ml-prediction.buffering {
+      color: #ffc107;
+    }
+
+    .ml-prediction.unknown {
+      color: #888;
+    }
+
+    .confidence-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease, background 0.3s ease;
+    }
+
+    /* .confidence-fill colors now applied inline by JS */
+
+    .ml-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .ml-prob {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .ml-prob-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+    }
+
+    .ml-prob-label {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+    }
+
+    .ml-prob-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .ml-prob-value.active {
+      color: #00ff88;
+    }
+
+    .ml-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .ml-controls .btn {
+      flex: 1;
+      font-size: 0.75rem;
+      padding: 6px 12px;
+    }
+
+    .ml-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .ml-title-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      min-width: 0;
+    }
+
+    .ml-inspect-toggle {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.75);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      white-space: nowrap;
+      transition: transform 0.12s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .ml-inspect-toggle:hover {
+      border-color: rgba(0, 217, 255, 0.55);
+      color: #00d9ff;
+      background: rgba(0, 217, 255, 0.08);
+    }
+
+    .ml-inspect-toggle:active {
+      transform: scale(0.98);
+    }
+
+    .ml-inspect-arrow {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      font-size: 0.85rem;
+      line-height: 1;
+      opacity: 0.9;
+    }
+
+    .ml-inspect-panel {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-ml-active {
+      background: rgba(0, 255, 136, 0.2) !important;
+      border-color: #00ff88 !important;
+      color: #00ff88 !important;
+    }
+
+    /* Fan State Card ML Indicators */
+    #fanStateCard {
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #fanStateCard.ml-confidence-high {
+      border: 2px solid #00ff88;
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+
+    #fanStateCard.ml-confidence-medium {
+      border: 2px solid #ffc107;
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+    }
+
+    #fanStateCard.ml-confidence-low {
+      border: 2px solid #ff5252;
+      box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
+    }
+
+    /* Per-class state colors applied inline by JS via _classColor() */
+
+    .state-analisando,
+    .state-buffering {
+      color: #ffc107 !important;
+    }
+
+    #fanStateCard .card-title::after {
+      content: ' (ML)';
+      font-size: 0.65rem;
+      color: #00ff88;
+      font-weight: 500;
+    }
+
+    .ml-transition-entry {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Online Learning */
+    #olAbsorbSection table { border-collapse: collapse; width: 100%; }
+    #olAbsorbSection table th,
+    #olAbsorbSection table td { padding: 2px 4px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    #olAbsorbSection table td:first-child { text-align: left; }
+    #olControlsSection .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Professional Header -->
+    <header>
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>IoT Fan Monitor (Oracle XE + FastAPI)</h1>
+          <div class="brand-subtitle">Sistema de Monitoramento de Vibração com FastAPI</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="tech-stack">
+          <span class="tech-badge">ESP32</span>
+          <span class="tech-badge">MPU6050</span>
+          <span class="tech-badge">FastAPI</span>
+          <span class="tech-badge">Python</span>
+          <span class="tech-badge">Oracle XE</span>
+          <span class="tech-badge">Machine Learning</span>
+        </div>
+        <nav class="header-nav">
+          <a class="nav-link" href="control.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Controle
+          </a>
+          <a class="nav-link" href="apresent.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            Apresentação
+          </a>
+          <a class="nav-link" href="documentacao.html" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              <line x1="8" y1="7" x2="16" y2="7" />
+              <line x1="8" y1="11" x2="16" y2="11" />
+              <line x1="8" y1="15" x2="13" y2="15" />
+            </svg>
+            Documentação
+          </a>
+        </nav>
+        <div class="status-badge status-offline" id="statusBadge">
+          <span class="pulse"></span>
+          <span>Offline</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Row 1: Sobre o Projeto -->
+    <div class="grid-2x1">
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 16v-4" />
+            <path d="M12 8h.01" />
+          </svg>
+          Sobre o Projeto
+        </div>
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.7;">
+          Sistema IoT completo para monitoramento de vibração de ventiladores industriais em um ambiente local.
+          Utiliza um microcontrolador ESP32 com sensor MPU6050 para coletar dados de vibração a <strong>20Hz</strong>.
+          Os dados são enviados via HTTP para um servidor local backend FastAPI + Oracle XE
+          e processados por um modelo de Machine Learning que classifica
+          automaticamente o estado do ventilador em <strong>7 classes</strong> (velocidade × estado de rotação).
+        </p>
+        <p
+          style="color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(148,163,184,0.2);">
+          Após análise comparativa entre <strong>3 algoritmos</strong> (Gaussian NB, Random Forest, LightGBM),
+          o <strong style="color: var(--primary);">Gaussian Naive Bayes</strong>
+          foi selecionado por apresentar <strong>~93% de acurácia (CV 5-fold)</strong> com 12 features
+          selecionadas via Cohen's d + filtro de correlação para <strong>7 classes</strong>, com velocidade de inferência compatível com tempo real.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Row 2: CompetÃªncias TÃ©cnicas - Pipeline Stack -->
+    <div class="card skills-card">
+      <div class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="vertical-align: middle; margin-right: 6px;">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+        Pipeline de Dados
+      </div>
+      <div class="pipeline-stack">
+        <div class="pipeline-layer layer-hardware">
+          <div class="layer-icon">📡</div>
+          <div class="layer-title">HARDWARE</div>
+          <div class="layer-techs">
+            <span class="tech-tag">ESP32</span>
+            <span class="tech-tag">MPU6050</span>
+            <span class="tech-tag">MicroPython</span>
+            <span class="tech-tag">I2C 5Hz</span>
+          </div>
+        </div>
+        <div class="pipeline-layer layer-comm">
+          <div class="layer-icon">🌐</div>
+          <div class="layer-title">COMUNICAÇÃO</div>
+          <div class="layer-techs">
+            <span class="tech-tag">HTTP</span>
+            <span class="tech-tag">Wi-Fi</span>
+            <span class="tech-tag">POST Requests</span>
+          </div>
+        </div>
+        <div class="pipeline-layer layer-backend">
+          <div class="layer-icon">💾</div>
+          <div class="layer-title">BACKEND</div>
+          <div class="layer-techs">
+            <span class="tech-tag">FastAPI</span>
+            <span class="tech-tag">Apache</span>
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Oracle XE</span>
+          </div>
+        </div>
+        <div class="pipeline-layer layer-ml">
+          <div class="layer-icon">🤖</div>
+          <div class="layer-title">MACHINE LEARNING</div>
+          <div class="layer-techs">
+            <span class="tech-tag">Scikit-learn</span>
+            <span class="tech-tag">Gaussian NB</span>
+            <span class="tech-tag">Cross-val 5-fold</span>
+            <span class="tech-tag">Feature Eng.</span>
+          </div>
+        </div>
+        <div class="pipeline-layer layer-visual">
+          <div class="layer-icon">🖥️</div>
+          <div class="layer-title">VISUALIZAÇÃO</div>
+          <div class="layer-techs">
+            <span class="tech-tag">Dashboard</span>
+            <span class="tech-tag">Chart.js</span>
+            <span class="tech-tag">HTML/CSS</span>
+            <span class="tech-tag">JavaScript</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: ML Monitor (Classification + Decision) -->
+    <div class="grid">
+      <div class="card ml-card" id="mlClassificationCard">
+        <div class="card-title ml-title-row">
+          <span class="ml-title-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="vertical-align: middle; margin-right: 6px;">
+              <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0 1 12 2z" />
+              <path d="M12 6h.01" />
+            </svg>
+            Classificação ML
+            <span class="ml-badge ml-badge-loading" id="mlBadge">ML Ativo</span>
+          </span>
+          <button class="ml-inspect-toggle" id="mlInspectToggle" type="button" aria-expanded="false">
+            <span class="ml-inspect-arrow" id="mlInspectArrow">&#9654;</span>
+            Detalhes
+          </button>
+        </div>
+
+        <!-- Monitor (sempre visível) -->
+        <div class="ml-prediction unknown" id="mlPrediction">--</div>
+        <div class="card-unit" id="mlConfidenceText">Aguardando modelo...</div>
+        <div class="confidence-bar">
+          <div class="confidence-fill" id="mlConfidenceBar" style="width: 0%"></div>
+        </div>
+        <div class="ml-stats">
+          <span id="mlBufferStatus">Buffer: 0/100</span>
+          <span id="mlStability">Estabilidade: --</span>
+        </div>
+
+        <div id="mlHealthCheck" style="display:none;"></div>
+
+        <div class="ml-decision-mini" id="mlDriftMini" style="margin-top:10px;">
+          <div class="ml-decision-section-title">Drift &amp; Recalibração</div>
+          <div class="ml-decision-grid" style="grid-template-columns:repeat(2, 1fr);margin-bottom:6px;">
+            <div class="ml-decision-kv">
+              <span>Modelo (z)</span>
+              <strong id="mlDriftModelKv">--</strong>
+            </div>
+            <div class="ml-decision-kv">
+              <span>Mecânico (tilt/bias)</span>
+              <strong id="mlDriftMechKv">--</strong>
+            </div>
+          </div>
+          <div id="mlDriftRecommendation" style="margin-top:4px;font-size:0.7rem;color:rgba(255,255,255,0.55);"></div>
+          <div style="height:80px;margin-top:8px;">
+            <canvas id="mlDriftChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Probability items created dynamically by JS (_ensureProbItems) -->
+        <div class="ml-prob" id="mlProbContainer"></div>
+
+        <div class="ml-decision-mini" style="margin-top:10px;">
+          <div class="ml-decision-section-title">Diagnóstico de Transição</div>
+          <div class="ml-decision-grid">
+            <div class="ml-decision-kv">
+              <span>Estado</span>
+              <strong id="mlTransitionTimer">--</strong>
+            </div>
+            <div class="ml-decision-kv">
+              <span>Concordância</span>
+              <strong id="mlFeatureAgreement">--</strong>
+            </div>
+          </div>
+          <div style="margin-top:6px;">
+            <span style="color:rgba(255,255,255,0.5);font-size:0.7rem;">Última transição:</span>
+            <span class="ml-transition-value" id="mlLastTransition" style="font-size:0.8rem;font-weight:600;margin-left:4px;">--</span>
+          </div>
+        </div>
+
+        <div class="ml-controls">
+          <button class="btn btn-ml-active" id="mlToggle">ML Ativo</button>
+          <button class="btn" id="mlReset">Reset</button>
+          <button class="btn" id="mlTestToggle" style="background:rgba(255,193,7,0.15);border-color:#ffc107;color:#ffc107;">Teste</button>
+        </div>
+
+        <!-- Detalhes (colapsável) -->
+        <div class="ml-inspect-panel hidden" id="mlInspectPanel">
+          <div class="ml-decision-section">
+            <div class="ml-decision-section-title">Predição (bruta vs suavizada)</div>
+            <div class="ml-decision-line">
+              <span class="ml-decision-label">Predição bruta</span>
+              <span class="ml-decision-value" id="mlRawPrediction">--</span>
+              <span class="ml-decision-sub" id="mlRawConfidence">--</span>
+            </div>
+            <div class="ml-decision-line" style="margin-top:8px;">
+              <span class="ml-decision-label">Predição suavizada</span>
+              <span class="ml-decision-value" id="mlSmoothedPrediction">--</span>
+              <span class="ml-decision-sub" id="mlSmoothedConfidence">--</span>
+            </div>
+          </div>
+
+          <div class="ml-decision-section">
+            <div class="ml-decision-section-title">Histerese e suavização</div>
+            <div class="ml-decision-grid">
+              <div class="ml-decision-kv">
+                <span>Confirmado</span>
+                <strong id="mlHysteresisConfirmed">--</strong>
+              </div>
+              <div class="ml-decision-kv">
+                <span>Candidato</span>
+                <strong id="mlHysteresisCandidate">--</strong>
+              </div>
+              <div class="ml-decision-kv">
+                <span>Contagem</span>
+                <strong id="mlHysteresisCount">--</strong>
+              </div>
+            </div>
+            <div class="ml-decision-meta">
+              <span>Alpha: <strong id="mlAlpha">--</strong></span>
+              <span>Janela: <strong id="mlWindowSize">--</strong></span>
+              <span>Mín pts: <strong id="mlMinPoints">--</strong></span>
+            </div>
+          </div>
+
+          <div class="ml-decision-section">
+            <div class="ml-decision-section-title">Probabilidades (brutas)</div>
+            <!-- Raw probability items created dynamically by JS -->
+            <div class="ml-prob ml-prob-compact" id="mlProbRawContainer"></div>
+          </div>
+
+          <div class="ml-decision-section">
+            <div class="ml-decision-section-title">Histórico de Transições</div>
+            <details style="margin-top:4px;">
+              <summary style="color:rgba(255,255,255,0.5);font-size:0.7rem;cursor:pointer;">Ver log (últimas 20)</summary>
+              <div id="mlTransitionLog" style="max-height:200px;overflow-y:auto;margin-top:6px;font-size:0.75rem;font-family:'JetBrains Mono',monospace;"></div>
+            </details>
+          </div>
+
+          <div class="ml-decision-section">
+            <div class="ml-decision-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+              <span>Features em tempo real</span>
+              <select id="mlFeaturePageSelect" style="background:#1a1a2e;color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:2px 6px;font-size:0.7rem;cursor:pointer;"></select>
+            </div>
+            <div class="ml-feature-list" id="mlFeatureList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Parâmetros ML -->
+    <div class="grid-2x1">
+      <div class="card ml-card" style="padding-bottom:16px;">
+        <details id="mlParamsDetails">
+          <summary style="cursor:pointer;color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:600;list-style:none;display:flex;align-items:center;gap:6px;">
+            <span style="transition:transform 0.2s;display:inline-block;" id="mlParamsArrow">&#9654;</span>
+            Parâmetros ML
+          </summary>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;" id="mlParamsContainer">
+            <div class="ml-param-row">
+              <label style="color:rgba(255,255,255,0.6);font-size:0.75rem;display:flex;justify-content:space-between;">
+                <span>WINDOW_SIZE</span><span id="mlParamWindowSizeVal" style="color:#00d9ff;font-family:'JetBrains Mono',monospace;">100</span>
+              </label>
+              <input type="range" id="mlParamWindowSize" min="30" max="200" step="10" value="100"
+                style="width:100%;accent-color:#00d9ff;cursor:pointer;">
+            </div>
+            <div class="ml-param-row">
+              <label style="color:rgba(255,255,255,0.6);font-size:0.75rem;display:flex;justify-content:space-between;">
+                <span>MIN_POINTS</span><span id="mlParamMinPointsVal" style="color:#00d9ff;font-family:'JetBrains Mono',monospace;">40</span>
+              </label>
+              <input type="range" id="mlParamMinPoints" min="10" max="100" step="5" value="40"
+                style="width:100%;accent-color:#00d9ff;cursor:pointer;">
+            </div>
+            <div class="ml-param-row">
+              <label style="color:rgba(255,255,255,0.6);font-size:0.75rem;display:flex;justify-content:space-between;">
+                <span>SMOOTHING_ALPHA</span><span id="mlParamSmoothingAlphaVal" style="color:#00d9ff;font-family:'JetBrains Mono',monospace;">0.65</span>
+              </label>
+              <input type="range" id="mlParamSmoothingAlpha" min="0.1" max="1.0" step="0.05" value="0.65"
+                style="width:100%;accent-color:#00d9ff;cursor:pointer;">
+            </div>
+            <div class="ml-param-row">
+              <label style="color:rgba(255,255,255,0.6);font-size:0.75rem;display:flex;justify-content:space-between;">
+                <span>HYSTERESIS_COUNT</span><span id="mlParamHysteresisCountVal" style="color:#00d9ff;font-family:'JetBrains Mono',monospace;">2</span>
+              </label>
+              <input type="range" id="mlParamHysteresisCount" min="1" max="5" step="1" value="2"
+                style="width:100%;accent-color:#00d9ff;cursor:pointer;">
+            </div>
+            <div class="ml-param-row">
+              <label style="color:rgba(255,255,255,0.6);font-size:0.75rem;display:flex;justify-content:space-between;">
+                <span>CHANGE_DETECT_RATIO</span><span id="mlParamChangeDetectRatioVal" style="color:#00d9ff;font-family:'JetBrains Mono',monospace;">0.45</span>
+              </label>
+              <input type="range" id="mlParamChangeDetectRatio" min="0.2" max="0.8" step="0.05" value="0.45"
+                style="width:100%;accent-color:#00d9ff;cursor:pointer;">
+            </div>
+            <div class="ml-param-row">
+              <label style="color:rgba(255,255,255,0.6);font-size:0.75rem;display:flex;justify-content:space-between;">
+                <span>FAST_FLUSH_KEEP</span><span id="mlParamFastFlushKeepVal" style="color:#00d9ff;font-family:'JetBrains Mono',monospace;">40</span>
+              </label>
+              <input type="range" id="mlParamFastFlushKeep" min="10" max="80" step="5" value="40"
+                style="width:100%;accent-color:#00d9ff;cursor:pointer;">
+            </div>
+            <button class="btn" id="mlParamsReset" style="margin-top:4px;font-size:0.75rem;padding:5px 12px;align-self:flex-start;">Resetar Defaults</button>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Row: Teste de Transição -->
+    <div class="grid-2x1" id="transitionTestRow" style="display:none;">
+      <div class="card ml-card" id="transitionTestCard">
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="vertical-align: middle; margin-right: 6px;">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Teste Guiado de Transição
+          </span>
+          <span id="testBadge" class="ml-badge ml-badge-offline">Parado</span>
+        </div>
+
+        <!-- Configurações -->
+        <details class="tt-config-details" style="margin-top:10px;">
+          <summary style="cursor:pointer;font-size:0.75rem;color:rgba(255,255,255,0.5);user-select:none;">Configurações do Teste</summary>
+          <div class="tt-config-grid">
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo inicial para o ventilador estabilizar em LOW antes de começar as transições">Estabilização (s)</label>
+              <input type="number" id="ttCfgStabilize" value="15" min="5" max="60" step="1">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo máximo adicional (após estabilização) para o classificador reconhecer LOW. Se exceder, o teste continua mesmo assim (log marca FORÇADO).">Espera Inicial (s)</label>
+              <input type="number" id="ttCfgInitialWait" value="30" min="0" max="180" step="5">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo máximo de espera para o classificador detectar a nova velocidade. Se exceder, marca TIMEOUT">Timeout (s)</label>
+              <input type="number" id="ttCfgTimeout" value="90" min="15" max="300" step="5">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo que a classificação deve permanecer estável no estado alvo para confirmar a detecção">Confirmação (s)</label>
+              <input type="number" id="ttCfgConfirm" value="3" min="1" max="15" step="0.5">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Contagem regressiva antes do comando MUDE AGORA — tempo para você se preparar">Preparação (s)</label>
+              <input type="number" id="ttCfgPrepare" value="5" min="2" max="20" step="1">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tag livre para rastrear frequencia, dataset ou experimento">Tag do Teste</label>
+              <input type="text" id="ttCfgTag" placeholder="ex: 20Hz_v2">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Observacoes curtas sobre o contexto do teste">Observacoes</label>
+              <input type="text" id="ttCfgNotes" placeholder="ex: ajuste de ganho">
+            </div>
+          </div>
+        </details>
+
+        <!-- Controles -->
+        <div class="ml-controls" style="margin-top:12px;">
+          <button class="btn" id="testStartBtn" style="background:rgba(0,255,136,0.15);border-color:#00ff88;color:#00ff88;">Iniciar Teste</button>
+          <button class="btn" id="testStopBtn" style="background:rgba(255,82,82,0.15);border-color:#ff5252;color:#ff5252;" disabled>Parar</button>
+        </div>
+
+        <!-- Barra de progresso global -->
+        <div class="tt-global-progress">
+          <div class="tt-global-progress-label">
+            <span id="ttProgressText">Etapa 0/7</span>
+            <span id="ttElapsedTime">00:00</span>
+          </div>
+          <div id="ttTimeRange" class="tt-time-range"></div>
+          <div class="tt-global-progress-bar">
+            <div class="tt-global-progress-fill" id="ttProgressFill" style="width:0%;"></div>
+          </div>
+        </div>
+
+        <!-- Barra de progresso das etapas -->
+        <div style="display:flex;gap:4px;margin:8px 0 8px;" id="testStepBar"></div>
+
+        <!-- Instrução principal -->
+        <div style="text-align:center;padding:18px 10px;">
+          <div id="testInstruction" style="font-size:1.2rem;font-weight:600;color:rgba(255,255,255,0.6);font-family:'Space Grotesk','Manrope',sans-serif;">
+            Pressione "Iniciar Teste" para começar
+          </div>
+          <div id="testPhaseInfo" style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:6px;"></div>
+          <div id="testTimer" style="font-size:3rem;font-weight:700;color:#00d9ff;margin-top:8px;font-family:'JetBrains Mono',monospace;">--</div>
+          <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-top:6px;">
+            Classificação atual: <span id="testCurrentClass" style="font-weight:600;font-family:'JetBrains Mono',monospace;">--</span>
+          </div>
+        </div>
+
+        <!-- Resultados -->
+        <div id="testResults" style="padding:0 0 6px;font-size:0.8rem;color:rgba(255,255,255,0.7);font-family:'JetBrains Mono',monospace;"></div>
+
+        <!-- Seleção de Log -->
+        <div class="tt-log-controls">
+          <span class="tt-log-label">Log Selecionado</span>
+          <select id="ttLogSelect"></select>
+          <button class="btn btn-small" id="ttLogRefresh">Atualizar</button>
+        </div>
+
+        <div id="ttLogSummarySection" style="display:none;">
+          <div class="tt-summary-title">Resumo do Log Selecionado</div>
+          <div id="ttLogSummaryMeta" class="tt-log-meta"></div>
+          <div id="ttLogSummaryContent" class="tt-summary-content"></div>
+        </div>
+
+        <!-- Resumo Estatístico (aparece ao final) -->
+        <div id="ttSummarySection" style="display:none;">
+          <div class="tt-summary-title">Resumo Estatístico</div>
+          <div id="ttSummaryContent" class="tt-summary-content"></div>
+          <div id="ttBaselineComparison" class="tt-baseline-section" style="display:none;">
+            <div class="tt-summary-title" style="margin-top:12px;">Comparação com Baseline do Modelo</div>
+            <div id="ttBaselineContent" class="tt-summary-content"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card ml-card" id="stabilityTestCard">
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="vertical-align: middle; margin-right: 6px;">
+              <path d="M12 2v6" />
+              <path d="M12 22v-6" />
+              <path d="M4.93 4.93l4.24 4.24" />
+              <path d="M14.83 14.83l4.24 4.24" />
+              <path d="M2 12h6" />
+              <path d="M22 12h-6" />
+              <path d="M4.93 19.07l4.24-4.24" />
+              <path d="M14.83 9.17l4.24-4.24" />
+            </svg>
+            Teste de Estabilidade (Soak)
+          </span>
+          <span id="stBadge" class="ml-badge ml-badge-offline">Parado</span>
+        </div>
+
+        <!-- Configuracoes -->
+        <details class="tt-config-details" style="margin-top:10px;">
+          <summary style="cursor:pointer;font-size:0.75rem;color:rgba(255,255,255,0.5);user-select:none;">Configuracoes do Teste</summary>
+          <div class="tt-config-grid">
+            <div class="tt-config-item" style="grid-column: span 2;">
+              <label class="tt-tooltip" data-tooltip="Ordem de estados (separados por virgula). Preenchido automaticamente ao carregar o modelo.">Sequencia</label>
+              <input type="text" id="stCfgSequence" value="">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo de coleta por estado (apos settle). 180s = 3 min">Hold (s)</label>
+              <input type="number" id="stCfgHold" value="180" min="30" max="900" step="10">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo ignorado apos confirmar o estado alvo (para evitar transiente)">Settle (s)</label>
+              <input type="number" id="stCfgSettle" value="20" min="0" max="180" step="1">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tempo máximo de espera para o classificador reconhecer o alvo. Se exceder, inicia settle/hold mesmo assim (log marca TIMEOUT).">Max espera alvo (s)</label>
+              <input type="number" id="stCfgWaitTarget" value="30" min="0" max="180" step="5">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Contagem regressiva antes do comando MUDE AGORA (tempo para voce se preparar)">Preparacao (s)</label>
+              <input type="number" id="stCfgPrepare" value="5" min="2" max="30" step="1">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Tag livre para rastrear frequencia, dataset ou experimento">Tag do Teste</label>
+              <input type="text" id="stCfgTag" placeholder="ex: 15Hz_soak_v1">
+            </div>
+            <div class="tt-config-item">
+              <label class="tt-tooltip" data-tooltip="Observacoes curtas sobre o contexto do teste">Observacoes</label>
+              <input type="text" id="stCfgNotes" placeholder="ex: fixacao nova">
+            </div>
+          </div>
+        </details>
+
+        <!-- Controles -->
+        <div class="ml-controls" style="margin-top:12px;">
+          <button class="btn" id="stStartBtn" style="background:rgba(0,255,136,0.15);border-color:#00ff88;color:#00ff88;">Iniciar Teste</button>
+          <button class="btn" id="stStopBtn" style="background:rgba(255,82,82,0.15);border-color:#ff5252;color:#ff5252;" disabled>Parar</button>
+        </div>
+
+        <!-- Barra de progresso global -->
+        <div class="tt-global-progress">
+          <div class="tt-global-progress-label">
+            <span id="stProgressText">Etapa 0/0</span>
+            <span id="stElapsedTime">00:00</span>
+          </div>
+          <div id="stTimeRange" class="tt-time-range"></div>
+          <div class="tt-global-progress-bar">
+            <div class="tt-global-progress-fill" id="stProgressFill" style="width:0%;"></div>
+          </div>
+        </div>
+
+        <!-- Barra de progresso das etapas -->
+        <div style="display:flex;gap:4px;margin:8px 0 8px;" id="stStepBar"></div>
+
+        <!-- Instrucao principal -->
+        <div style="text-align:center;padding:18px 10px;">
+          <div id="stInstruction" style="font-size:1.2rem;font-weight:600;color:rgba(255,255,255,0.6);font-family:'Space Grotesk','Manrope',sans-serif;">
+            Pressione "Iniciar Teste" para comecar
+          </div>
+          <div id="stPhaseInfo" style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:6px;"></div>
+          <div id="stTimer" style="font-size:3rem;font-weight:700;color:#00d9ff;margin-top:8px;font-family:'JetBrains Mono',monospace;">--</div>
+          <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-top:6px;">
+            Classificacao atual: <span id="stCurrentClass" style="font-weight:600;font-family:'JetBrains Mono',monospace;">--</span>
+          </div>
+        </div>
+
+        <!-- Resultados -->
+        <div id="stResults" style="padding:0 0 6px;font-size:0.8rem;color:rgba(255,255,255,0.7);font-family:'JetBrains Mono',monospace;"></div>
+
+        <!-- Resumo Estatistico (aparece ao final) -->
+        <div id="stSummarySection" style="display:none;">
+          <div class="tt-summary-title">Resumo Estatistico</div>
+          <div id="stSummaryContent" class="tt-summary-content"></div>
+        </div>
+
+        <!-- Online Learning Absorption (shown after soak test completes) -->
+        <div id="olAbsorbSection" style="display:none;"></div>
+        <div id="autoTuneSection" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Row: Recalibração Rápida -->
+    <div id="quickRecalSection" class="card ml-card" style="display:none;">
+      <!-- Conteúdo injetado dinamicamente por QuickRecalibration._showUI() -->
+    </div>
+
+    <!-- Row 4: Desempenho do Modelo (1x1) -->
+    <div class="grid-2x1">
+      <div class="card model-card model-card-full">
+        <div class="card-title model-card-title">
+          <span class="model-card-title-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <span>Desempenho do Modelo</span>
+          </span>
+          <span id="olBadge" class="ml-badge ml-badge-offline">Modelo Base</span>
+        </div>
+
+        <div class="model-metrics-grid" aria-label="Metricas do modelo">
+          <div class="model-metric-tile">
+            <div class="model-metric-value" id="modelCvAccuracy">--</div>
+            <div class="model-metric-label">CV (5-fold)</div>
+          </div>
+          <div class="model-metric-tile">
+            <div class="model-metric-value" id="modelTrainAccuracy">--</div>
+            <div class="model-metric-label">Train</div>
+          </div>
+          <div class="model-metric-tile">
+            <div class="model-metric-value" id="modelHoldoutAccuracy">--</div>
+            <div class="model-metric-label">Holdout</div>
+          </div>
+          <div class="model-metric-tile">
+            <div class="model-metric-value" id="modelLowMedConfusionRate">--</div>
+            <div class="model-metric-label">L&lt;-&gt;M Err</div>
+          </div>
+        </div>
+
+        <div class="model-metrics-meta" aria-label="Resumo do treinamento">
+          <span><strong id="modelFeatureCount">--</strong> features</span>
+          <span class="meta-dot">&middot;</span>
+          <span><strong id="modelWindowCount">--</strong> janelas</span>
+          <span class="meta-dot">&middot;</span>
+          <span id="modelValidation">--</span>
+        </div>
+
+        <details class="model-section-details" id="olDetails" style="margin-top:12px;">
+          <summary>
+            Aprendizado Online
+            <span class="model-section-meta" id="olSummaryMeta"></span>
+          </summary>
+          <div class="model-section-body">
+            <div class="model-ol-pending" id="olPendingSession">
+              <div class="model-ol-pending-header">
+                <span class="model-ol-pending-title">Sessao Soak</span>
+                <span id="olPendingBadge" class="ml-badge ml-badge-offline">Sem sessao</span>
+              </div>
+              <div id="olPendingText" class="model-ol-pending-text">
+                Rode o Soak Test para gerar uma sessao rotulada para adaptacao.
+              </div>
+              <div class="model-ol-pending-actions">
+                <button class="btn btn-small" id="olGoToSoakBtn">Ir para Soak</button>
+                <button class="btn btn-small" id="olClearPendingBtn" style="display:none;">Limpar</button>
+              </div>
+            </div>
+            <div id="olControlsSection" class="model-ol-controls">
+              <div class="model-ol-desc">
+                Adapte o modelo absorvendo dados do Soak Test. O modelo base e sempre preservado.
+              </div>
+              <div id="olHistoryInfo" class="model-ol-history"></div>
+              <div class="model-ol-actions">
+                <button class="btn btn-small" id="olResetBtn" disabled>Resetar para Modelo Base</button>
+                <button class="btn btn-small" id="olExportBtn">Exportar Modelo Adaptado</button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="model-section-details" id="modelParamsDetails" style="margin-top:12px;">
+          <summary>
+            Referência do Modelo (Features)
+            <span class="model-section-meta" id="modelParamsMeta"></span>
+          </summary>
+          <div class="model-section-body">
+            <div class="model-params-desc">
+              Estatísticas atuais do modelo por classe para cada feature de janela (mean/std/count). Isso reflete
+              diretamente as mudanças do Aprendizado Online.
+            </div>
+            <div class="model-params-controls">
+              <label for="modelParamsClassSelect">Classe</label>
+              <!-- Options populated dynamically by JS (renderModelFeatureParams) -->
+              <select id="modelParamsClassSelect" class="model-params-select"></select>
+            </div>
+            <div id="modelParamsSummary" class="model-params-summary"></div>
+            <div id="modelParamsTableWrap" class="model-params-table-wrap"></div>
+            <div class="model-params-note">
+              Observação: as referências “Treino/Adaptado” nos gráficos usam dados brutos de eixo
+              (accel/gyro/vib). Esta seção mostra parâmetros das <em>features</em> do modelo.
+            </div>
+          </div>
+        </details>
+
+        <details class="model-section-details" id="modelTraceDetails" style="margin-top:12px;">
+          <summary>Rastreabilidade e Features</summary>
+          <div class="model-section-body">
+            <div class="model-metrics-stack">
+              <div class="model-metric-row">
+              <span class="model-metric-label">Modelo</span>
+              <span class="model-metric-value" id="modelVersion" style="font-size:0.7rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Arquivo</span>
+              <span class="model-metric-value" id="modelFile" style="font-size:0.65rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Tipo</span>
+              <span class="model-metric-value" id="modelType" style="font-size:0.65rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Gerado em</span>
+              <span class="model-metric-value" id="modelGeneratedAt" style="font-size:0.65rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Notebook</span>
+              <span class="model-metric-value" id="modelGeneratedBy" style="font-size:0.65rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Labels</span>
+              <span class="model-metric-value" id="modelLabels" style="font-size:0.65rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Seleção</span>
+              <span class="model-metric-value" id="modelSelectionMethod" style="font-size:0.6rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Window/Step</span>
+              <span class="model-metric-value" id="modelWindowInfo" style="font-size:0.65rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">EDA Config</span>
+              <span class="model-metric-value" id="modelEdaVersion">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">EDA ID</span>
+              <span class="model-metric-value" id="modelEdaId" style="font-size:0.6rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">FE ID</span>
+              <span class="model-metric-value" id="modelFeId" style="font-size:0.6rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Sample Rate (treino)</span>
+              <span class="model-metric-value" id="modelSampleRate">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Features CSV</span>
+              <span class="model-metric-value" id="modelFeaturesCsvFile" style="font-size:0.6rem;">--</span>
+            </div>
+            <div class="model-metric-row">
+              <span class="model-metric-label">Features CSV Hash</span>
+              <span class="model-metric-value" id="modelFeaturesCsvHash" style="font-size:0.6rem;">--</span>
+            </div>
+            </div>
+            <details class="model-features">
+              <summary>Ver features do modelo (<span id="modelFeatureCountSummary">--</span>)</summary>
+              <div class="model-feature-list" id="modelFeatureList"></div>
+            </details>
+          </div>
+        </details>
+
+        <div class="model-note" id="modelNote">
+          <strong>Modelo ML</strong> - aguardando carregamento...
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 5: Estado do Ventilador (1x2) -->
+    <div class="grid-1x2">
+      <div class="card" id="fanStateCard">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path
+              d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          Estado do Ventilador
+        </div>
+        <div class="card-value" id="fanState">--</div>
+        <div class="card-unit" id="fanStateDetail">Aguardando conexão...</div>
+      </div>
+      <div class="card" id="severityCard">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          Severidade
+        </div>
+        <div class="card-value" id="severity">NONE</div>
+        <div class="card-unit" id="severityMessage">Sistema normal</div>
+      </div>
+    </div>
+
+    <!-- Row 6: Sensores Principais (1x3) -->
+    <div class="grid-1x3">
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
+          </svg>
+          Temperatura
+        </div>
+        <div class="card-value" id="tempValue">--</div>
+        <div class="card-unit">°C</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="tempProgress"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          Aceleração
+        </div>
+        <div class="card-values-column">
+          <div class="card-value-line" id="accelAxisX">AX=--</div>
+          <div class="card-value-line" id="accelAxisY">AY=--</div>
+          <div class="card-value-line" id="accelAxisZ">AZ=--</div>
+        </div>
+        <div class="card-unit">g (Magnitude)</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="accelMagProgress"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+          Vel. Angular
+        </div>
+        <div class="card-values-column">
+          <div class="card-value-line" id="gyroAxisX">GX=--</div>
+          <div class="card-value-line" id="gyroAxisY">GY=--</div>
+          <div class="card-value-line" id="gyroAxisZ">GZ=--</div>
+        </div>
+        <div class="card-unit">dps (Magnitude)</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="gyroMagProgress"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 7: Dados Recebidos (1x3) -->
+    <div class="grid-1x3">
+      <div class="card" id="lastPayloadSummaryCard">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Último Dado Recebido
+        </div>
+        <div class="card-values-column">
+          <div class="card-value-line" id="lastPayloadTimestamp">--</div>
+          <div class="card-value-line" id="lastPayloadTemp">--</div>
+          <div class="card-value-line" id="lastPayloadVib">--</div>
+        </div>
+        <div class="card-unit">Timestamp | Temperatura | Vibração</div>
+      </div>
+      <div class="card" id="lastPayloadAccelCard">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          Leituras dos Eixos
+        </div>
+        <div class="card-values-column">
+          <div class="card-value-line" id="lastPayloadAX">--</div>
+          <div class="card-value-line" id="lastPayloadAY">--</div>
+          <div class="card-value-line" id="lastPayloadAZ">--</div>
+        </div>
+        <div class="card-unit">AX | AY | AZ (g)</div>
+      </div>
+      <div class="card" id="lastPayloadGyroCard">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="vertical-align: middle; margin-right: 6px;">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+          Leituras dos Eixos
+        </div>
+        <div class="card-values-column">
+          <div class="card-value-line" id="lastPayloadGX">--</div>
+          <div class="card-value-line" id="lastPayloadGY">--</div>
+          <div class="card-value-line" id="lastPayloadGZ">--</div>
+        </div>
+        <div class="card-unit">GX | GY | GZ</div>
+      </div>
+    </div>
+
+    <!-- Time Range Controls -->
+    <div class="controls">
+      <span>Janela de tempo:</span>
+      <span style="border-left:1px solid #cbd5e1;margin:0 8px;height:20px;display:inline-block;vertical-align:middle;"></span>
+      <span style="font-size:0.8rem;color:#94a3b8;">Suavização:</span>
+      <input type="range" id="chartTensionSlider" min="0" max="0.4" step="0.05" value="0"
+        style="width:80px;accent-color:#00d9ff;cursor:pointer;vertical-align:middle;">
+      <span id="chartTensionVal" style="font-size:0.75rem;color:#00d9ff;font-family:'JetBrains Mono',monospace;min-width:28px;display:inline-block;">0</span>
+      <span style="border-left:1px solid #cbd5e1;margin:0 8px;height:20px;display:inline-block;vertical-align:middle;"></span>
+      <span style="font-size:0.8rem;color:#94a3b8;">Zoom X:</span>
+      <button class="btn btn-small" id="btnXZoomOut" title="Zoom out (X): janela maior">X-</button>
+      <button class="btn btn-small" id="btnXZoomIn" title="Zoom in (X): janela menor">X+</button>
+      <button class="btn active" data-range="all">Tudo</button>
+      <button class="btn" data-range="30s">30 s</button>
+      <button class="btn" data-range="1m">1 min</button>
+      <button class="btn" data-range="5m">5 min</button>
+      <button class="btn" data-range="10m">10 min</button>
+      <button class="btn" data-range="1h">1 hora</button>
+      <button class="btn" data-range="6h">6 horas</button>
+    </div>
+
+    <!-- Freq Analyzer Bar -->
+    <div class="freq-bar" id="freqAnalyzerCard">
+      <div class="freq-bar-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+        Amostragem
+      </div>
+      <div class="freq-bar-stats">
+        <div class="freq-stat">
+          <span class="freq-stat-label">Configurada</span>
+          <span class="freq-stat-value" id="freqConfigured">-- Hz</span>
+        </div>
+        <div class="freq-stat">
+          <span class="freq-stat-label">Real</span>
+          <span class="freq-stat-value" id="freqReal">-- Hz</span>
+        </div>
+        <div class="freq-stat">
+          <span class="freq-stat-label">Desvio</span>
+          <span class="freq-stat-value" id="freqDeviation">--%</span>
+        </div>
+        <div class="freq-stat">
+          <span class="freq-stat-label">Intervalo</span>
+          <span class="freq-stat-value" id="freqInterval">-- s</span>
+        </div>
+        <div class="freq-stat">
+          <span class="freq-stat-label">Jitter</span>
+          <span class="freq-stat-value" id="freqJitter">-- s</span>
+        </div>
+        <div class="freq-stat">
+          <span class="freq-stat-label">Amostras (60s)</span>
+          <span class="freq-stat-value" id="freqSamples">--</span>
+        </div>
+        <div class="freq-stat">
+          <span class="freq-stat-label">Status</span>
+          <span class="freq-stat-value" id="freqStatus">--</span>
+        </div>
+      </div>
+      <div class="freq-bar-progress">
+        <div class="freq-bar-progress-fill" id="freqProgress"></div>
+      </div>
+    </div>
+
+    <!-- Charts Tabs -->
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-button active" data-tab="gyro">Velocidade Angular Detalhada</button>
+        <button class="tab-button" data-tab="accel">Aceleração Detalhada</button>
+        <button class="tab-button" data-tab="overview">Visão Geral</button>
+      </div>
+
+      <div class="tab-pane" id="tab-overview">
+        <div class="charts-stack">
+          <div class="chart-card">
+            <div class="chart-title">
+              <span>Temperatura (°C)</span>
+              <span class="chart-timer">--</span>
+              <button class="chart-screenshot-btn" onclick="downloadChart('tempChart','temperatura')" title="Salvar imagem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PNG
+              </button>
+            </div>
+            <div class="chart-controls">
+              <span>Zoom Y</span>
+              <div class="chart-buttons">
+                <button class="btn btn-small" data-yzoom-target="temp" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+                <button class="btn btn-small active" data-yzoom-target="temp" data-yzoom="auto" title="Auto (Y)">Auto</button>
+                <button class="btn btn-small" data-yzoom-target="temp" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+                <span class="chart-zoom-readout" data-yzoom-readout="temp">Y: Auto</span>
+              </div>
+            </div>
+            <div class="chart-container"><canvas id="tempChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">
+              <span>Vibração (dps)</span>
+              <span class="chart-timer">--</span>
+              <button class="chart-screenshot-btn" onclick="downloadChart('vibrationChart','vibracao')" title="Salvar imagem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PNG
+              </button>
+            </div>
+            <div class="chart-controls">
+              <span>Zoom Y</span>
+              <div class="chart-buttons">
+                <button class="btn btn-small" data-yzoom-target="vibration" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+                <button class="btn btn-small active" data-yzoom-target="vibration" data-yzoom="auto" title="Auto (Y)">Auto</button>
+                <button class="btn btn-small" data-yzoom-target="vibration" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+                <span class="chart-zoom-readout" data-yzoom-readout="vibration">Y: Auto</span>
+              </div>
+            </div>
+            <div class="chart-container"><canvas id="vibrationChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">
+              <span>Aceleração (g)</span>
+              <span class="chart-timer">--</span>
+              <button class="chart-screenshot-btn" onclick="downloadChart('accelChart','aceleracao')" title="Salvar imagem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                PNG
+              </button>
+            </div>
+            <div class="chart-controls">
+              <span>Zoom Y</span>
+              <div class="chart-buttons">
+                <button class="btn btn-small" data-yzoom-target="accel" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+                <button class="btn btn-small active" data-yzoom-target="accel" data-yzoom="auto" title="Auto (Y)">Auto</button>
+                <button class="btn btn-small" data-yzoom-target="accel" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+                <span class="chart-zoom-readout" data-yzoom-readout="accel">Y: Auto</span>
+              </div>
+            </div>
+            <div class="chart-stat-strip chart-stat-strip-multi" id="accelMultiStats">
+              <div class="chart-stat-row">
+                <span class="chart-stat-axis axis-x">X</span>
+              <span class="chart-stat-item axis-x"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="accelMultiRmsX">--</span></span>
+              <span class="chart-stat-item axis-x"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="accelMultiMinX">--</span></span>
+              <span class="chart-stat-item axis-x"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="accelMultiMaxX">--</span></span>
+              <span class="chart-stat-item axis-x"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="accelMultiStdX">--</span></span>
+            </div>
+            <div class="chart-stat-row">
+              <span class="chart-stat-axis axis-y">Y</span>
+              <span class="chart-stat-item axis-y"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="accelMultiRmsY">--</span></span>
+              <span class="chart-stat-item axis-y"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="accelMultiMinY">--</span></span>
+              <span class="chart-stat-item axis-y"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="accelMultiMaxY">--</span></span>
+              <span class="chart-stat-item axis-y"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="accelMultiStdY">--</span></span>
+            </div>
+            <div class="chart-stat-row">
+              <span class="chart-stat-axis axis-z">Z</span>
+              <span class="chart-stat-item axis-z"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="accelMultiRmsZ">--</span></span>
+              <span class="chart-stat-item axis-z"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="accelMultiMinZ">--</span></span>
+              <span class="chart-stat-item axis-z"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="accelMultiMaxZ">--</span></span>
+              <span class="chart-stat-item axis-z"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="accelMultiStdZ">--</span></span>
+            </div>
+          </div>
+            <div class="chart-container"><canvas id="accelChart"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>Giroscópio (dps)</span>
+            <span class="chart-timer">--</span>
+            <button class="chart-screenshot-btn" onclick="downloadChart('gyroChart','giroscopio')" title="Salvar imagem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              PNG
+            </button>
+          </div>
+          <div class="chart-controls">
+            <span>Zoom Y</span>
+            <div class="chart-buttons">
+              <button class="btn btn-small" data-yzoom-target="gyro" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+              <button class="btn btn-small active" data-yzoom-target="gyro" data-yzoom="auto" title="Auto (Y)">Auto</button>
+              <button class="btn btn-small" data-yzoom-target="gyro" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+              <span class="chart-zoom-readout" data-yzoom-readout="gyro">Y: Auto</span>
+            </div>
+          </div>
+          <div class="chart-stat-strip chart-stat-strip-multi" id="gyroMultiStats">
+            <div class="chart-stat-row">
+              <span class="chart-stat-axis axis-x gyro-axis-x">X</span>
+              <span class="chart-stat-item gyro-axis-x"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="gyroMultiRmsX">--</span></span>
+              <span class="chart-stat-item gyro-axis-x"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="gyroMultiMinX">--</span></span>
+              <span class="chart-stat-item gyro-axis-x"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="gyroMultiMaxX">--</span></span>
+              <span class="chart-stat-item gyro-axis-x"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="gyroMultiStdX">--</span></span>
+            </div>
+            <div class="chart-stat-row">
+              <span class="chart-stat-axis axis-y gyro-axis-y">Y</span>
+              <span class="chart-stat-item gyro-axis-y"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="gyroMultiRmsY">--</span></span>
+              <span class="chart-stat-item gyro-axis-y"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="gyroMultiMinY">--</span></span>
+              <span class="chart-stat-item gyro-axis-y"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="gyroMultiMaxY">--</span></span>
+              <span class="chart-stat-item gyro-axis-y"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="gyroMultiStdY">--</span></span>
+            </div>
+            <div class="chart-stat-row">
+              <span class="chart-stat-axis axis-z gyro-axis-z">Z</span>
+              <span class="chart-stat-item gyro-axis-z"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="gyroMultiRmsZ">--</span></span>
+              <span class="chart-stat-item gyro-axis-z"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="gyroMultiMinZ">--</span></span>
+              <span class="chart-stat-item gyro-axis-z"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="gyroMultiMaxZ">--</span></span>
+              <span class="chart-stat-item gyro-axis-z"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="gyroMultiStdZ">--</span></span>
+            </div>
+          </div>
+          <div class="chart-container"><canvas id="gyroChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-accel">
+      <div class="charts-grid charts-grid-vertical">
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>Aceleração X (g)</span>
+            <span class="chart-timer">--</span>
+            <button class="chart-screenshot-btn" onclick="downloadChart('accelXChart','aceleracao_x')" title="Salvar imagem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              PNG
+            </button>
+          </div>
+          <div class="chart-controls">
+            <span>Zoom Y</span>
+            <div class="chart-buttons">
+              <button class="btn btn-small" data-yzoom-target="accelX" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+              <button class="btn btn-small active" data-yzoom-target="accelX" data-yzoom="auto" title="Auto (Y)">Auto</button>
+              <button class="btn btn-small" data-yzoom-target="accelX" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+              <span class="chart-zoom-readout" data-yzoom-readout="accelX">Y: Auto</span>
+            </div>
+          </div>
+          <div class="chart-stat-strip axis-x" id="accelXStats">
+            <div class="chart-stat"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="accelXStatRms">--</span></div>
+            <div class="chart-stat"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="accelXStatMin">--</span></div>
+            <div class="chart-stat"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="accelXStatMax">--</span></div>
+            <div class="chart-stat"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="accelXStatStd">--</span></div>
+            <div class="chart-stat chart-stat-state" id="accelXStatState">
+              <span class="chart-stat-label">Classe</span>
+              <span class="chart-stat-value" id="accelXStatStateValue">--</span>
+            </div>
+          </div>
+          <div class="chart-container"><canvas id="accelXChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>Aceleração Y (g)</span>
+            <span class="chart-timer">--</span>
+            <button class="chart-screenshot-btn" onclick="downloadChart('accelYChart','aceleracao_y')" title="Salvar imagem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              PNG
+            </button>
+          </div>
+          <div class="chart-controls">
+            <span>Zoom Y</span>
+            <div class="chart-buttons">
+              <button class="btn btn-small" data-yzoom-target="accelY" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+              <button class="btn btn-small active" data-yzoom-target="accelY" data-yzoom="auto" title="Auto (Y)">Auto</button>
+              <button class="btn btn-small" data-yzoom-target="accelY" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+              <span class="chart-zoom-readout" data-yzoom-readout="accelY">Y: Auto</span>
+            </div>
+          </div>
+        <div class="chart-stat-strip axis-y" id="accelYStats">
+          <div class="chart-stat"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="accelYStatRms">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="accelYStatMin">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="accelYStatMax">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="accelYStatStd">--</span></div>
+          <div class="chart-stat chart-stat-state" id="accelYStatState">
+            <span class="chart-stat-label">Classe</span>
+            <span class="chart-stat-value" id="accelYStatStateValue">--</span>
+          </div>
+        </div>
+          <div class="chart-container"><canvas id="accelYChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>Aceleração Z (g)</span>
+            <span class="chart-timer">--</span>
+            <button class="chart-screenshot-btn" onclick="downloadChart('accelZChart','aceleracao_z')" title="Salvar imagem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              PNG
+            </button>
+          </div>
+          <div class="chart-controls">
+            <span>Zoom Y</span>
+            <div class="chart-buttons">
+              <button class="btn btn-small" data-yzoom-target="accelZ" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+              <button class="btn btn-small active" data-yzoom-target="accelZ" data-yzoom="auto" title="Auto (Y)">Auto</button>
+              <button class="btn btn-small" data-yzoom-target="accelZ" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+              <span class="chart-zoom-readout" data-yzoom-readout="accelZ">Y: Auto</span>
+            </div>
+          </div>
+        <div class="chart-stat-strip axis-z" id="accelZStats">
+          <div class="chart-stat"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="accelZStatRms">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="accelZStatMin">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="accelZStatMax">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="accelZStatStd">--</span></div>
+          <div class="chart-stat chart-stat-state" id="accelZStatState">
+            <span class="chart-stat-label">Classe</span>
+            <span class="chart-stat-value" id="accelZStatStateValue">--</span>
+          </div>
+        </div>
+          <div class="chart-container"><canvas id="accelZChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane active" id="tab-gyro">
+    <div class="charts-grid charts-grid-vertical">
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>Giroscópio X (dps)</span>
+          <span class="chart-timer">--</span>
+          <button class="chart-screenshot-btn" onclick="downloadChart('gyroXChart','giroscopio_x')" title="Salvar imagem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PNG
+          </button>
+        </div>
+        <div class="chart-controls">
+          <span>Zoom Y</span>
+          <div class="chart-buttons">
+            <button class="btn btn-small" data-yzoom-target="gyroX" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+            <button class="btn btn-small active" data-yzoom-target="gyroX" data-yzoom="auto" title="Auto (Y)">Auto</button>
+            <button class="btn btn-small" data-yzoom-target="gyroX" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+            <span class="chart-zoom-readout" data-yzoom-readout="gyroX">Y: Auto</span>
+          </div>
+        </div>
+        <div class="chart-stat-strip gyro-axis-x" id="gyroXStats">
+          <div class="chart-stat"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="gyroXStatRms">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="gyroXStatMin">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="gyroXStatMax">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="gyroXStatStd">--</span></div>
+          <div class="chart-stat chart-stat-state" id="gyroXStatState">
+            <span class="chart-stat-label">Classe</span>
+            <span class="chart-stat-value" id="gyroXStatStateValue">--</span>
+          </div>
+        </div>
+        <div class="chart-container"><canvas id="gyroXChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>Giroscópio Y (dps)</span>
+          <span class="chart-timer">--</span>
+          <button class="chart-screenshot-btn" onclick="downloadChart('gyroYChart','giroscopio_y')" title="Salvar imagem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PNG
+          </button>
+        </div>
+        <div class="chart-controls">
+          <span>Zoom Y</span>
+          <div class="chart-buttons">
+            <button class="btn btn-small" data-yzoom-target="gyroY" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+            <button class="btn btn-small active" data-yzoom-target="gyroY" data-yzoom="auto" title="Auto (Y)">Auto</button>
+            <button class="btn btn-small" data-yzoom-target="gyroY" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+            <span class="chart-zoom-readout" data-yzoom-readout="gyroY">Y: Auto</span>
+          </div>
+        </div>
+        <div class="chart-stat-strip gyro-axis-y" id="gyroYStats">
+          <div class="chart-stat"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="gyroYStatRms">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="gyroYStatMin">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="gyroYStatMax">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="gyroYStatStd">--</span></div>
+          <div class="chart-stat chart-stat-state" id="gyroYStatState">
+            <span class="chart-stat-label">Classe</span>
+            <span class="chart-stat-value" id="gyroYStatStateValue">--</span>
+          </div>
+        </div>
+        <div class="chart-container"><canvas id="gyroYChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>Giroscópio Z (dps)</span>
+          <span class="chart-timer">--</span>
+          <button class="chart-screenshot-btn" onclick="downloadChart('gyroZChart','giroscopio_z')" title="Salvar imagem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PNG
+          </button>
+        </div>
+        <div class="chart-controls">
+          <span>Zoom Y</span>
+          <div class="chart-buttons">
+            <button class="btn btn-small" data-yzoom-target="gyroZ" data-yzoom="out" title="Zoom out (Y)">Y-</button>
+            <button class="btn btn-small active" data-yzoom-target="gyroZ" data-yzoom="auto" title="Auto (Y)">Auto</button>
+            <button class="btn btn-small" data-yzoom-target="gyroZ" data-yzoom="in" title="Zoom in (Y)">Y+</button>
+            <span class="chart-zoom-readout" data-yzoom-readout="gyroZ">Y: Auto</span>
+          </div>
+        </div>
+        <div class="chart-stat-strip gyro-axis-z" id="gyroZStats">
+          <div class="chart-stat"><span class="chart-stat-label">RMS</span><span class="chart-stat-value" id="gyroZStatRms">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Min</span><span class="chart-stat-value" id="gyroZStatMin">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Max</span><span class="chart-stat-value" id="gyroZStatMax">--</span></div>
+          <div class="chart-stat"><span class="chart-stat-label">Desvio</span><span class="chart-stat-value" id="gyroZStatStd">--</span></div>
+          <div class="chart-stat chart-stat-state" id="gyroZStatState">
+            <span class="chart-stat-label">Classe</span>
+            <span class="chart-stat-value" id="gyroZStatStateValue">--</span>
+          </div>
+        </div>
+        <div class="chart-container"><canvas id="gyroZChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Alerts Section -->
+  <div class="alerts">
+    <div class="alerts-head">
+      <h3>Histórico de Alertas</h3>
+      <div class="alerts-actions">
+        <button class="btn" id="clearCache" title="Limpa dados/alertas locais do dashboard (não apaga o banco).">Resetar dashboard</button>
+        <button class="btn" id="exportCsv" title="Exporta as leituras carregadas no dashboard (cache local).">Exportar leituras (CSV)</button>
+      </div>
+    </div>
+    <div id="alertsList">
+      <div class="card-unit">Nenhum alerta registrado.</div>
+    </div>
+  </div>
+
+  <!-- Professional Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <strong>IoT Fan Monitor</strong> v1.0
+        <span class="footer-separator">|</span>
+        Desenvolvido por <strong>Anderson Ferreira</strong>
+      </div>
+      <div class="footer-tech">
+        <span>Stack:</span>
+        ESP32 • MPU6050 • FastAPI • Python • Oracle XE • Gaussian Naive Bayes
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/anderson-ferreira-83/aws_iot_esp32_MPU6050_project" target="_blank" rel="noopener"
+          class="footer-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+          </svg>
+          GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/anderson-ferreira-1a473138/" target="_blank" rel="noopener"
+          class="footer-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+          </svg>
+          LinkedIn
+        </a>
+      </div>
+      <div class="footer-update">
+        Última atualização: <span id="lastUpdate">--</span>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="js/classifier.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+
+</html>
+
+

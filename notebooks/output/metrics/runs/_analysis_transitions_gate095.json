@@ -1,0 +1,315 @@
+[
+  {
+    "n_transitions": 10,
+    "span_s": 102.397,
+    "transitions_per_min": 5.86,
+    "confidence": {
+      "mean": 0.911,
+      "min": 0.577,
+      "max": 0.975
+    },
+    "dirs_top": [
+      {
+        "from": "LOW",
+        "to": "MEDIUM",
+        "count": 5
+      },
+      {
+        "from": "MEDIUM",
+        "to": "LOW",
+        "count": 3
+      },
+      {
+        "from": "MEDIUM",
+        "to": "HIGH",
+        "count": 1
+      },
+      {
+        "from": "LOW",
+        "to": "HIGH",
+        "count": 1
+      }
+    ],
+    "backtracks": {
+      "window_s": 5.0,
+      "pair_count": 2,
+      "transition_count": 4,
+      "pair_types": {
+        "LOW<->MEDIUM": 1,
+        "MEDIUM<->LOW": 1
+      },
+      "examples": [
+        {
+          "i": 0,
+          "j": 1,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 1.801,
+          "conf_i": 0.9560360154921556,
+          "conf_j": 0.8603949306366641
+        },
+        {
+          "i": 8,
+          "j": 9,
+          "pair": "MEDIUM<->LOW",
+          "dt_s": 4.202,
+          "conf_i": 0.5765099183237985,
+          "conf_j": 0.9570861317976384
+        }
+      ]
+    },
+    "low_to_medium": {
+      "all": {
+        "n": 5,
+        "confidence": {
+          "mean": 0.956,
+          "min": 0.954,
+          "max": 0.957
+        },
+        "best_eq_to_pct": 100.0,
+        "bestCount_counts": {
+          "6": 2,
+          "9": 1,
+          "7": 2
+        }
+      },
+      "backtrack": {
+        "n": 2,
+        "confidence": {
+          "mean": 0.957,
+          "min": 0.956,
+          "max": 0.957
+        },
+        "best_eq_to_pct": 100.0,
+        "bestCount_counts": {
+          "6": 1,
+          "7": 1
+        }
+      },
+      "stable": {
+        "n": 3,
+        "confidence": {
+          "mean": 0.956,
+          "min": 0.954,
+          "max": 0.957
+        },
+        "best_eq_to_pct": 100.0,
+        "bestCount_counts": {
+          "9": 1,
+          "6": 1,
+          "7": 1
+        }
+      }
+    },
+    "low_to_medium_gate_sim": {
+      "gate": 0.95,
+      "blocked_backtrack": 0,
+      "blocked_stable": 0,
+      "blocked_total": 0
+    },
+    "backtrack_pair_gate_sim": {
+      "gate": 0.95,
+      "blocked_pairs": 0,
+      "total_pairs": 2,
+      "blocked_pct": 0.0
+    },
+    "file": "ml_transitions_20260207_172510_f_15.json"
+  },
+  {
+    "n_transitions": 108,
+    "span_s": 1665.249,
+    "transitions_per_min": 3.891,
+    "confidence": {
+      "mean": 0.934,
+      "min": 0.678,
+      "max": 0.981
+    },
+    "dirs_top": [
+      {
+        "from": "LOW",
+        "to": "MEDIUM",
+        "count": 42
+      },
+      {
+        "from": "MEDIUM",
+        "to": "LOW",
+        "count": 34
+      },
+      {
+        "from": "MEDIUM",
+        "to": "HIGH",
+        "count": 15
+      },
+      {
+        "from": "HIGH",
+        "to": "MEDIUM",
+        "count": 13
+      },
+      {
+        "from": "HIGH",
+        "to": "LOW",
+        "count": 2
+      },
+      {
+        "from": "LOW",
+        "to": "HIGH",
+        "count": 2
+      }
+    ],
+    "backtracks": {
+      "window_s": 5.0,
+      "pair_count": 26,
+      "transition_count": 48,
+      "pair_types": {
+        "LOW<->MEDIUM": 17,
+        "MEDIUM<->HIGH": 1,
+        "MEDIUM<->LOW": 4,
+        "HIGH<->MEDIUM": 4
+      },
+      "examples": [
+        {
+          "i": 1,
+          "j": 2,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 1.602,
+          "conf_i": 0.8565999040151974,
+          "conf_j": 0.9605843144538715
+        },
+        {
+          "i": 6,
+          "j": 7,
+          "pair": "MEDIUM<->HIGH",
+          "dt_s": 1.604,
+          "conf_i": 0.9564569374349574,
+          "conf_j": 0.9571645744480002
+        },
+        {
+          "i": 12,
+          "j": 13,
+          "pair": "MEDIUM<->LOW",
+          "dt_s": 3.196,
+          "conf_i": 0.8721184466175,
+          "conf_j": 0.9315307893214384
+        },
+        {
+          "i": 13,
+          "j": 14,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 1.601,
+          "conf_i": 0.9315307893214384,
+          "conf_j": 0.9584491980381893
+        },
+        {
+          "i": 19,
+          "j": 20,
+          "pair": "MEDIUM<->LOW",
+          "dt_s": 3.398,
+          "conf_i": 0.957125005503595,
+          "conf_j": 0.8969715016668979
+        },
+        {
+          "i": 20,
+          "j": 21,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 1.612,
+          "conf_i": 0.8969715016668979,
+          "conf_j": 0.9598974795598673
+        },
+        {
+          "i": 24,
+          "j": 25,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 3.381,
+          "conf_i": 0.9570949955593503,
+          "conf_j": 0.8483041032214755
+        },
+        {
+          "i": 27,
+          "j": 28,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 1.581,
+          "conf_i": 0.9511780804950148,
+          "conf_j": 0.9574009593540623
+        },
+        {
+          "i": 29,
+          "j": 30,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 1.599,
+          "conf_i": 0.7982343266457735,
+          "conf_j": 0.748021216583001
+        },
+        {
+          "i": 32,
+          "j": 33,
+          "pair": "LOW<->MEDIUM",
+          "dt_s": 3.19,
+          "conf_i": 0.9572733980421284,
+          "conf_j": 0.9662920462380695
+        }
+      ]
+    },
+    "low_to_medium": {
+      "all": {
+        "n": 42,
+        "confidence": {
+          "mean": 0.921,
+          "min": 0.678,
+          "max": 0.98
+        },
+        "best_eq_to_pct": 81.0,
+        "bestCount_counts": {
+          "8": 3,
+          "7": 10,
+          "5": 8,
+          "6": 19,
+          "9": 2
+        }
+      },
+      "backtrack": {
+        "n": 18,
+        "confidence": {
+          "mean": 0.899,
+          "min": 0.678,
+          "max": 0.98
+        },
+        "best_eq_to_pct": 77.8,
+        "bestCount_counts": {
+          "8": 1,
+          "6": 9,
+          "5": 3,
+          "7": 4,
+          "9": 1
+        }
+      },
+      "stable": {
+        "n": 24,
+        "confidence": {
+          "mean": 0.937,
+          "min": 0.695,
+          "max": 0.972
+        },
+        "best_eq_to_pct": 83.3,
+        "bestCount_counts": {
+          "7": 6,
+          "5": 5,
+          "6": 10,
+          "8": 2,
+          "9": 1
+        }
+      }
+    },
+    "low_to_medium_gate_sim": {
+      "gate": 0.95,
+      "blocked_backtrack": 11,
+      "blocked_stable": 3,
+      "blocked_total": 14
+    },
+    "backtrack_pair_gate_sim": {
+      "gate": 0.95,
+      "blocked_pairs": 14,
+      "total_pairs": 26,
+      "blocked_pct": 53.8
+    },
+    "file": "ml_transitions_20260207_172709_f_15.json"
+  }
+]

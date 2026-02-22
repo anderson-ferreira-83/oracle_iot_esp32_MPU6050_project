@@ -1,0 +1,55 @@
+﻿version: '3.8'
+
+services:
+  # Backend Python (runtime atual)
+  backend:
+    image: python:3.12-slim
+    container_name: iot_backend_python
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "pip install --no-cache-dir -r backend/requirements.txt
+      && python backend/run_server.py"
+    environment:
+      ORACLE_HOST: oracle
+      ORACLE_PORT: 1521
+      ORACLE_SERVICE_NAME: xepdb1
+      ORACLE_USER: iot_mpu6050
+      ORACLE_PASSWORD: oracle
+    depends_on:
+      - oracle
+    restart: unless-stopped
+
+  # Oracle XE/Free (runtime principal)
+  oracle:
+    image: gvenzl/oracle-xe:21-slim-faststart
+    container_name: iot_oracle_xe
+    restart: unless-stopped
+    environment:
+      ORACLE_PASSWORD: "oracle"
+      APP_USER: "iot_mpu6050"
+      APP_USER_PASSWORD: "oracle"
+    ports:
+      # Portas externas alteradas para evitar conflito com Oracle nativo do Windows (1521/5500)
+      - "1522:1521"
+      - "15500:5500"
+    volumes:
+      - ./database/bootstrap_oracle_live_runtime.sql:/container-entrypoint-initdb.d/001_bootstrap.sql
+      - oracle_data:/opt/oracle/oradata
+
+  # Broker MQTT (Eclipse Mosquitto - compativel com WSL2/x86_64)
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: iot_mqtt_broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+volumes:
+  oracle_data:
