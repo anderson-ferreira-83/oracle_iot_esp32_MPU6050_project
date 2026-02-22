@@ -1,6 +1,6 @@
 {
   "mode": "HIGH",
-  "sample_rate": 20,
+  "sample_rate": 5,
   "ingest_enabled": true,
   "cmd_speed_label": "HIGH",
   "rot_state_label": "STOPPED",
