@@ -1,26 +1,17 @@
-# Python
+# Python (cache regenerado automaticamente — nao commitar)
 __pycache__/
 *.pyc
 *.pyo
 .venv*/
 
-# IDE
-.vscode/
+# IDE (configuracoes locais de editor)
 .idea/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Device runtime config/secrets (MicroPython)
-tools/device_config.json
-tools/wifi_profiles.json
-
-# Credenciais reais do ambiente local
-.env.oracle
-.env
-
-# Runtime logs e logs datados
+# Runtime logs e logs datados (gerados em execucao — nao commitar)
 logs/*.log
 logs/ml_transitions_2[0-9]*.json
 logs/ml_transitions_current.txt
@@ -31,3 +22,7 @@ logs/ml_transitions_current.txt
 # Jupyter checkpoints
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
+
+# NOTA: Repositorio PRIVADO.
+# device_config.json, wifi_profiles.json, .env.oracle e .vscode/
+# sao commitados intencionalmente para facilitar transferencia entre maquinas.
