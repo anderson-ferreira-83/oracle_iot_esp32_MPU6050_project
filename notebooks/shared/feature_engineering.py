@@ -1,6 +1,22 @@
 import numpy as np
 from scipy.stats import skew, kurtosis
 from scipy.fft import rfft, rfftfreq
+from scipy.signal import detrend as scipy_detrend, windows as scipy_windows
+
+
+# ---------------------------------------------------------------------------
+# Spectral band definitions (calibration targets — update after first EDA)
+# ---------------------------------------------------------------------------
+# Bands are ESTIMATES based on typical fan physics.
+# Run 04_Spectral_Feature_Analysis.ipynb after first 100 Hz collection to
+# identify the exact peak Hz for each class and update these limits.
+SPECTRAL_BANDS = {
+    'rot':   (0.10,  1.50),   # rotation component  (~0.25 Hz = 1 rot/4s)
+    'vel1':  (3.00,  6.50),   # LOW  speed vibration (~5 Hz)
+    'vel2':  (6.50,  9.50),   # MED  speed vibration (~7.5 Hz)
+    'vel3':  (9.50, 14.00),   # HIGH speed vibration (~10–12 Hz)
+    'noise': (25.0, 50.00),   # high-freq noise floor (reference)
+}
 
 
 def compute_time_features(values, axis_name, ddof=0):
@@ -258,6 +274,139 @@ def extract_features_windowed_extended(
             feat.update(compute_extended_features(
                 window_df[axis].values, axis,
                 sampling_hz=sampling_hz, ddof=0,
+            ))
+
+        rows.append(feat)
+
+    return rows
+
+
+# ---------------------------------------------------------------------------
+# Spectral signature — full spectrum for EDA visualization
+# ---------------------------------------------------------------------------
+
+def compute_spectral_signature(values, sampling_hz=100.0, n_fft=4096):
+    """Full spectral pipeline for EDA: detrend → Hann → zero-pad → FFT.
+
+    Returns
+    -------
+    freqs : ndarray   — frequency axis (Hz)
+    mags  : ndarray   — amplitude spectrum (corrected for window)
+    peak_freq : float — dominant frequency above 0.5 Hz
+    peak_mag  : float — magnitude at peak_freq
+    band_energies : dict — RMS energy per SPECTRAL_BANDS entry
+    """
+    arr = np.asarray(values, dtype=np.float64)
+    n = len(arr)
+    if n < 16:
+        empty = np.zeros(n_fft // 2 + 1)
+        return rfftfreq(n_fft, 1.0 / sampling_hz), empty, 0.0, 0.0, {}
+
+    # 1. Remove linear drift (eliminates slow sensor tilt / gravity shift)
+    arr = scipy_detrend(arr)
+
+    # 2. Hann window (prevents spectral leakage at window edges)
+    win = scipy_windows.hann(n)
+    win_rms = float(np.sqrt(np.mean(win ** 2)))
+    arr_w = arr * win
+
+    # 3. FFT with zero-padding → finer bin spacing
+    #    n_fft=4096, window=1000 @ 100 Hz → bins at 0.024 Hz
+    spectrum = np.abs(rfft(arr_w, n=n_fft))
+    freqs = rfftfreq(n_fft, d=1.0 / sampling_hz)
+
+    # Amplitude correction: window RMS + one-sided spectrum
+    mags = spectrum / (n * win_rms)
+    mags[1:-1] *= 2.0
+
+    # 4. Dominant peak above 0.5 Hz (avoid DC residue)
+    mask_peak = freqs >= 0.5
+    if mask_peak.any():
+        idx = int(np.argmax(mags[mask_peak]))
+        peak_freq = float(freqs[mask_peak][idx])
+        peak_mag  = float(mags[mask_peak][idx])
+    else:
+        peak_freq, peak_mag = 0.0, 0.0
+
+    # 5. Band energies (RMS of magnitudes inside each band)
+    band_energies = {}
+    for band_name, (f_lo, f_hi) in SPECTRAL_BANDS.items():
+        mask = (freqs >= f_lo) & (freqs < f_hi)
+        band_energies[band_name] = float(np.sqrt(np.mean(mags[mask] ** 2))) if mask.any() else 0.0
+
+    return freqs, mags, peak_freq, peak_mag, band_energies
+
+
+# ---------------------------------------------------------------------------
+# Spectral features — ML-ready feature vector per window
+# ---------------------------------------------------------------------------
+
+def compute_spectral_features(values, axis_name, sampling_hz=100.0,
+                               n_fft=4096, bands=None):
+    """Spectral ML features for one axis window.
+
+    Features per axis:
+      {axis}_peak_freq              — dominant frequency (Hz)
+      {axis}_peak_mag               — magnitude at dominant peak
+      {axis}_band_{name}_energy     — RMS energy per band in SPECTRAL_BANDS
+
+    Same detrend + Hann + zero-pad pipeline as compute_spectral_signature.
+    """
+    if bands is None:
+        bands = SPECTRAL_BANDS
+
+    _, mags, peak_freq, peak_mag, band_energies = compute_spectral_signature(
+        values, sampling_hz=sampling_hz, n_fft=n_fft
+    )
+
+    feats = {
+        f'{axis_name}_peak_freq': peak_freq,
+        f'{axis_name}_peak_mag':  peak_mag,
+    }
+    for band_name, energy in band_energies.items():
+        feats[f'{axis_name}_band_{band_name}_energy'] = energy
+
+    return feats
+
+
+# ---------------------------------------------------------------------------
+# Windowed spectral feature extraction (notebooks / training pipeline)
+# ---------------------------------------------------------------------------
+
+def extract_features_windowed_spectral(
+    df_class, fan_state, sensor_axes, window_size, step_size,
+    timestamp_col='timestamp_s', sampling_hz=100.0, n_fft=4096,
+):
+    """Windowed spectral feature extraction (detrend + Hann + zero-pad).
+
+    One row per window, spectral features for all sensor_axes.
+    Compatible with extract_features_windowed_extended — can be concatenated.
+
+    Parameters
+    ----------
+    window_size : samples per window
+                  1000 = 10 s @ 100 Hz → true resolution Δf = 0.1 Hz
+    step_size   : stride between windows
+                  500 = 50% overlap → new analysis every 5 s
+    n_fft       : FFT zero-padding size (4096 recommended)
+    """
+    rows = []
+    n = len(df_class)
+    if n < window_size or window_size <= 0 or step_size <= 0:
+        return rows
+
+    df_reset = df_class.reset_index(drop=True)
+    for start in range(0, n - window_size + 1, step_size):
+        end = start + window_size
+        window_df = df_reset.iloc[start:end]
+        feat = _extract_window_metadata(window_df, fan_state, timestamp_col)
+        feat['window_start'] = start
+        feat['window_end']   = end
+
+        for axis in sensor_axes:
+            feat.update(compute_spectral_features(
+                window_df[axis].values, axis,
+                sampling_hz=sampling_hz, n_fft=n_fft,
             ))
 
         rows.append(feat)

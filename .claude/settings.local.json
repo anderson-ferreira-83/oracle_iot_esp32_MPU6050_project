@@ -93,7 +93,9 @@
       "Bash(du -sh /mnt/c/Users/Anderson/Downloads/oracle_iot_esp32_MPU6050_project-main/* | sort -h)",
       "Bash(du -sh /mnt/c/Users/Anderson/Downloads/oracle_iot_esp32_MPU6050_project-main/notebooks/output/*)",
       "Bash(git credential-manager --version 2>&1 || git-credential-manager --version 2>&1 || echo \"gcm not found\"\ngit config --global credential.helper 2>&1)",
-      "Bash(git add web/js/dashboard.js web/index.html && git status)"
+      "Bash(git add web/js/dashboard.js web/index.html && git status)",
+      "Bash(/mnt/c/Windows/py.exe:*)",
+      "Bash(/mnt/c/app/Anderson/product/21c/dbhomeXE/bin/sqlplus.exe:*)"
     ]
   }
 }

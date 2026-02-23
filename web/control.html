@@ -1085,7 +1085,7 @@
         <button class="ctrl-btn ctrl-btn-new" onclick="newCollection()" title="Cria nova sessao de coleta com ID unico baseado na taxa atual">Nova Coleta</button>
         <div class="hz-control">
           <span style="font-size:0.85rem;font-weight:600;color:var(--muted);white-space:nowrap;">Taxa:</span>
-          <input type="range" id="hzSlider" min="1" max="25" value="4" oninput="updateHzDisplay(this.value)" onchange="setSampleRate(this.value)" title="Define a taxa de amostragem do ESP32 (Hz)">
+          <input type="range" id="hzSlider" min="1" max="150" value="100" oninput="updateHzDisplay(this.value)" onchange="setSampleRate(this.value)" title="Define a taxa de amostragem do ESP32 (Hz)">
           <span class="hz-display" id="hzDisplay">4 Hz</span>
         </div>
         <button class="ctrl-btn ctrl-btn-ingest-pause" id="btnIngestPause" onclick="pauseIngest()" title="Pausa a gravacao de dados no Oracle XE">Pausar DB</button>

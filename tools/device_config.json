@@ -4,9 +4,9 @@
   "wifi_profile_file": "/wifi_profiles.json",
   "network_revision_file": "/last_network_revision.txt",
   "server_hostname": "meu-notebook.local:8000",
-  "server_fallback_ip": "10.125.237.85:8000",
+  "server_fallback_ip": "10.125.237.165:8000",
   "server_fallback_ips": [
-    "10.125.237.85:8000"
+    "10.125.237.165:8000"
   ],
   "api_path": "/api/ingest",
   "mdns_retry_interval_s": 30,
@@ -17,25 +17,26 @@
   "auth_token": "F0xb@m986960440",
   "device_id": "ESP32_MPU6050_ORACLE",
   "force_main_lite": true,
-  "target_sample_rate": 10,
+  "target_sample_rate": 100,
+  "target_sends_per_sec": 5,
   "min_sample_rate": 1,
-  "max_sample_rate": 25,
+  "max_sample_rate": 150,
   "collection_id": "v5_stream",
   "current_fan_state": "RAW",
-  "http_timeout": 2,
+  "http_timeout": 4,
   "http_max_resp_body": 2048,
   "send_backoff_base_ms": 500,
   "send_backoff_max_ms": 8000,
   "send_backoff_jitter_ms": 250,
   "low_mem_threshold": 14000,
   "low_mem_recover_threshold": 22000,
-  "low_mem_queue_limit": 160,
+  "low_mem_queue_limit": 300,
   "net_mem_recover_streak": 3,
   "net_mem_reboot_fail_streak": 30,
   "persist_queue_enabled": true,
   "persist_queue_file": "/offline_queue.json",
-  "persist_queue_max_samples": 160,
-  "hard_queue_cap": 180,
+  "persist_queue_max_samples": 300,
+  "hard_queue_cap": 350,
   "persist_queue_flush_interval_s": 20,
   "portal_ssid": "Config-ESP32",
   "portal_password": "senha123",
@@ -45,7 +46,7 @@
     {
       "ssid": "S20_Ders@0",
       "password": "F0xbam1844",
-      "server_ip": "10.125.237.85:8000"
+      "server_ip": "10.125.237.165:8000"
     },
     {
       "ssid": "Dersao83",

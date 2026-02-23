@@ -454,7 +454,7 @@ def _open_portal(cfg):
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
-MAX_SAMPLE_RATE = 25
+MAX_SAMPLE_RATE = 150
 MIN_BATCH_SIZE = 1
 TARGET_SENDS_PER_SEC = 1  # 1 HTTP request/s → batch = sample_rate amostras
 
