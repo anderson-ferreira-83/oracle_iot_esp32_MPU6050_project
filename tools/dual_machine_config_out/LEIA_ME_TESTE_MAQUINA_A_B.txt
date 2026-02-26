@@ -1,5 +1,5 @@
 CONFIG GERADA COM SUCESSO
-Data: 2026-02-26 13:07:50
+Data: 2026-02-26 14:37:55
 
 Arquivos:
 - device_config.json
@@ -7,7 +7,7 @@ Arquivos:
 
 Servidor alvo fixo:
 - Maquina A: 10.125.237.165:8000
-- Maquina B: 192.168.0.108:8000
+- Maquina B: 10.125.237.85:8000
 
 Hotspots configurados:
 - Maquina A: S20_Ders@0

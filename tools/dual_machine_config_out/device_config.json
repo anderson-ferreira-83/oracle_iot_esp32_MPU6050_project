@@ -7,7 +7,7 @@
     "server_fallback_ip":  "10.125.237.165:8000",
     "server_fallback_ips":  [
                                 "10.125.237.165:8000",
-                                "192.168.0.108:8000"
+                                "10.125.237.85:8000"
                             ],
     "api_path":  "/api/ingest",
     "mdns_retry_interval_s":  30,
@@ -52,7 +52,7 @@
                                   {
                                       "ssid":  "Dersao83",
                                       "password":  "986960440",
-                                      "server_ip":  "192.168.0.108:8000"
+                                      "server_ip":  "10.125.237.85:8000"
                                   }
                               ],
     "debug":  true
