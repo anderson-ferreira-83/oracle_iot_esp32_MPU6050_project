@@ -2,7 +2,7 @@
   "connected": true,
   "ssid": "S20_Ders@0",
   "ip": "10.125.237.169",
-  "rssi": -37,
+  "rssi": -76,
   "send_fail_streak": null,
   "network_fail_streak": null,
   "last_send_error": null,
@@ -15,6 +15,6 @@
   "persist_enabled": null,
   "fw_ts": null,
   "device_id": "ESP32_MPU6050_ORACLE",
-  "updated_at": 1772050319.002473,
-  "updated_at_iso": "2026-02-25 17:11:59"
+  "updated_at": 1772062511.38833,
+  "updated_at_iso": "2026-02-25 20:35:11"
 }

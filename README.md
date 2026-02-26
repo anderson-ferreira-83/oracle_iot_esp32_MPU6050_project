@@ -492,6 +492,18 @@ Se após ~30 segundos não houver dados, veja o console do Thonny para mensagens
   • Edite o perfil Wi-Fi         │
   • Clique "Aplicar no ESP32"    │ → envia config no próximo POST
   • ESP32 reinicia e reconecta   │
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│  CENÁRIO 5: Troco de rede frequentemente (hotspot ↔ Wi-Fi casa) │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+  PROBLEMA: server_fallback_ip   │ → fixo para UMA rede. Na outra
+  é o IP de uma rede específica. │   rede o ESP32 tenta o IP errado
+                                 │   e falha até reiniciar.
+                                 │
+  SOLUÇÃO PERMANENTE: use mDNS   │ → veja seção 5.6 abaixo
+  (meu-notebook.local)           │   funciona em QUALQUER rede
 ```
 
 ### 5.5 Referência Rápida de IPs por Rede
@@ -500,12 +512,69 @@ Se após ~30 segundos não houver dados, veja o console do Thonny para mensagens
 |------|------------------------|----------------------|
 | Wi-Fi doméstico | `192.168.0.x` / `192.168.1.x` | Wi-Fi |
 | Hotspot Android padrão | `192.168.43.x` | Ethernet (adaptador virtual) |
-| Hotspot Samsung | `10.125.x.x` ou `192.168.x.x` | Ethernet |
-| Hotspot iPhone | `172.20.10.x` | Ethernet |
+| Hotspot Samsung | `10.125.x.x` ou `192.168.x.x` | Wi-Fi |
+| Hotspot iPhone | `172.20.10.x` | Wi-Fi |
 | Rede corporativa | varia — pergunte ao TI | Ethernet ou Wi-Fi |
 
-> **Dica:** adicione os IPs de todas as redes que você usa em `server_fallback_ips[]`.
-> O firmware tenta cada um em ordem até achar o servidor — funciona mesmo que o IP tenha mudado um pouco.
+> **Atenção:** `server_fallback_ip` só funciona em UMA rede por vez.
+> Se você troca de rede com frequência, use a solução mDNS (seção 5.6).
+
+---
+
+### 5.6 Solução Permanente: mDNS com `meu-notebook.local`
+
+> **Quando usar:** você usa o ESP32 em mais de uma rede (ex: hotspot do celular em campo + Wi-Fi de casa).
+> Com mDNS, o ESP32 descobre o IP do PC automaticamente em **qualquer rede**, sem precisar de USB.
+
+#### Pré-requisito
+
+- **Bonjour** instalado no Windows (necessário para o PC anunciar `meu-notebook.local` via mDNS).
+  Download: https://support.apple.com/downloads/bonjour-for-windows
+- Reinicie o PC após instalar.
+
+#### Verificação (PowerShell)
+
+```powershell
+ping meu-notebook.local
+```
+Se resolver → mDNS está funcionando. Se não resolver → verifique se o Bonjour está ativo nos serviços do Windows.
+
+#### Configuração — uma única vez via Thonny (USB)
+
+Edite `tools/device_config.json` no PC, zerando os campos de IP fixo e mantendo apenas o hostname:
+
+```json
+{
+  "server_hostname":    "meu-notebook.local:8000",
+  "server_fallback_ip": "",
+  "server_fallback_ips": []
+}
+```
+
+Faça upload via Thonny (igual ao passo de troca de IP):
+```
+File → Open → device_config.json (PC)
+File → Save As → MicroPython device → device_config.json
+Reinicie o ESP32 (EN/RST)
+```
+
+O firmware agora resolve `meu-notebook.local` via DNS/mDNS em cada conexão.
+Funciona em hotspot Samsung, Wi-Fi doméstico e qualquer outra rede — **sem precisar de USB novamente**.
+
+#### Limitação
+
+Se o roteador/hotspot bloquear pacotes multicast mDNS (raro), o ESP32 não conseguirá resolver o hostname.
+Sintoma: `[HTTP] fail` repetido no console até reboot. Solução: volte ao IP fixo para aquela rede específica.
+
+#### IP fixo como reserva no Samsung S20 (complementar ao mDNS)
+
+No celular:
+```
+Configurações → Conexões → Roteador Wi-Fi Móvel
+→ Dispositivos conectados → selecione o PC
+→ Ativar "Sempre atribuir mesmo endereço IP"
+```
+Isso garante que o PC sempre recebe o mesmo IP no hotspot — útil como plano B caso mDNS falhe.
 
 ---
 
