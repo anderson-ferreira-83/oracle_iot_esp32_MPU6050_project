@@ -35,8 +35,7 @@ DEFAULT_WIFI_PROFILE_FILE = "/wifi_profiles.json"
 DEFAULT_API_PATH = "/api/ingest"
 
 FALLBACK_WIFI_PROFILES = [
-    {"ssid": "S20_Ders@0", "password": "Foxbam1844"},
-    {"ssid": "Dersao83", "password": "986960440"},
+    {"ssid": "S20_Ders@0", "password": "F0xbam1844"},
 ]
 
 
@@ -139,8 +138,8 @@ def _load_profiles(cfg):
 
 
 def _server_cfg(cfg):
-    host_default = _sanitize_host_entry(cfg.get("server_hostname", "meu-notebook.local"))
-    ip_default = _sanitize_host_entry(cfg.get("server_fallback_ip", "192.168.0.105"))
+    host_default = _sanitize_host_entry(cfg.get("server_hostname", ""))
+    ip_default = _sanitize_host_entry(cfg.get("server_fallback_ip", "10.125.237.165:8000"))
     api_path = _ensure_api_path(cfg.get("api_path", DEFAULT_API_PATH), DEFAULT_API_PATH)
     ip_list = _normalize_hosts(cfg.get("server_fallback_ips", []), ip_default)
 

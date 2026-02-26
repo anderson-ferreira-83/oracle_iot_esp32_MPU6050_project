@@ -1739,7 +1739,7 @@
     const DEFAULT_HOTSPOT_PROFILE = {
       alias: 'HOTSPOT_BASE',
       ssid: 'S20_Ders@0',
-      password: 'Foxbam1844',
+      password: 'F0xbam1844',
       server_ip: '',
     };
     const NETWORK_PROFILES_STORAGE_PREFIX = 'iot_network_profiles_';
@@ -2544,10 +2544,10 @@
         if (ssidEl) ssidEl.textContent = data.ssid || '--';
         const age = data.updated_at ? Math.round(Date.now() / 1000 - data.updated_at) : null;
         const newSsid = String(data.ssid || '').trim();
-        const connectedFlag = (data.connected === true)
-          || (data.connected == null && !!newSsid && age !== null && age < 45);
         const freshData = age !== null && age < 30;
         const recentPing = age !== null && age < 60;
+        const connectedFlag = ((data.connected === true) && recentPing)
+          || (data.connected == null && !!newSsid && age !== null && age < 45);
         let bannerState = 'offline';
         if (freshEl) {
           if (connectedFlag && freshData) {
@@ -3093,6 +3093,14 @@
       return 'bad';
     }
 
+    function runtimeToneFromNetLink(linkRaw) {
+      const link = String(linkRaw || '--').toUpperCase();
+      if (link === 'UP') return 'good';
+      if (link === 'STALE') return 'warn';
+      if (link === 'DOWN') return 'bad';
+      return 'warn';
+    }
+
     function normalizeRuntimeStateClass(freshnessRaw) {
       const freshness = String(freshnessRaw || 'no_data').toLowerCase();
       return RUNTIME_STATE_CLASSES.includes(freshness) ? freshness : 'no_data';
@@ -3134,12 +3142,18 @@
 
     function runtimeNetworkParts(deviceStatus) {
       const status = deviceStatus && typeof deviceStatus === 'object' ? deviceStatus : {};
-      const link = status.connected === true ? 'UP' : (status.connected === false ? 'DOWN' : '--');
+      const ageNum = Number(status.age_s);
+      const recent = Number.isFinite(ageNum) && ageNum < 60;
+      let link = '--';
+      if (status.connected === true) {
+        link = recent ? 'UP' : 'STALE';
+      } else if (status.connected === false) {
+        link = 'DOWN';
+      }
       const ssid = String(status.ssid || '--');
       const ip = String(status.ip || '--');
       const rssiNum = Number(status.rssi);
       const rssi = Number.isFinite(rssiNum) ? `${Math.round(rssiNum)}dBm` : '--';
-      const ageNum = Number(status.age_s);
       const age = formatRuntimeAgeSeconds(ageNum);
       const netFail = Number.isFinite(Number(status.network_fail_streak)) ? Number(status.network_fail_streak) : 0;
       const sendFail = Number.isFinite(Number(status.send_fail_streak)) ? Number(status.send_fail_streak) : 0;
@@ -3169,7 +3183,7 @@
         const html = `
           <div class="runtime-row runtime-row-main">
             ${runtimePill('Runtime', '--', 'bad')}
-            ${runtimePill('NET', net.link, net.link === 'UP' ? 'good' : (net.link === 'DOWN' ? 'bad' : 'warn'))}
+            ${runtimePill('NET', net.link, runtimeToneFromNetLink(net.link))}
             ${runtimePill('DB', ingestEnabled ? 'ON' : 'OFF', ingestEnabled ? 'good' : 'warn')}
           </div>
           <div class="runtime-row runtime-row-network">
@@ -3218,7 +3232,7 @@
         <div class="runtime-row runtime-row-main">
           ${runtimePill('Device', activeDevice, 'info', 'wide')}
           ${runtimePill('Age', `${age} (${freshness.toUpperCase()})`, runtimeToneFromFreshness(freshness))}
-          ${runtimePill('NET', net.link, net.link === 'UP' ? 'good' : (net.link === 'DOWN' ? 'bad' : 'warn'))}
+          ${runtimePill('NET', net.link, runtimeToneFromNetLink(net.link))}
           ${runtimePill('DB', dbState, dbState === 'DB:ON' ? 'good' : 'warn')}
         </div>
         <div class="runtime-row runtime-row-config">

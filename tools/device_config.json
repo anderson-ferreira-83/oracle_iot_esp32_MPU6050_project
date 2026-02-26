@@ -4,8 +4,9 @@
   "wifi_profile_file": "/wifi_profiles.json",
   "network_revision_file": "/last_network_revision.txt",
   "server_hostname": "meu-notebook.local:8000",
-  "server_fallback_ip": "10.125.237.85:8000",
+  "server_fallback_ip": "10.125.237.165:8000",
   "server_fallback_ips": [
+    "10.125.237.165:8000",
     "10.125.237.85:8000"
   ],
   "api_path": "/api/ingest",
@@ -46,7 +47,7 @@
     {
       "ssid": "S20_Ders@0",
       "password": "F0xbam1844",
-      "server_ip": "10.125.237.85:8000"
+      "server_ip": "10.125.237.165:8000"
     },
     {
       "ssid": "Dersao83",

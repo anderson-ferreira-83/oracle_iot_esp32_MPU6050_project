@@ -91,8 +91,8 @@ def _server_ip_for_ssid(profiles, ssid):
         if not isinstance(p, dict):
             continue
         if str(p.get("ssid", "")).strip() == ssid:
-            ip = str(p.get("server_ip", "")).strip()
-            if ip and _is_ipv4_literal(ip):
+            ip = _sanitize_host_entry(p.get("server_ip", ""))
+            if ip:
                 return ip
     return ""
 
@@ -113,7 +113,7 @@ def _first_server_host(cfg):
     if host:
         return host
 
-    return "192.168.0.108"
+    return "10.125.237.165:8000"
 
 
 def _resolve_server_host(cfg, profiles, connected_ssid):
@@ -150,7 +150,7 @@ def _load_wifi_profiles(cfg):
     if ssid:
         return [{"ssid": ssid, "password": password}]
 
-    return [{"ssid": "Dersao83", "password": "986960440"}]
+    return [{"ssid": "S20_Ders@0", "password": "F0xbam1844", "server_ip": "10.125.237.165:8000"}]
 
 
 def _wifi_connect_profiles(wlan, profiles):
