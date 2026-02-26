@@ -47,7 +47,7 @@ $existingLocalVip = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $ifInde
     Where-Object { $_.IPAddress -eq $VirtualIp }
 
 if (-not $existingLocalVip) {
-    $vipInUse = Test-Connection -TargetName $VirtualIp -Count 1 -Quiet -ErrorAction SilentlyContinue
+    $vipInUse = Test-Connection -ComputerName $VirtualIp -Count 1 -Quiet -ErrorAction SilentlyContinue
     if ($vipInUse) {
         throw "O IP virtual $VirtualIp responde na rede e nao esta nesta interface. Outro host ja esta usando."
     }
