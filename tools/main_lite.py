@@ -23,6 +23,8 @@ MPU_ADDR = 0x68
 AUTH_TOKEN_DEFAULT = "F0xb@m986960440"
 API_PATH_DEFAULT = "/api/ingest"
 MAX_RESPONSE_BYTES = 4096
+DNS_CACHE_TTL_MS = 120000
+_DNS_CACHE = {}
 
 
 def _load_json(path, default):
@@ -254,92 +256,131 @@ def _parse_url(url):
     return host_port, host, port, path
 
 
-def _http_post(url, payload_bytes, token, timeout=3):
-    s = None
-    try:
-        host_port, host, port, path = _parse_url(url)
+def _dns_cache_key(host, port):
+    return "{}:{}".format(host, port)
 
-        if _is_ipv4_literal(host):
-            addr = (host, port)
-        else:
-            addr = socket.getaddrinfo(host, port)[0][-1]
 
-        s = socket.socket()
-        s.settimeout(timeout)
-        s.connect(addr)
-
-        req = (
-            "POST {} HTTP/1.0\r\n"
-            "Host: {}\r\n"
-            "Connection: close\r\n"
-            "Content-Type: application/json\r\n"
-            "Authorization: Bearer {}\r\n"
-            "Content-Length: {}\r\n"
-            "\r\n"
-        ).format(path, host_port, token, len(payload_bytes))
-
-        s.send(req.encode())
-        s.send(payload_bytes)
-
-        # Read full response (HTTP/1.0 â€” server closes after body)
-        chunks = []
-        total = 0
-        while total < MAX_RESPONSE_BYTES:
-            try:
-                chunk = s.recv(512)
-                if not chunk:
-                    break
-                chunks.append(chunk)
-                total += len(chunk)
-            except Exception:
-                break
-
-        raw = b"".join(chunks)
-        chunks = None
-
-        status = 0
-        if raw and raw[:5] == b"HTTP/":
-            end = raw.find(b"\r\n")
-            if end > 0:
-                parts = raw[:end].split()
-                if len(parts) >= 2:
-                    try:
-                        status = int(parts[1])
-                    except Exception:
-                        pass
-
-        resp = None
-        if status == 200:
-            sep = raw.find(b"\r\n\r\n")
-            if sep >= 0:
-                body = raw[sep + 4:]
-                raw = None
-                try:
-                    body_str = body.decode("utf-8")
-                except Exception:
-                    body_str = ""
-                body = None
-                body_str = body_str.lstrip("\ufeff\r\n\t ")
-                if body_str and body_str[0] in "{[":
-                    try:
-                        resp = json.loads(body_str)
-                    except Exception:
-                        pass
-                body_str = None
-            else:
-                raw = None
-        else:
-            raw = None
-
-        return status == 200, status, resp
-    except Exception as e:
-        return False, e, None
-    finally:
+def _drop_cached_addr(host, port):
+    key = _dns_cache_key(host, port)
+    if key in _DNS_CACHE:
         try:
-            if s:
-                s.close()
+            del _DNS_CACHE[key]
         except Exception:
             pass
+
+
+def _resolve_addr(host, port, force_refresh=False):
+    if _is_ipv4_literal(host):
+        return (host, port)
+
+    key = _dns_cache_key(host, port)
+    now = time.ticks_ms()
+    if not force_refresh:
+        cached = _DNS_CACHE.get(key)
+        if isinstance(cached, dict):
+            expires = cached.get("expires_ms")
+            addr = cached.get("addr")
+            if isinstance(expires, int) and addr and time.ticks_diff(expires, now) > 0:
+                return addr
+
+    addr = socket.getaddrinfo(host, port)[0][-1]
+    _DNS_CACHE[key] = {
+        "addr": addr,
+        "expires_ms": time.ticks_add(now, DNS_CACHE_TTL_MS),
+    }
+    return addr
+
+
+def _http_post(url, payload_bytes, token, timeout=3):
+    host_port, host, port, path = _parse_url(url)
+    retries = 2 if not _is_ipv4_literal(host) else 1
+    last_error = None
+
+    for attempt in range(retries):
+        s = None
+        try:
+            addr = _resolve_addr(host, port, force_refresh=(attempt > 0))
+
+            s = socket.socket()
+            s.settimeout(timeout)
+            s.connect(addr)
+
+            req = (
+                "POST {} HTTP/1.0\r\n"
+                "Host: {}\r\n"
+                "Connection: close\r\n"
+                "Content-Type: application/json\r\n"
+                "Authorization: Bearer {}\r\n"
+                "Content-Length: {}\r\n"
+                "\r\n"
+            ).format(path, host_port, token, len(payload_bytes))
+
+            s.send(req.encode())
+            s.send(payload_bytes)
+
+            # Read full response (HTTP/1.0 â€” server closes after body)
+            chunks = []
+            total = 0
+            while total < MAX_RESPONSE_BYTES:
+                try:
+                    chunk = s.recv(512)
+                    if not chunk:
+                        break
+                    chunks.append(chunk)
+                    total += len(chunk)
+                except Exception:
+                    break
+
+            raw = b"".join(chunks)
+            chunks = None
+
+            status = 0
+            if raw and raw[:5] == b"HTTP/":
+                end = raw.find(b"\r\n")
+                if end > 0:
+                    parts = raw[:end].split()
+                    if len(parts) >= 2:
+                        try:
+                            status = int(parts[1])
+                        except Exception:
+                            pass
+
+            resp = None
+            if status == 200:
+                sep = raw.find(b"\r\n\r\n")
+                if sep >= 0:
+                    body = raw[sep + 4:]
+                    raw = None
+                    try:
+                        body_str = body.decode("utf-8")
+                    except Exception:
+                        body_str = ""
+                    body = None
+                    body_str = body_str.lstrip("\ufeff\r\n\t ")
+                    if body_str and body_str[0] in "{[":
+                        try:
+                            resp = json.loads(body_str)
+                        except Exception:
+                            pass
+                    body_str = None
+                else:
+                    raw = None
+            else:
+                raw = None
+
+            return status == 200, status, resp
+        except Exception as e:
+            last_error = e
+            if not _is_ipv4_literal(host):
+                _drop_cached_addr(host, port)
+        finally:
+            try:
+                if s:
+                    s.close()
+            except Exception:
+                pass
+
+    return False, last_error, None
 
 
 # ---------------------------------------------------------------------------

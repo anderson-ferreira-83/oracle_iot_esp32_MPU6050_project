@@ -1649,6 +1649,31 @@ function adjustUpdateRate(newRateHz) {
   }
 }
 
+function computeDashboardPullRate(serverConfig) {
+  const sendsPerSec = Number(serverConfig?.sends_per_sec);
+  if (Number.isFinite(sendsPerSec) && sendsPerSec > 0) {
+    // Poll a bit faster than ESP32 upload cadence, but keep sane limits.
+    return Math.max(2, Math.min(20, Math.round(sendsPerSec * 2)));
+  }
+
+  // Legacy fallback when sends_per_sec is absent.
+  const sampleRate = Number(serverConfig?.sample_rate);
+  if (Number.isFinite(sampleRate) && sampleRate > 0 && sampleRate <= 20) {
+    return Math.max(1, Math.min(20, Math.round(sampleRate)));
+  }
+
+  return null;
+}
+
+function applyServerConfig(serverConfig) {
+  if (!serverConfig) return;
+  lastServerConfig = serverConfig;
+  const pollRate = computeDashboardPullRate(serverConfig);
+  if (pollRate) {
+    adjustUpdateRate(pollRate);
+  }
+}
+
 // Busca apenas o último dado (para atualização rápida de status)
 async function fetchLatest() {
   try {
@@ -1661,12 +1686,7 @@ async function fetchLatest() {
     const serverConfig = responseData.config;
 
     // Adjust rate if needed
-    if (serverConfig && serverConfig.sample_rate) {
-      adjustUpdateRate(Number(serverConfig.sample_rate));
-    }
-    if (serverConfig) {
-      lastServerConfig = serverConfig;
-    }
+    applyServerConfig(serverConfig);
 
     const normalized = normalizePayload(payload);
     lastPayload = normalized;
@@ -1712,12 +1732,7 @@ async function fetchHistory() {
     const serverConfig = responseData.config;
 
     // Adjust rate if needed
-    if (serverConfig && serverConfig.sample_rate) {
-      adjustUpdateRate(Number(serverConfig.sample_rate));
-    }
-    if (serverConfig) {
-      lastServerConfig = serverConfig;
-    }
+    applyServerConfig(serverConfig);
 
     if (!Array.isArray(payload)) {
       return;
@@ -3223,12 +3238,7 @@ fetchLatest = async function () {
     const responseData = await response.json();
     const payload = responseData.data;
     const serverConfig = responseData.config;
-    if (serverConfig && serverConfig.sample_rate) {
-      adjustUpdateRate(Number(serverConfig.sample_rate));
-    }
-    if (serverConfig) {
-      lastServerConfig = serverConfig;
-    }
+    applyServerConfig(serverConfig);
     const normalized = normalizePayload(payload);
     lastPayload = normalized;
     const hasCounter = Number.isFinite(normalized.counter);
@@ -3264,12 +3274,7 @@ fetchLatest = async function () {
       const serverConfig = responseData.config;
 
       // Adjust rate if needed
-      if (serverConfig && serverConfig.sample_rate) {
-        adjustUpdateRate(Number(serverConfig.sample_rate));
-      }
-      if (serverConfig) {
-        lastServerConfig = serverConfig;
-      }
+      applyServerConfig(serverConfig);
 
       if (!Array.isArray(payload) || payload.length === 0) {
         await fetchSingleLatest();
@@ -3362,12 +3367,7 @@ fetchHistory = async function () {
     const serverConfig = responseData.config;
 
     // Adjust rate if needed
-    if (serverConfig && serverConfig.sample_rate) {
-      adjustUpdateRate(Number(serverConfig.sample_rate));
-    }
-    if (serverConfig) {
-      lastServerConfig = serverConfig;
-    }
+    applyServerConfig(serverConfig);
 
     if (!Array.isArray(payload)) {
       return;

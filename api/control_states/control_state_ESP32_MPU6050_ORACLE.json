@@ -8,19 +8,19 @@
   "vib_profile_label": "NATURAL",
   "label_source": "CONTROL",
   "transition_marker": 0,
-  "network_revision": 1772132974684,
+  "network_revision": 1772133489502,
   "network_apply_pending": true,
   "open_portal": false,
   "wifi_profiles": [
     {
       "ssid": "S20_Ders@0",
       "password": "F0xbam1844",
-      "server_ip": ""
+      "server_ip": "SAMSUNG-900X5T.local:8000"
     },
     {
       "ssid": "Dersao83",
       "password": "986960440",
-      "server_ip": ""
+      "server_ip": "ScienceMachine.local:8000"
     }
   ],
   "server_hostname": "SAMSUNG-900X5T.local:8000",

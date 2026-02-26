@@ -46,12 +46,12 @@
                                   {
                                       "ssid":  "S20_Ders@0",
                                       "password":  "F0xbam1844",
-                                      "server_ip":  ""
+                                      "server_ip":  "SAMSUNG-900X5T.local:8000"
                                   },
                                   {
                                       "ssid":  "Dersao83",
                                       "password":  "986960440",
-                                      "server_ip":  ""
+                                      "server_ip":  "ScienceMachine.local:8000"
                                   }
                               ],
     "debug":  true
