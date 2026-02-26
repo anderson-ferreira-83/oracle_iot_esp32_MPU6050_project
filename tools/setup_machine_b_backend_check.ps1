@@ -3,7 +3,8 @@ param(
     [int]$Port = 8000,
     [int]$StartupTimeoutSec = 30,
     [switch]$SkipStartBackend,
-    [switch]$OpenFirewallRule
+    [switch]$OpenFirewallRule,
+    [switch]$OpenPages
 )
 
 $ErrorActionPreference = "Stop"
@@ -146,6 +147,16 @@ Write-Host ""
 Write-Host "[RESULT] server_ip para ESP32: $ip`:$Port"
 if ($startedPid) {
     Write-Host "[RESULT] Uvicorn iniciou neste script com PID $startedPid."
+}
+
+if ($OpenPages -and $local.ok) {
+    $indexUrl = "http://127.0.0.1:$Port/web/index.html"
+    $controlUrl = "http://127.0.0.1:$Port/web/control.html"
+    Start-Process $indexUrl
+    Start-Process $controlUrl
+    Write-Host "[WEB] Paginas abertas:"
+    Write-Host "      $indexUrl"
+    Write-Host "      $controlUrl"
 }
 
 if (-not $local.ok -or -not $lan.ok) {
