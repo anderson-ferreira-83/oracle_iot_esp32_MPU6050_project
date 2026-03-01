@@ -1,15 +1,15 @@
 {
-  "mode": "HIGH",
+  "mode": "PAUSE",
   "sample_rate": 100,
-  "ingest_enabled": true,
-  "cmd_speed_label": "HIGH",
+  "ingest_enabled": false,
+  "cmd_speed_label": "OFF",
   "rot_state_label": "STOPPED",
   "use_state_label": "NO_LOAD",
   "vib_profile_label": "NATURAL",
   "label_source": "CONTROL",
   "transition_marker": 0,
-  "network_revision": 1772133489502,
-  "network_apply_pending": true,
+  "network_revision": 1772372688120,
+  "network_apply_pending": false,
   "open_portal": false,
   "wifi_profiles": [
     {
@@ -23,11 +23,11 @@
       "server_ip": "ScienceMachine.local:8000"
     }
   ],
-  "server_hostname": "SAMSUNG-900X5T.local:8000",
-  "server_fallback_ip": "",
+  "server_hostname": "",
+  "server_fallback_ip": "10.125.237.165:8000",
   "server_fallback_ips": [],
   "api_path": "/api/ingest",
-  "collection_id": "col_20260223_204702_100hz",
+  "collection_id": "col_20260301_152250_100hz",
   "data_purpose": "MONITORING",
   "new_collection": true,
   "sends_per_sec": 5,

@@ -85,6 +85,12 @@ def _transport_mode(cfg):
         return "ble"
     if mode == "usb":
         return "usb"
+    if mode == "espnow":
+        return "espnow"
+    if mode == "espnow_rx":
+        return "espnow_rx"
+    if mode == "espnow_rx_usb":
+        return "espnow_rx_usb"
     return "wifi"
 
 
@@ -164,6 +170,41 @@ def _should_open_portal(cfg, failure_count):
     if failure_count <= 0:
         return False
     return (failure_count % every) == 0
+
+
+def _boot_grace_ms(cfg):
+    delay_ms = _cfg_int(cfg.get("boot_grace_ms", 1200), 1200)
+    if delay_ms < 0:
+        delay_ms = 0
+    if delay_ms > 10000:
+        delay_ms = 10000
+    return delay_ms
+
+
+def _safe_boot_requested(cfg):
+    pin_num = _cfg_int(cfg.get("boot_safe_pin", 0), 0)
+    active_low = _cfg_bool(cfg.get("boot_safe_pin_active_low", True), True)
+    if pin_num < 0:
+        return False
+
+    pull = None
+    if active_low and hasattr(machine.Pin, "PULL_UP"):
+        pull = machine.Pin.PULL_UP
+    elif (not active_low) and hasattr(machine.Pin, "PULL_DOWN"):
+        pull = machine.Pin.PULL_DOWN
+
+    try:
+        if pull is None:
+            pin = machine.Pin(pin_num, machine.Pin.IN)
+        else:
+            pin = machine.Pin(pin_num, machine.Pin.IN, pull)
+        value = pin.value()
+    except Exception:
+        return False
+
+    if active_low:
+        return value == 0
+    return value == 1
 
 
 def _sanitize_host_entry(value):
@@ -543,14 +584,29 @@ boot_failures = 0
 cfg = _load_boot_cfg()
 transport_mode = _transport_mode(cfg)
 ok = False
+safe_boot = False
 
-if transport_mode in ("ble", "usb"):
+grace_ms = _boot_grace_ms(cfg)
+if grace_ms > 0:
+    print("Boot grace {} ms (Ctrl+C / BOOT para modo seguro)...".format(grace_ms))
+    try:
+        time.sleep_ms(grace_ms)
+    except Exception:
+        time.sleep(grace_ms / 1000.0)
+
+safe_boot = _safe_boot_requested(cfg)
+if safe_boot:
+    print("Modo seguro solicitado no boot; nao iniciando main automaticamente.")
+
+if (not safe_boot) and transport_mode in ("ble", "usb", "espnow", "espnow_rx_usb"):
     ok = True
     if transport_mode == "ble":
         print("Modo BLE selecionado. Ignorando etapa de Wi-Fi no boot.")
+    elif transport_mode in ("espnow", "espnow_rx_usb"):
+        print("Modo ESP-NOW TX / RX-USB selecionado. Ignorando etapa de Wi-Fi no boot.")
     else:
         print("Modo USB selecionado. Ignorando etapa de Wi-Fi no boot.")
-else:
+elif not safe_boot:
     while True:
         ok, cfg = connect_wifi_and_server()
         if ok:
@@ -612,6 +668,63 @@ if ok:
             except Exception:
                 pass
             machine.reset()
+    elif transport_mode == "espnow":
+        print("Executando main_espnow_tx.py a partir do boot.py...")
+        try:
+            _prepare_for_main_import()
+            import main_espnow_tx
+        except MemoryError:
+            print("MemoryError em main_espnow_tx; reiniciando...")
+            try:
+                time.sleep(1)
+            except Exception:
+                pass
+            machine.reset()
+        except Exception as e:
+            print("Falha ao iniciar main_espnow_tx: {}".format(e))
+            try:
+                time.sleep(1)
+            except Exception:
+                pass
+            machine.reset()
+    elif transport_mode == "espnow_rx":
+        print("Executando main_espnow_rx.py a partir do boot.py...")
+        try:
+            _prepare_for_main_import()
+            import main_espnow_rx
+        except MemoryError:
+            print("MemoryError em main_espnow_rx; reiniciando...")
+            try:
+                time.sleep(1)
+            except Exception:
+                pass
+            machine.reset()
+        except Exception as e:
+            print("Falha ao iniciar main_espnow_rx: {}".format(e))
+            try:
+                time.sleep(1)
+            except Exception:
+                pass
+            machine.reset()
+    elif transport_mode == "espnow_rx_usb":
+        print("Executando main_espnow_rx_usb.py a partir do boot.py...")
+        try:
+            _prepare_for_main_import()
+            import main_espnow_rx_usb
+        except MemoryError:
+            print("MemoryError em main_espnow_rx_usb; reiniciando...")
+            try:
+                time.sleep(1)
+            except Exception:
+                pass
+            machine.reset()
+        except Exception as e:
+            print("Falha ao iniciar main_espnow_rx_usb: {}".format(e))
+            try:
+                time.sleep(1)
+            except Exception:
+                pass
+            machine.reset()
     else:
         use_lite = bool(cfg.get("force_main_lite", True))
         if use_lite:
@@ -662,5 +775,8 @@ if ok:
                     pass
                 machine.reset()
 else:
-    print("Sem conexao Wi-Fi. Boot finalizado sem iniciar main.")
+    if safe_boot:
+        print("Boot finalizado em modo seguro.")
+    else:
+        print("Sem conexao Wi-Fi. Boot finalizado sem iniciar main.")
 

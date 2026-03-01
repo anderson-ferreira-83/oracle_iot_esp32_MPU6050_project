@@ -1,0 +1,10 @@
+{
+    "transport_mode":    "espnow",
+    "espnow_peer_mac":   [104, 37, 221, 252, 163, 160],
+    "espnow_channel":    6,
+    "device_id":         "ESP32_MPU6050_ORACLE",
+    "collection_id":     "v5_stream",
+    "target_sample_rate": 100,
+    "mode":              "RAW",
+    "low_mem_threshold": 14000
+}

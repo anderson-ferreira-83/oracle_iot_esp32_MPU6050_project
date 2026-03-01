@@ -38,6 +38,27 @@ Write-Host "  Oracle:  $($env:ORACLE_USER)@$($env:ORACLE_HOST):$($env:ORACLE_POR
 Write-Host "  Porta:   $PORT"
 Write-Host ""
 
+# --- Detecta modo de transporte via configs do ESP32 ---
+$transportMode = ""
+$configCandidates = @(
+    "tools\device_config.json",
+    "tools\device_config_espnow_rx_usb.json",
+    "tools\device_config_espnow_rx.json"
+)
+foreach ($cfg in $configCandidates) {
+    if (Test-Path $cfg) {
+        try {
+            $parsed = Get-Content $cfg -Raw | ConvertFrom-Json
+            if ($parsed.transport_mode) {
+                $transportMode = $parsed.transport_mode
+                Write-Host "  Transporte: $transportMode (lido de $cfg)"
+                break
+            }
+        } catch {}
+    }
+}
+Write-Host ""
+
 # --- Verifica se porta ja esta em uso ---
 $portInUse = $false
 try {
@@ -86,6 +107,18 @@ if ($portInUse) {
     Write-Host "[OK] Servidor pronto em http://127.0.0.1:$PORT" -ForegroundColor Green
 }
 
+# --- Inicia bridge USB se modo espnow_rx_usb ---
+if ($transportMode -eq "espnow_rx_usb") {
+    Write-Host ""
+    Write-Host "[...] Iniciando bridge USB (ESP32-RX -> backend)..." -ForegroundColor Yellow
+    $bridgeArgs = "$PYTHON_VER tools\usb_espnow_bridge.py"
+    Start-Process -FilePath $PYTHON -ArgumentList $bridgeArgs `
+        -WorkingDirectory $PROJECT_DIR `
+        -WindowStyle Normal
+    Write-Host "[OK] Bridge USB iniciada em nova janela." -ForegroundColor Green
+    Write-Host "     Certifique-se de que o ESP32-RX esta conectado via USB antes de coletar dados."
+}
+
 # --- Abre as paginas no navegador padrao ---
 Write-Host ""
 Write-Host "[...] Abrindo paginas no navegador..." -ForegroundColor Yellow
@@ -95,6 +128,10 @@ foreach ($url in $PAGES) {
 }
 
 Write-Host ""
-Write-Host "[OK] Pronto! O servidor continua rodando na outra janela." -ForegroundColor Green
-Write-Host "     Para encerrar, feche a janela do uvicorn ou pressione Ctrl+C nela."
+Write-Host "[OK] Pronto! Processos rodando em janelas separadas:" -ForegroundColor Green
+Write-Host "     - Janela uvicorn: backend FastAPI"
+if ($transportMode -eq "espnow_rx_usb") {
+    Write-Host "     - Janela bridge:   USB Serial ESP32-RX -> localhost:$PORT"
+}
+Write-Host "     Para encerrar, feche as janelas ou pressione Ctrl+C nelas."
 Write-Host ""

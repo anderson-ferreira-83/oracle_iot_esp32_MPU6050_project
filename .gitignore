@@ -20,6 +20,9 @@ api/device_status/*.json
 # Windows shortcuts
 *.lnk
 
+# Cloudflare tunnel (nao mais utilizado)
+tools/bin/
+
 # Jupyter checkpoints
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/

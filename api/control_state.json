@@ -1,6 +1,6 @@
 {
   "mode": "RAW",
-  "sample_rate": 10,
+  "sample_rate": 100,
   "ingest_enabled": true,
   "cmd_speed_label": "UNKNOWN",
   "rot_state_label": "UNKNOWN",
@@ -16,6 +16,9 @@
   "server_fallback_ip": "",
   "server_fallback_ips": [],
   "api_path": "/api/ingest",
-  "collection_id": "col_20260213_231445_4hz",
-  "new_collection": true
+  "collection_id": "col_20260301_103013_100hz",
+  "data_purpose": "TRAINING",
+  "new_collection": true,
+  "sends_per_sec": 1,
+  "transition_duration_s": 10
 }

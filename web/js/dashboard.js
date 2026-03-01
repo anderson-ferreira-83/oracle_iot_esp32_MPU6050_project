@@ -6,7 +6,7 @@
   REALTIME_WINDOW_SECONDS: 5, // Janela para atualizações em tempo real
   UPDATE_INTERVAL: 200,     // pull a cada 200ms (5Hz) - alinhado com taxa do ESP32
   MAX_POINTS: 7200,
-  TIME_RANGE: 'all',
+  TIME_RANGE: '30s',
   OFFLINE_AFTER_MS: 10000,  // v4.1: Reduzido para 10s
   GAP_THRESHOLD_MS: 2000,   // Quebra a linha quando houver buracos maiores que 2s
 };
@@ -7706,7 +7706,7 @@ function initMLParamSliders() {
 }
 
 // Initialize chart tension from localStorage
-window.CHART_TENSION = parseFloat(localStorage.getItem('chartTension') || '0');
+window.CHART_TENSION = parseFloat(localStorage.getItem('chartTension') ?? '0.30');
 
 function initTensionSlider() {
   const slider = document.getElementById('chartTensionSlider');

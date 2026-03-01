@@ -258,7 +258,7 @@ def sanitize_state(state: Optional[Dict[str, Any]], defaults: Optional[Dict[str,
     out.update(src)
     out["mode"] = sanitize_enum(out.get("mode"), {"RAW", "PAUSE", "LOW", "MEDIUM", "HIGH", "OFF"}, base["mode"])
     try:
-        out["sample_rate"] = max(1, min(100, int(round(float(out.get("sample_rate"))))))
+        out["sample_rate"] = max(1, min(150, int(round(float(out.get("sample_rate"))))))
     except Exception:
         out["sample_rate"] = base["sample_rate"]
     out["ingest_enabled"] = sanitize_bool(out.get("ingest_enabled"), base["ingest_enabled"])
@@ -940,6 +940,35 @@ async def reset_db(request: Request, authorization: Optional[str] = Header(defau
             "monitoring_preserved": True,
         }
     )
+
+
+@app.post("/api/reset_monitoring")
+async def reset_monitoring(request: Request, authorization: Optional[str] = Header(default=None)):
+    """Apaga todos os dados de sensor_monitoring_data. Requer confirmacao via force=true."""
+    require_bearer(authorization)
+    body = await read_json_body(request)
+    force_reset = sanitize_bool(body.get("force"), False)
+    if not force_reset:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "message": "Envie {'force': true} para confirmar o reset dos dados de monitoramento.",
+                "force_hint": "Esta operacao apaga TODOS os dados de sensor_monitoring_data irreversivelmente.",
+            },
+        )
+    with db_conn() as conn:
+        try:
+            row = fetch_one(conn, "SELECT COUNT(*) AS cnt FROM sensor_monitoring_data")
+            rows_deleted = int(row["cnt"]) if row else 0
+            exec_sql(conn, "TRUNCATE TABLE sensor_monitoring_data")
+            _column_cache.clear()
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Erro ao resetar monitoramento: {exc}")
+    return JSONResponse({
+        "status": "success",
+        "message": f"sensor_monitoring_data truncada com sucesso. {rows_deleted} linhas removidas.",
+        "rows_deleted": rows_deleted,
+    })
 
 
 @app.post("/api/export_csv")
