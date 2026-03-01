@@ -1832,6 +1832,19 @@ class RealTimeClassifier {
         return success;
     }
 
+    /** Retorna arrays do buffer atual + accel_mag_g calculado. Usado pelo painel espectral. */
+    getSignalArrays() {
+        if (!this.buffer || this.buffer.size < 2) return null;
+        const arr = this.buffer.getArrays();
+        const n = arr.ax.length;
+        const mag = new Array(n);
+        for (let i = 0; i < n; i++) {
+            mag[i] = Math.sqrt(arr.ax[i]*arr.ax[i] + arr.ay[i]*arr.ay[i] + arr.az[i]*arr.az[i]);
+        }
+        arr.mag = mag;
+        return arr;
+    }
+
     reset() {
         this.buffer.clear();
         this.lastPrediction = null;

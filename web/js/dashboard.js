@@ -7871,6 +7871,151 @@ function goToSoakAbsorption() {
   }
 }
 
+// =============================================================================
+// SPECTRAL ANALYSIS PANEL
+// PSD em dB via FFT radix-2 do buffer do classifier (accel_mag_g + gyro_z)
+// =============================================================================
+
+const SPEC_BANDS = [
+  { key: 'rot',  label: 'ROT',  fLow: 0.5, fHigh: 1.8, color: '#a78bfa' },
+  { key: 'low',  label: 'LOW',  fLow: 1.8, fHigh: 2.5, color: '#60a5fa' },
+  { key: 'med',  label: 'MED',  fLow: 2.5, fHigh: 4.0, color: '#fb923c' },
+  { key: 'high', label: 'HIGH', fLow: 4.0, fHigh: 7.0, color: '#f87171' },
+  { key: 'hi',   label: '>7Hz', fLow: 7.0, fHigh: 25., color: '#64748b' },
+];
+
+let _specChartMag = null, _specChartGyro = null, _specIntervalId = null;
+
+function _fftInPlace(re, im) {
+  const N = re.length;
+  let j = 0;
+  for (let i = 1; i < N; i++) {
+    let bit = N >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      let t = re[i]; re[i] = re[j]; re[j] = t;
+      t = im[i]; im[i] = im[j]; im[j] = t;
+    }
+  }
+  for (let len = 2; len <= N; len <<= 1) {
+    const ang = -2 * Math.PI / len, wRe = Math.cos(ang), wIm = Math.sin(ang);
+    for (let i = 0; i < N; i += len) {
+      let cRe = 1, cIm = 0;
+      for (let k = 0, h = len >> 1; k < h; k++) {
+        const p = i+k, q = p+h;
+        const vRe = re[q]*cRe - im[q]*cIm, vIm = re[q]*cIm + im[q]*cRe;
+        re[q] = re[p]-vRe; im[q] = im[p]-vIm;
+        re[p] += vRe;      im[p] += vIm;
+        const nRe = cRe*wRe - cIm*wIm; cIm = cRe*wIm + cIm*wRe; cRe = nRe;
+      }
+    }
+  }
+}
+
+function _computePSD(signal, fs) {
+  let N = 256;
+  while (N * 2 <= signal.length && N < 1024) N <<= 1;
+  const start = signal.length - N;
+  let mean = 0;
+  for (let i = 0; i < N; i++) mean += signal[start + i];
+  mean /= N;
+  const re = new Float64Array(N), im = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    const w = 0.5 * (1 - Math.cos(2 * Math.PI * i / (N - 1)));
+    re[i] = (signal[start + i] - mean) * w;
+  }
+  _fftInPlace(re, im);
+  const freqs = [], psd = [];
+  const dHz = fs / N;
+  for (let k = 0, half = N >> 1; k <= half; k++) {
+    const f = k * dHz;
+    if (f > 28) break;
+    freqs.push(f);
+    psd.push(Math.max(-90, 10 * Math.log10((re[k]*re[k] + im[k]*im[k]) / (N * N) + 1e-20)));
+  }
+  return { freqs, psd };
+}
+
+function _bandPowerdB(freqs, psd, fLow, fHigh) {
+  let sum = 0, n = 0;
+  for (let i = 0; i < freqs.length; i++) {
+    if (freqs[i] >= fLow && freqs[i] < fHigh) { sum += Math.pow(10, psd[i] / 10); n++; }
+  }
+  return n ? 10 * Math.log10(sum / n) : -90;
+}
+
+function _initSpecChart(canvasId, borderColor) {
+  const ctx = document.getElementById(canvasId)?.getContext('2d');
+  if (!ctx) return null;
+  return new Chart(ctx, {
+    type: 'line',
+    data: { datasets: [{ data: [], borderColor: borderColor,
+      backgroundColor: borderColor.replace(')', ',0.12)').replace('rgb', 'rgba'),
+      borderWidth: 1.5, fill: 'origin', tension: 0, pointRadius: 0 }] },
+    options: {
+      animation: false, responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: c => c.parsed.y.toFixed(1) + ' dB' } } },
+      scales: {
+        x: { type: 'linear', min: 0, max: 25,
+          title: { display: true, text: 'Frequência (Hz)', color: '#64748b', font: { size: 10 } },
+          ticks: { color: '#64748b', maxTicksLimit: 14, font: { size: 9 } },
+          grid: { color: 'rgba(148,163,184,0.08)' } },
+        y: { min: -90, max: 0,
+          title: { display: true, text: 'PSD (dB)', color: '#64748b', font: { size: 10 } },
+          ticks: { color: '#64748b', font: { size: 9 } },
+          grid: { color: 'rgba(148,163,184,0.08)' } },
+      },
+    },
+  });
+}
+
+function updateSpectrumPanel() {
+  const pane = document.getElementById('tab-espectro');
+  if (!pane?.classList.contains('active')) return;
+  const clf = window.fanClassifier;
+  if (!clf?.buffer || clf.buffer.size < 64) return;
+  const arrs = clf.getSignalArrays?.();
+  if (!arrs) return;
+  const fs = ClassifierConfig.SAMPLING_HZ;
+
+  // accel_mag_g spectrum
+  const { freqs, psd } = _computePSD(arrs.mag, fs);
+  if (_specChartMag) {
+    _specChartMag.data.datasets[0].data = freqs.map((f, i) => ({ x: f, y: psd[i] }));
+    _specChartMag.update('none');
+  }
+  // Band power strip
+  for (const b of SPEC_BANDS) {
+    const pw = _bandPowerdB(freqs, psd, b.fLow, b.fHigh);
+    const pEl = document.getElementById('specPow_' + b.key);
+    const fEl = document.getElementById('specFill_' + b.key);
+    if (pEl) pEl.textContent = pw.toFixed(1) + ' dB';
+    if (fEl) fEl.style.width = Math.max(0, Math.min(100, (pw + 90) / 90 * 100)) + '%';
+  }
+
+  // gyro_z spectrum
+  if (_specChartGyro && arrs.gz?.length >= 64) {
+    const { freqs: fG, psd: pG } = _computePSD(arrs.gz, fs);
+    _specChartGyro.data.datasets[0].data = fG.map((f, i) => ({ x: f, y: pG[i] }));
+    _specChartGyro.update('none');
+  }
+
+  const ts = document.getElementById('spectrumTimer');
+  if (ts) ts.textContent = new Date().toLocaleTimeString('pt-BR');
+}
+
+function startSpectrumAnalyzer() {
+  if (!document.getElementById('spectrumChart')) return;
+  _specChartMag  = _initSpecChart('spectrumChart',     '#60a5fa');
+  _specChartGyro = _initSpecChart('spectrumGyroChart', '#a78bfa');
+  updateSpectrumPanel();
+  _specIntervalId = setInterval(updateSpectrumPanel, 2000);
+}
+
+// =============================================================================
+
 async function startApp() {
   if (window.appStarted) return;
   window.appStarted = true;
@@ -7956,6 +8101,7 @@ async function startApp() {
   setMLDataOnline(false);
   startDataFetching();
   startFreqAnalyzer();
+  startSpectrumAnalyzer();
 
   // Periodic freshness check: mark offline if no fresh data
   setInterval(() => {

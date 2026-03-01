@@ -413,6 +413,15 @@ def extract_features_windowed_spectral(
                 sampling_hz=sampling_hz, n_fft=n_fft,
             ))
 
+        # Auto-adiciona bandas finas para accel_mag_g se não veio em sensor_axes
+        if 'accel_mag_g' not in sensor_axes:
+            _comps = ('accel_x_g', 'accel_y_g', 'accel_z_g')
+            if all(c in window_df.columns for c in _comps):
+                _mag = np.sqrt(sum(window_df[c].values ** 2 for c in _comps))
+                feat.update(compute_spectral_features(
+                    _mag, 'accel_mag_g', sampling_hz=sampling_hz, n_fft=n_fft,
+                ))
+
         rows.append(feat)
 
     return rows
@@ -560,6 +569,15 @@ def extract_features_windowed_drift_resistant(
                 window_df[axis].values, axis,
                 sampling_hz=sampling_hz, n_fft=n_fft,
             ))
+
+        # Auto-adiciona drift-resistant features para accel_mag_g
+        if 'accel_mag_g' not in sensor_axes:
+            _comps = ('accel_x_g', 'accel_y_g', 'accel_z_g')
+            if all(c in window_df.columns for c in _comps):
+                _mag = np.sqrt(sum(window_df[c].values ** 2 for c in _comps))
+                feat.update(compute_drift_resistant_features(
+                    _mag, 'accel_mag_g', sampling_hz=sampling_hz, n_fft=n_fft,
+                ))
 
         rows.append(feat)
 
