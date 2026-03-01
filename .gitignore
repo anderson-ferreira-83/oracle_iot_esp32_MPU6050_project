@@ -15,6 +15,7 @@ Thumbs.db
 logs/*.log
 logs/ml_transitions_2[0-9]*.json
 logs/ml_transitions_current.txt
+api/device_status/*.json
 
 # Windows shortcuts
 *.lnk

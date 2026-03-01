@@ -86,20 +86,29 @@
     }
     .ctrl-btn:active { transform: scale(0.96); }
     .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .ctrl-btn-new { background: #8b5cf6; color: #fff; }
+    .ctrl-btn-new { background: #3b82f6; color: #fff; }
+    .ctrl-btn-new:hover:not(:disabled) { background: #2563eb; }
     .ctrl-btn-reset { background: #ef4444; color: #fff; font-size: 0.85rem; padding: 10px 18px; }
-    .ctrl-btn-export { background: #0d9488; color: #fff; border-color: #0d9488; font-size: 0.85rem; padding: 10px 18px; }
-    .ctrl-btn-export-zip { background: #7c3aed; color: #fff; border-color: #7c3aed; font-size: 0.85rem; padding: 10px 18px; }
-    .ctrl-btn-export:hover:not(:disabled) { background: #0f766e; border-color: #0f766e; }
-    .ctrl-btn-export-zip:hover:not(:disabled) { background: #6d28d9; border-color: #6d28d9; }
+    .ctrl-btn-reset-monitor { background: #475569; color: #fff; font-size: 0.85rem; padding: 10px 18px; }
+    .ctrl-btn-reset-monitor:hover:not(:disabled) { background: #334155; }
+    .ctrl-btn-export { background: #475569; color: #fff; border-color: #475569; font-size: 0.85rem; padding: 10px 18px; }
+    .ctrl-btn-export-zip { background: #334155; color: #fff; border-color: #334155; font-size: 0.85rem; padding: 10px 18px; }
+    .ctrl-btn-export:hover:not(:disabled) { background: #334155; border-color: #334155; }
+    .ctrl-btn-export-zip:hover:not(:disabled) { background: #1e293b; border-color: #1e293b; }
     .ctrl-btn-export:disabled { background: #94a3b8; border-color: #94a3b8; cursor: not-allowed; }
     .ctrl-btn-export-zip:disabled { background: #94a3b8; border-color: #94a3b8; cursor: not-allowed; }
     .ctrl-btn-raw { background: #3b82f6; color: #fff; }
     .ctrl-btn-pause { background: #f59e0b; color: #000; }
-    .ctrl-btn-low { background: #00d9ff; color: #000; }
-    .ctrl-btn-medium { background: #00ff88; color: #000; }
-    .ctrl-btn-high { background: #ff5252; color: #fff; }
+    .ctrl-btn-low { background: #60a5fa; color: #fff; }
+    .ctrl-btn-medium { background: #fb923c; color: #fff; }
+    .ctrl-btn-high { background: #f87171; color: #fff; }
     .ctrl-btn-stop-auto { background: #ef4444; color: #fff; }
+    /* Command groups */
+    .cmd-groups-wrap { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .cmd-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 7px 10px; border-radius: 8px; background: rgba(15,23,42,0.18); border: 1px solid rgba(148,163,184,0.15); }
+    .cmd-group-label { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; color: #64748b; min-width: 60px; text-transform: uppercase; }
+    .cmd-group-danger { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.06); }
+    .cmd-group-danger .cmd-group-label { color: #b91c1c; }
     .auto-time-btn {
       padding: 6px 14px !important;
       font-size: 0.8rem !important;
@@ -1281,15 +1290,29 @@
           style="display:none;">↩ Finalizar Treino</button>
       </div>
 
-      <div class="prep-actions-row" aria-label="Acoes de coleta">
-        <button class="ctrl-btn ctrl-btn-new" onclick="newCollection()"
-          title="Cria nova sessao de coleta rotulada (ativa modo Treino automaticamente)">▶ Nova Coleta</button>
-        <button class="ctrl-btn ctrl-btn-ingest-pause" id="btnIngestPause" onclick="pauseIngest()" title="Pausa a gravacao de dados no Oracle XE">Pausar DB</button>
-        <button class="ctrl-btn ctrl-btn-ingest-resume" id="btnIngestResume" onclick="resumeIngest()" disabled title="Retoma a gravacao de dados no Oracle XE">Retomar DB</button>
-        <button class="ctrl-btn ctrl-btn-export" id="btnExportCsv" onclick="exportToCSV()" title="Exporta manualmente a coleta atual para CSV (util para checkpoints durante a coleta)">Exportar CSV</button>
-        <button class="ctrl-btn ctrl-btn-export-zip" id="btnExportZip" onclick="exportDatabaseZip()" title="Exporta os dados do banco (colecao atual ou tudo) em arquivo .zip sem precisar abrir o Oracle">Exportar ZIP</button>
-        <button class="ctrl-btn ctrl-btn-reset" onclick="resetDatabase()"
-          title="Zera dados de TREINO (sensor_training_data + sensor_data). Dados de monitoramento sao PRESERVADOS.">Zerar Treino</button>
+      <div class="cmd-groups-wrap" aria-label="Acoes de coleta">
+        <div class="cmd-group">
+          <span class="cmd-group-label">Sessao</span>
+          <button class="ctrl-btn ctrl-btn-new" onclick="newCollection()"
+            title="Cria nova sessao de coleta rotulada (ativa modo Treino automaticamente)">▶ Nova Coleta</button>
+        </div>
+        <div class="cmd-group">
+          <span class="cmd-group-label">Banco</span>
+          <button class="ctrl-btn ctrl-btn-ingest-pause" id="btnIngestPause" onclick="pauseIngest()" title="Pausa a gravacao de dados no Oracle XE">Pausar DB</button>
+          <button class="ctrl-btn ctrl-btn-ingest-resume" id="btnIngestResume" onclick="resumeIngest()" disabled title="Retoma a gravacao de dados no Oracle XE">Retomar DB</button>
+        </div>
+        <div class="cmd-group">
+          <span class="cmd-group-label">Exportar</span>
+          <button class="ctrl-btn ctrl-btn-export" id="btnExportCsv" onclick="exportToCSV()" title="Exporta manualmente a coleta atual para CSV (util para checkpoints durante a coleta)">Exportar CSV</button>
+          <button class="ctrl-btn ctrl-btn-export-zip" id="btnExportZip" onclick="exportDatabaseZip()" title="Exporta os dados do banco (colecao atual ou tudo) em arquivo .zip sem precisar abrir o Oracle">Exportar ZIP</button>
+        </div>
+        <div class="cmd-group cmd-group-danger">
+          <span class="cmd-group-label">Resetar</span>
+          <button class="ctrl-btn ctrl-btn-reset-monitor" onclick="resetMonitoring()"
+            title="Zera TODOS os dados de monitoramento (sensor_monitoring_data). Dados de treino sao PRESERVADOS.">Zerar Monitor.</button>
+          <button class="ctrl-btn ctrl-btn-reset" onclick="resetDatabase()"
+            title="Zera dados de TREINO (sensor_training_data + sensor_data). Dados de monitoramento sao PRESERVADOS.">Zerar Treino</button>
+        </div>
       </div>
       <div class="hz-row" aria-label="Controle de taxa">
         <span class="hz-label">Taxa:</span>
@@ -3650,6 +3673,26 @@
         resetValidation();
       } catch (e) {
         alert(`Erro ao resetar banco:\n${e.message || e}`);
+      }
+    }
+
+    async function resetMonitoring() {
+      const msg = 'Isso apagara TODOS os dados de monitoramento (sensor_monitoring_data).\n\nDados de treino serao PRESERVADOS.\n\nDeseja continuar?';
+      if (!confirm(msg)) return;
+      try {
+        const res = await fetch(buildApiUrl('../api/reset_monitoring'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}` },
+          body: JSON.stringify(withDevicePayload({ force: true }))
+        });
+        const data = await res.json();
+        const detailMsg = (typeof data?.detail === 'string')
+          ? data.detail
+          : (typeof data?.detail?.message === 'string' ? data.detail.message : null);
+        if (!res.ok) throw new Error(detailMsg || 'Falha ao resetar monitoramento');
+        alert(data.message || 'Monitoramento resetado com sucesso.');
+      } catch (e) {
+        alert(`Erro ao resetar monitoramento:\n${e.message || e}`);
       }
     }
 
