@@ -16,25 +16,36 @@ $PAGES        = @(
     "http://127.0.0.1:$PORT/web/control.html",
     "http://127.0.0.1:$PORT/web/index.html"
 )
-$MAX_WAIT_SEC = 30   # tempo maximo aguardando o servidor subir
-
-# --- Variaveis de ambiente Oracle ---
-$env:ORACLE_HOST         = "localhost"
-$env:ORACLE_PORT         = "1521"
-$env:ORACLE_SERVICE_NAME = "xepdb1"
-$env:ORACLE_USER         = "dersao"
-$env:ORACLE_PASSWORD     = "986960440"
+$MAX_WAIT_SEC = 90   # tempo maximo aguardando o servidor subir (ADB cloud pode demorar mais)
 
 # --- Caminho do projeto ---
 $PROJECT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Definition
 Set-Location $PROJECT_DIR
+
+# --- Variaveis de ambiente Oracle (lidas do .env.oracle) ---
+$envFile = Join-Path $PROJECT_DIR ".env.oracle"
+if (Test-Path $envFile) {
+    foreach ($line in Get-Content $envFile) {
+        $line = $line.Trim()
+        if ($line -eq "" -or $line.StartsWith("#")) { continue }
+        $parts = $line -split "=", 2
+        if ($parts.Count -eq 2) {
+            $key = $parts[0].Trim()
+            $val = $parts[1].Trim()
+            [System.Environment]::SetEnvironmentVariable($key, $val, "Process")
+        }
+    }
+    Write-Host "  .env.oracle carregado." -ForegroundColor DarkGray
+} else {
+    Write-Host "[AVISO] .env.oracle nao encontrado, usando variaveis do ambiente." -ForegroundColor Yellow
+}
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  Oracle IoT ESP32 MPU6050 - Backend Start  " -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "  Projeto: $PROJECT_DIR"
-Write-Host "  Oracle:  $($env:ORACLE_USER)@$($env:ORACLE_HOST):$($env:ORACLE_PORT)/$($env:ORACLE_SERVICE_NAME)"
+Write-Host "  Oracle:  $($env:ORACLE_USER)@$($env:ORACLE_DSN)"
 Write-Host "  Porta:   $PORT"
 Write-Host ""
 
@@ -80,13 +91,14 @@ if ($portInUse) {
 
     # --- Aguarda o servidor responder ---
     Write-Host "[...] Aguardando servidor (max ${MAX_WAIT_SEC}s)..." -ForegroundColor Yellow
-    $elapsed = 0
+    Start-Sleep -Seconds 5   # pausa inicial: evita TIME_WAIT no bind da porta
+    $elapsed = 5
     $ready   = $false
     while ($elapsed -lt $MAX_WAIT_SEC) {
-        Start-Sleep -Seconds 1
-        $elapsed++
+        Start-Sleep -Seconds 2
+        $elapsed += 2
         try {
-            $r = Invoke-WebRequest -Uri $HEALTH_URL -TimeoutSec 2 -UseBasicParsing -ErrorAction Stop
+            $r = Invoke-WebRequest -Uri $HEALTH_URL -TimeoutSec 3 -UseBasicParsing -ErrorAction Stop
             if ($r.StatusCode -eq 200) {
                 $ready = $true
                 break

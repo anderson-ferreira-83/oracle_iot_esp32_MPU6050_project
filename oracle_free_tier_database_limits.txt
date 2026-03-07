@@ -1,0 +1,96 @@
+ORACLE CLOUD – FREE TIER (ALWAYS FREE) DATABASE LIMITS
+
+Resumo
+
+A Oracle Cloud Infrastructure (OCI) oferece um plano gratuito chamado
+“Always Free” que permite criar bancos de dados Oracle Autonomous
+Database sem custo permanente, desde que os limites de recursos não
+sejam ultrapassados.
+
+Esses bancos são úteis para: - ensino de SQL - projetos acadêmicos -
+testes com Java/JDBC - aplicações pequenas - laboratórios de banco de
+dados
+
+LIMITES DO BANCO GRATUITO
+
+No plano Always Free você pode utilizar:
+
+-   Até 2 bancos de dados Autonomous
+-   1 OCPU por banco
+-   20 GB de armazenamento por banco
+-   Aproximadamente 30 conexões simultâneas
+-   Ambiente SQL acessível via navegador (Database Actions)
+-   Conexão externa via JDBC, ferramentas SQL ou IDEs
+
+IMPORTANTE: O QUE DEFINE O LIMITE
+
+A Oracle NÃO limita o número de registros (linhas) no banco.
+
+O limite é definido apenas por:
+
+-   armazenamento total (20 GB)
+-   recursos computacionais (1 OCPU)
+
+QUANTIDADE APROXIMADA DE REGISTROS EM 20GB
+
+Isso depende do tamanho médio de cada registro.
+
+Exemplos aproximados:
+
+Registro médio de 100 bytes: ≈ 200 milhões de registros
+
+Registro médio de 500 bytes: ≈ 40 milhões de registros
+
+Registro médio de 1 KB: ≈ 20 milhões de registros
+
+Registro médio de 5 KB: ≈ 4 milhões de registros
+
+QUANDO COMEÇA A HAVER COBRANÇA
+
+A cobrança só ocorre se alguma dessas condições acontecer:
+
+1)  armazenamento ultrapassar 20 GB
+2)  CPU aumentar acima de 1 OCPU
+3)  o banco for convertido manualmente para versão paga
+4)  outros serviços pagos da Oracle Cloud forem utilizados
+
+GARANTIA DE GRATUIDADE
+
+Se o banco estiver marcado como:
+
+Always Free
+
+ele não escala automaticamente e não gera cobrança desde que os limites
+sejam respeitados.
+
+COMPORTAMENTO DE INATIVIDADE
+
+Se o banco ficar sem uso por aproximadamente 7 dias:
+
+-   ele pode ser pausado automaticamente
+-   os dados não são apagados
+-   o banco volta a funcionar quando acessado novamente
+
+EXEMPLO REAL PARA USO ACADÊMICO
+
+Um banco típico para aulas com:
+
+-   10 tabelas
+-   200 mil registros
+
+costuma ocupar aproximadamente:
+
+50 MB a 200 MB
+
+Ou seja, menos de 1% do limite gratuito.
+
+RESUMO FINAL
+
+Always Free permite:
+
+-   2 bancos de dados
+-   20 GB por banco
+-   1 OCPU
+-   cerca de 30 conexões simultâneas
+-   sem limite de quantidade de registros
+-   uso gratuito permanente dentro desses limites

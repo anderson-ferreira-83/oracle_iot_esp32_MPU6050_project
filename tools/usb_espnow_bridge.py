@@ -84,13 +84,18 @@ def reconstruct_payload(data: dict) -> dict | None:
         collection_id = data["cid"]
         sr            = int(data["sr"])
         fan_state     = str(data.get("fs", "RAW"))
-        t0            = float(data["t0"])
         raw_batch     = data["b"]
     except (KeyError, TypeError, ValueError) as e:
         log.warning(f"Payload invalido: {e}")
         return None
 
     period = 1.0 / max(1, sr)
+    # Usa o relogio do PC (float64) em vez do t0 do ESP32 (float32).
+    # float32 perde a parte fracionaria para timestamps grandes (~1.77e9),
+    # gerando t0 identico em todos os pacotes e Hz errado no frontend.
+    # t0 = instante do primeiro sample do batch = agora - (n-1)*period
+    t0 = time.time() - (len(raw_batch) - 1) * period
+
     batch = []
     for i, s in enumerate(raw_batch):
         if len(s) < 7:

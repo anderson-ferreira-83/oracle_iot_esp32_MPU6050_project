@@ -51,8 +51,8 @@ SAMPLE_SIZE = 18
 HEADER_FMT  = "<BBBBBB"
 HEADER_SIZE = 6
 
-POST_BATCH_SIZE    = 100   # amostras por envio ao bridge (1s a 100 Hz)
-MAX_POST_INTERVAL_MS = 2000
+POST_BATCH_SIZE    = 13    # 1 pacote ESP-NOW por escrita serial: evita bloqueio de ~400ms que causava perda de pacotes
+MAX_POST_INTERVAL_MS = 500
 
 
 # ---------------------------------------------------------------------------
@@ -197,7 +197,8 @@ def main():
     espnow_channel= _cfg_int(cfg.get("espnow_channel", 1), 1)
 
     sys.stdout.write("=" * 40 + "\n")
-    sys.stdout.write("ESP32 MPU6050 v1.0-espnow-rx-usb\n")
+    sys.stdout.write("ESP32 MPU6050 v1.2-espnow-rx-usb\n")
+    sys.stdout.write("Atualizado: 2026-03-07 15:17 BRT | POST_BATCH_SIZE 100->13: corrige perda de pacotes ESP-NOW por bloqueio do serial write\n")
     sys.stdout.write("Modo: USB Serial (sem WiFi)\n")
     sys.stdout.write("=" * 40 + "\n")
 

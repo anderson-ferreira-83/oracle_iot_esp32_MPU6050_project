@@ -132,6 +132,51 @@ def _read_mpu(i2c):
 
 
 # ---------------------------------------------------------------------------
+# FIFO do MPU6050 — amostragem por hardware (cristal do sensor, sem timing Python)
+#   0x1A CONFIG     : DLPF mode 1 → saida giroscopio = 1 kHz
+#   0x19 SMPLRT_DIV : taxa = 1000 / (div + 1)  ex: div=9 → 100 Hz
+#   0x23 FIFO_EN    : 0xF8 = accel + temp + gyro (14 bytes/amostra)
+#   0x6A USER_CTRL  : bit6=FIFO_EN, bit2=FIFO_RESET
+#   0x72/73 FIFO_COUNT, 0x74 FIFO_R_W
+# ---------------------------------------------------------------------------
+FIFO_SAMPLE_SIZE = 14  # ax,ay,az,temp,gx,gy,gz  (2 bytes cada)
+
+
+def _init_mpu_fifo(i2c, sample_rate):
+    i2c.writeto(MPU_ADDR, b"\x6B\x00")                              # acorda sensor
+    i2c.writeto(MPU_ADDR, b"\x1A\x01")                              # DLPF mode 1
+    div = max(0, min(255, 1000 // max(1, sample_rate) - 1))
+    i2c.writeto(MPU_ADDR, bytes([0x19, div]))                        # SMPLRT_DIV
+    i2c.writeto(MPU_ADDR, b"\x23\xF8")                              # FIFO_EN
+    i2c.writeto(MPU_ADDR, b"\x6A\x44")                              # habilita+reseta FIFO
+
+
+def _reset_fifo(i2c):
+    i2c.writeto(MPU_ADDR, b"\x6A\x44")
+
+
+def _read_fifo_count(i2c):
+    raw = i2c.readfrom_mem(MPU_ADDR, 0x72, 2)
+    return ((raw[0] & 0x1F) << 8) | raw[1]
+
+
+def _read_fifo_samples(i2c, n):
+    raw = i2c.readfrom_mem(MPU_ADDR, 0x74, n * FIFO_SAMPLE_SIZE)
+    out = []
+    for i in range(n):
+        o = i * FIFO_SAMPLE_SIZE
+        ax   = _bytes_to_int(raw[o],    raw[o+1])  / 16384.0
+        ay   = _bytes_to_int(raw[o+2],  raw[o+3])  / 16384.0
+        az   = _bytes_to_int(raw[o+4],  raw[o+5])  / 16384.0
+        temp = _bytes_to_int(raw[o+6],  raw[o+7])  / 340.0 + 36.53
+        gx   = _bytes_to_int(raw[o+8],  raw[o+9])  / 131.0
+        gy   = _bytes_to_int(raw[o+10], raw[o+11]) / 131.0
+        gz   = _bytes_to_int(raw[o+12], raw[o+13]) / 131.0
+        out.append((ax, ay, az, gx, gy, gz, temp))
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Empacotamento binario
 # ---------------------------------------------------------------------------
 def _clamp16(v):
@@ -276,7 +321,8 @@ def main():
             return
 
     print("=" * 40)
-    print("ESP32 MPU6050 v1.0-espnow-tx")
+    print("ESP32 MPU6050 v1.3-espnow-tx")
+    print("Atualizado: 2026-03-07 15:17 BRT | MPU6050 FIFO hardware: taxa controlada por cristal do sensor (SMPLRT_DIV), elimina timing Python")
     print("Peer RX: {}".format(_mac_str(peer_mac)))
     print("Canal: {} | Taxa: {} Hz".format(channel, sample_rate))
     print("Samples/pkt: {} | ~{:.1f} pkts/s".format(
@@ -286,20 +332,15 @@ def main():
     print("=" * 40)
 
     i2c = machine.I2C(0, scl=machine.Pin(22), sda=machine.Pin(21), freq=400000)
-    i2c.writeto(MPU_ADDR, b"\x6B\x00")
-
-    # Timing em microsegundos para precisao maxima
-    period_us   = 1_000_000 // sample_rate
-    next_sample = time.ticks_us()
+    _init_mpu_fifo(i2c, sample_rate)
 
     sent_ok = 0
     sent_fail = 0
     fail_streak = 0
     sensor_fail = 0
+    fifo_overflow = 0
     last_stat = time.ticks_ms()
-    sample_buf = []
     gc_counter = 0
-    gc_pending = False
     seq = 0
 
     state = {
@@ -309,23 +350,31 @@ def main():
     }
 
     while True:
-        # Fase 1: aguarda o proximo deadline
-        #   - sleep_ms(1) enquanto faltam >1500 us (economiza CPU)
-        #   - GC roda aqui (periodo ocioso) para nao interromper amostragem
-        #   - spin-wait nos ultimos 1500 us (precisao microsegundos)
-        remaining = time.ticks_diff(next_sample, time.ticks_us())
-        if remaining > 1500:
-            if gc_pending:
-                gc.collect()
-                gc_pending = False
-            time.sleep_ms(1)
+        # Le contagem de bytes disponiveis no FIFO
+        try:
+            count = _read_fifo_count(i2c)
+        except Exception as e:
+            sensor_fail += 1
+            if sensor_fail <= 3 or (sensor_fail % 20) == 0:
+                print("[SENSOR] fifo_count: {}".format(e))
             continue
-        while time.ticks_diff(next_sample, time.ticks_us()) > 0:
-            pass
 
-        next_sample = time.ticks_add(next_sample, period_us)
+        # Detecta overflow (FIFO = 1024 bytes): reseta e descarta
+        if count >= 1024 - FIFO_SAMPLE_SIZE:
+            fifo_overflow += 1
+            try:
+                _reset_fifo(i2c)
+            except Exception:
+                pass
+            continue
 
-        # Fase 2: verifica comandos do RX uma vez por amostra (nao no loop de espera)
+        # Aguarda acumular amostras suficientes para um pacote ESP-NOW
+        if count < MAX_SAMPLES_PER_PKT * FIFO_SAMPLE_SIZE:
+            continue
+
+        # --- Pacote pronto ---
+
+        # Verifica comandos do RX (uma vez por pacote, nao bloqueia)
         try:
             host, msg = en.recv(0)
             if msg and len(msg) > 0:
@@ -334,33 +383,38 @@ def main():
                     state = new_state
                     if state["sample_rate"] != sample_rate:
                         sample_rate = state["sample_rate"]
-                        period_us   = 1_000_000 // sample_rate
-                        sample_buf  = []
+                        div = max(0, min(255, 1000 // max(1, sample_rate) - 1))
+                        try:
+                            i2c.writeto(MPU_ADDR, bytes([0x19, div]))
+                            _reset_fifo(i2c)
+                        except Exception:
+                            pass
                     fan_state = state["fan_state"]
         except Exception:
             pass
 
-        # Fase 3: le sensor e acumula
+        # Le exatamente um pacote do FIFO
         try:
-            ax, ay, az, gx, gy, gz, temp = _read_mpu(i2c)
+            samples = _read_fifo_samples(i2c, MAX_SAMPLES_PER_PKT)
         except Exception as e:
             sensor_fail += 1
             if sensor_fail <= 3 or (sensor_fail % 20) == 0:
-                print("[SENSOR] {}".format(e))
-            gc_pending = True
+                print("[SENSOR] fifo_read: {}".format(e))
+            try:
+                _reset_fifo(i2c)
+            except Exception:
+                pass
             continue
 
-        sample_buf.append(_pack_sample(time.ticks_ms(), ax, ay, az, gx, gy, gz, temp))
-
-        if len(sample_buf) < MAX_SAMPLES_PER_PKT:
-            continue
-
-        pkt = _build_packet(sample_buf, sample_rate, fan_state, seq)
+        # Empacota e envia
+        now_ms = time.ticks_ms()
+        packed = [_pack_sample(now_ms, ax, ay, az, gx, gy, gz, temp)
+                  for ax, ay, az, gx, gy, gz, temp in samples]
+        pkt = _build_packet(packed, sample_rate, fan_state, seq)
         seq = (seq + 1) & 0xFF
-        sample_buf = []
 
         try:
-            en.send(peer_mac, pkt, False)  # sync=False: nao espera ACK (nao bloqueia)
+            en.send(peer_mac, pkt, False)
             sent_ok += 1
             fail_streak = 0
         except Exception as e:
@@ -369,19 +423,16 @@ def main():
             if fail_streak <= 3 or (fail_streak % 20) == 0:
                 print("[ESPNOW] fail {} ({})".format(fail_streak, e))
 
-        # Agenda GC para o proximo periodo ocioso (nao bloqueia aqui)
+        # GC apos envio
         gc_counter += 1
-        if gc_counter >= 20:
-            gc_pending = True
+        if gc_counter >= 10 or gc.mem_free() < low_mem_threshold:
+            gc.collect()
             gc_counter = 0
 
         now_ms = time.ticks_ms()
         if time.ticks_diff(now_ms, last_stat) >= 10000:
-            mem = gc.mem_free()
-            if mem < low_mem_threshold:
-                gc_pending = True
-            print("[STAT] OK:{} FAIL:{} SENSOR_FAIL:{} STREAK:{} MEM:{}".format(
-                sent_ok, sent_fail, sensor_fail, fail_streak, mem
+            print("[STAT] OK:{} FAIL:{} SENSOR_FAIL:{} FIFO_OVF:{} STREAK:{} MEM:{}".format(
+                sent_ok, sent_fail, sensor_fail, fifo_overflow, fail_streak, gc.mem_free()
             ))
             last_stat = now_ms
 

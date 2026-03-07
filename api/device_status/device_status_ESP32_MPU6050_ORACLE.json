@@ -1,12 +1,12 @@
 {
   "connected": true,
-  "ssid": "USB",
+  "ssid": null,
   "ip": null,
-  "rssi": 0,
+  "rssi": null,
   "send_fail_streak": null,
   "network_fail_streak": null,
   "last_send_error": null,
-  "last_endpoint": "USB",
+  "last_endpoint": null,
   "learned_server_ip": null,
   "buffer_len": null,
   "flash_queue_len": null,
@@ -15,6 +15,6 @@
   "persist_enabled": null,
   "fw_ts": null,
   "device_id": "ESP32_MPU6050_ORACLE",
-  "updated_at": 1772225802.395542,
-  "updated_at_iso": "2026-02-27 17:56:42"
+  "updated_at": 1772915437.501409,
+  "updated_at_iso": "2026-03-07 17:30:37"
 }

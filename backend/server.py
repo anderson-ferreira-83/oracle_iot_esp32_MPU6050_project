@@ -14,6 +14,21 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 
+# Carrega .env.oracle do raiz do projeto (se existir) antes de qualquer import Oracle
+def _load_env_file(path: Path) -> None:
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key, val = key.strip(), val.strip()
+        if key and key not in os.environ:
+            os.environ[key] = val
+
+_load_env_file(Path(__file__).resolve().parents[1] / ".env.oracle")
+
 import oracledb
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -79,7 +94,7 @@ def get_pool() -> oracledb.ConnectionPool:
         return _db_pool
     with _db_pool_lock:
         if _db_pool is None:
-            _db_pool = oracledb.create_pool(
+            pool_kwargs: Dict[str, Any] = dict(
                 user=env("ORACLE_USER", "student"),
                 password=env("ORACLE_PASSWORD", "oracle"),
                 dsn=oracle_dsn(),
@@ -87,6 +102,12 @@ def get_pool() -> oracledb.ConnectionPool:
                 max=8,
                 increment=1,
             )
+            wallet_dir = os.getenv("ORACLE_WALLET_DIR", "").strip()
+            if wallet_dir:
+                pool_kwargs["config_dir"]        = wallet_dir
+                pool_kwargs["wallet_location"]   = wallet_dir
+                pool_kwargs["wallet_password"]   = os.getenv("ORACLE_WALLET_PASSWORD", "")
+            _db_pool = oracledb.create_pool(**pool_kwargs)
     return _db_pool
 
 
@@ -783,7 +804,10 @@ def _ensure_new_tables() -> None:
 
 @app.on_event("startup")
 async def startup_event():
-    _ensure_new_tables()
+    import asyncio
+    # Roda em thread separada para nao bloquear o event loop durante a conexao ao ADB
+    loop = asyncio.get_event_loop()
+    loop.run_in_executor(None, _ensure_new_tables)
 
 if (BASE_DIR / "web").exists():
     app.mount("/web", StaticFiles(directory=str(BASE_DIR / "web")), name="web")
@@ -800,9 +824,13 @@ def root():
 
 @app.get("/health")
 def health():
-    with db_conn() as conn:
-        row = fetch_one(conn, "SELECT 'OK' AS status FROM dual")
-    return {"status": "ok", "db": row.get("status") if row else None}
+    try:
+        with db_conn() as conn:
+            row = fetch_one(conn, "SELECT 'OK' AS status FROM dual")
+        db_status = row.get("status") if row else "error"
+    except Exception as e:
+        db_status = f"error: {e}"
+    return {"status": "ok", "db": db_status}
 
 
 @app.post("/api/reset_db")

@@ -1,0 +1,2 @@
+WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="C:\Users\Anderson\Downloads\oracle_fast_api_iot_esp32_MPU6050_project\tools\cloud\wallet")))
+SSL_SERVER_DN_MATCH=yes
